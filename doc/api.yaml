@@ -1,0 +1,313 @@
+openapi: 3.0.3
+info:
+  title: WasaPhoto API
+  description: |
+    Questa API permette agli utenti 
+    l'utilizzo di tutti i servizi offerti dal sito
+    WasaPhoto.
+  version: 0.0.1
+
+components: 
+    schemas:
+      #
+      user:
+        title: User structure
+        properties:      
+          name:
+            type: string
+          id:
+            type: integer
+          follower:
+            type: array
+            items: {$ref:"#/components/schemas/user"}
+          following:
+            type: array
+            items: {$ref:"#/components/schemas/user"}
+          banList:
+            type: array
+            items: {$ref:"#/components/schemas/user"}
+      #
+      image:
+        title: Image structure
+        properties:
+          id: 
+            type: string
+          file:
+            type: string
+            format: binary
+          descrizione: 
+            type: string
+          likes:
+            type: array
+            items: {$ref:"#/components/schemas/user"}
+          comments:
+            type: array
+            items:
+              type: object
+              properties:
+                text:
+                  type: string
+                commenter:
+                  type: object
+                  items: {$ref:"#/components/schemas/user"}
+          author:
+            type: object
+            items: {$ref:"#/components/schemas/user"}
+          
+
+paths:
+  #
+  /user/{idUser}:
+    parameters: 
+    - name: idUser
+      in: path
+      required: true
+      description: id dell'utente della pagina visitata
+      schema:
+        type: integer
+        description: es /user/260513
+    post:
+      summary: Modifica o Primo inserimento nome utente
+      tags: ["user"]
+      operationId: setMyUserName
+      requestBody:
+        content: 
+          application/json: 
+            schema: 
+              type: string
+      responses: 
+        "201":
+          description: Successo, user name modificato.    
+    get:
+      summary: Ritorna il profilo utente
+      tags: ["user"]
+      operationId: getUserProfile
+      responses: 
+        "200":
+          description: Successo, ricevuto l' object che rappresenta l'utente.
+          content:
+            type: {$ref:"components/schemas/user"}
+  #  
+  /user/{idUser}/following/:  
+    parameters: 
+    - name: idUser
+      in: path
+      required: true
+      description: id dell'utente della pagina visitata
+      schema:
+        type: integer
+    put:
+      summary: follow di un utente
+      tags: ["user"]
+      operationId: followUser
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              items: {$ref:"components/schemas/user"}
+      responses:
+        "201":
+          description: Successo, utente seguito.
+    delete:
+      summary: unfollow di un utente
+      tags: ["user"]
+      operationId: unfollowUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              items: {$ref:"components/schemas/user"}
+      responses:
+        "200":
+          description: "Successo, utente non più seguito"
+    get:
+      summary: stream following utente
+      tags: ["user"]
+      operationId: getMyStream
+      responses:
+        "200":
+          description: Successo, ricevuto tutti i following dell'utente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  items: {$ref:"components/schemas/user"}
+  #
+  /user/{idUser}/banned/:
+    parameters: 
+    - name: idUser
+      in: path
+      required: true
+      description: id dell'utente della pagina visitata
+      schema:
+        type: integer
+    post:
+      summary: Ban di un utente
+      tags: ["user"]
+      operationId: banUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              items: {$ref:"components/schemas/user"}
+      responses:
+        "201":
+          description: "Successo, utente aggiunto alla ban list"
+    delete:
+      summary: unBan di un utente
+      tags: ["user"]
+      operationId: unbanUser
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              items: {$ref:"components/schemas/user"}
+      responses:
+        "200": 
+          description: "Successo, utente rimosso dalla ban list"
+  #
+  /user/{idUser}/immages:  
+    parameters: 
+    - name: idUser
+      in: path
+      required: true
+      description: id dell'utente della pagina visitata
+      schema:
+        type: integer
+        description: es /userProfile/260513
+    post:
+      summary: Upload di un immagine
+      tags: ["immages"]
+      operationId: uploadPhoto
+      requestBody: 
+        content: 
+          multipart/form-data: 
+            schema:
+              type: object
+              items: {$ref:"#/components/schemas/image"}
+      responses:
+        "201":
+          description: Successo, immagine caricata
+    delete:
+      summary: Rimozione di un immagine
+      tags: ["immages"]
+      operationId: deletePhoto
+      requestBody: 
+        content: 
+          multipart/form-data: 
+            schema:
+              type: string
+              #type: object
+              #items: {$ref:"#/components/schemas/image"}
+      responses:
+        "200":
+          description: Successo, immagine eliminata
+  #
+  /user/{idUser}/immages/likes:
+    parameters:
+    - name: idUser
+      in: path
+      required: true
+      description: id dell'utente della pagina visitata
+      schema:
+        type: integer
+    put:
+      summary: inserimento dell'utente nella lista dei like della foto
+      tags: ["immages"]      
+      operationId: likePhoto
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              items: {$ref:"components/schemas/user"}
+      responses:
+        "201":
+          description: "Successo, utente aggiunto alla lista dei like della foto"
+    delete:
+      summary: rimozione dell'utente nella lista dei like della foto
+      tags: ["immages"]      
+      operationId: unlikePhoto
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              items: {$ref:"components/schemas/user"}
+      responses:
+        "200":
+          description: "Successo, utente eliminato dalla lista dei like della foto"
+  #
+  /user/{idUser}/immages/comments:
+    parameters:
+      - name: idUser
+        in: path
+        required: true
+        description: id dell'utente della pagina visitata
+        schema:
+          type: integer
+    post: 
+      summary: inserimento nell'utente nella lista dei commenti della foto
+      tags: ["immages"]
+      operationId: commentPhoto
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              items: {$ref:"components/schemas/user"}
+      responses:
+        "201":
+          description: "Successo, utente inserito dalla lista dei commenti della foto"
+    delete:
+      summary: rimozione dell'utente nella lista dei commenti della foto
+      tags: ["immages"]
+      operationId: uncommentPhoto
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              items: {$ref:"components/schemas/user"}
+      responses:
+        "200":
+          description: "Successo, utente eliminato dalla lista dei commenti della foto"
+  #
+  /session:
+    post:
+      tags: ["login"]
+      summary: Logs in the user
+      operationId: doLogin
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:   
+                  type: string
+                  example: Maria
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+        required: true
+      responses:
+        '201':
+          description: User log-in action successful
+          content:   
+            application/json:
+              schema: 
+                type: integer
+
+
+                    
+                  
+        
+      
