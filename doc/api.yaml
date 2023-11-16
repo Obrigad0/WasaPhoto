@@ -5,7 +5,7 @@ info:
     Questa API permette agli utenti 
     l'utilizzo di tutti i servizi offerti dal sito
     WasaPhoto.
-  version: 0.0.1
+  version: 0.0.2
 
 components: 
     schemas:
@@ -19,13 +19,16 @@ components:
             type: integer
           follower:
             type: array
-            items: {$ref:"#/components/schemas/user"}
+            items: 
+              $ref: "#/components/schemas/user"
           following:
             type: array
-            items: {$ref:"#/components/schemas/user"}
+            items: 
+              $ref: "#/components/schemas/user"
           banList:
             type: array
-            items: {$ref:"#/components/schemas/user"}
+            items: 
+              $ref: "#/components/schemas/user"
       #
       image:
         title: Image structure
@@ -39,7 +42,8 @@ components:
             type: string
           likes:
             type: array
-            items: {$ref:"#/components/schemas/user"}
+            items: 
+              $ref: "#/components/schemas/user"
           comments:
             type: array
             items:
@@ -49,10 +53,12 @@ components:
                   type: string
                 commenter:
                   type: object
-                  items: {$ref:"#/components/schemas/user"}
+                  items: 
+                    $ref: "#/components/schemas/user"
           author:
             type: object
-            items: {$ref:"#/components/schemas/user"}
+            items: 
+              $ref: "#/components/schemas/user"
           
 
 paths:
@@ -86,7 +92,9 @@ paths:
         "200":
           description: Successo, ricevuto l' object che rappresenta l'utente.
           content:
-            type: {$ref:"components/schemas/user"}
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/user"
   #  
   /user/{idUser}/following/:  
     parameters: 
@@ -105,7 +113,8 @@ paths:
           application/json:
             schema: 
               type: object
-              items: {$ref:"components/schemas/user"}
+              items: 
+                $ref: "#/components/schemas/user"
       responses:
         "201":
           description: Successo, utente seguito.
@@ -118,7 +127,8 @@ paths:
           application/json:
             schema:
               type: object
-              items: {$ref:"components/schemas/user"}
+              items: 
+                $ref: "#/components/schemas/user"
       responses:
         "200":
           description: "Successo, utente non più seguito"
@@ -135,7 +145,8 @@ paths:
                 type: array
                 items:
                   type: object
-                  items: {$ref:"components/schemas/user"}
+                  items: 
+                    $ref: "#/components/schemas/user"
   #
   /user/{idUser}/banned/:
     parameters: 
@@ -154,7 +165,8 @@ paths:
           application/json:
             schema:
               type: object
-              items: {$ref:"components/schemas/user"}
+              items:
+                $ref: "#/components/schemas/user"
       responses:
         "201":
           description: "Successo, utente aggiunto alla ban list"
@@ -167,7 +179,8 @@ paths:
           application/json:
             schema: 
               type: object
-              items: {$ref:"components/schemas/user"}
+              items:
+                $ref: "#/components/schemas/user"
       responses:
         "200": 
           description: "Successo, utente rimosso dalla ban list"
@@ -190,7 +203,8 @@ paths:
           multipart/form-data: 
             schema:
               type: object
-              items: {$ref:"#/components/schemas/image"}
+              items: 
+                $ref: "#/components/schemas/image"
       responses:
         "201":
           description: Successo, immagine caricata
@@ -200,11 +214,9 @@ paths:
       operationId: deletePhoto
       requestBody: 
         content: 
-          multipart/form-data: 
+          application/json:
             schema:
               type: string
-              #type: object
-              #items: {$ref:"#/components/schemas/image"}
       responses:
         "200":
           description: Successo, immagine eliminata
@@ -226,7 +238,8 @@ paths:
           application/json:
             schema: 
               type: object
-              items: {$ref:"components/schemas/user"}
+              items: 
+                $ref: "#/components/schemas/user"
       responses:
         "201":
           description: "Successo, utente aggiunto alla lista dei like della foto"
@@ -239,7 +252,8 @@ paths:
           application/json:
             schema: 
               type: object
-              items: {$ref:"components/schemas/user"}
+              items: 
+                $ref: "#/components/schemas/user"
       responses:
         "200":
           description: "Successo, utente eliminato dalla lista dei like della foto"
@@ -261,7 +275,8 @@ paths:
           application/json:
             schema: 
               type: object
-              items: {$ref:"components/schemas/user"}
+              items: 
+                $ref: "#/components/schemas/user"
       responses:
         "201":
           description: "Successo, utente inserito dalla lista dei commenti della foto"
@@ -274,7 +289,8 @@ paths:
           application/json:
             schema: 
               type: object
-              items: {$ref:"components/schemas/user"}
+              items: 
+                $ref: "#/components/schemas/user"
       responses:
         "200":
           description: "Successo, utente eliminato dalla lista dei commenti della foto"
