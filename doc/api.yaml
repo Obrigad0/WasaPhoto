@@ -5,7 +5,7 @@ info:
     Questa API permette agli utenti 
     l'utilizzo di tutti i servizi offerti dal sito
     WasaPhoto.
-  version: 0.0.2
+  version: 0.0.3
 
 components: 
     schemas:
@@ -20,15 +20,15 @@ components:
           follower:
             type: array
             items: 
-              $ref: "#/components/schemas/user"
+              type: integer
           following:
             type: array
             items: 
-              $ref: "#/components/schemas/user"
+              type: integer
           banList:
             type: array
             items: 
-              $ref: "#/components/schemas/user"
+              type: integer
       #
       image:
         title: Image structure
@@ -43,7 +43,7 @@ components:
           likes:
             type: array
             items: 
-              $ref: "#/components/schemas/user"
+              type: integer
           comments:
             type: array
             items:
@@ -52,13 +52,9 @@ components:
                 text:
                   type: string
                 commenter:
-                  type: object
-                  items: 
-                    $ref: "#/components/schemas/user"
+                  type: integer
           author:
-            type: object
-            items: 
-              $ref: "#/components/schemas/user"
+            type: integer
           
 
 paths:
@@ -112,9 +108,7 @@ paths:
         content:
           application/json:
             schema: 
-              type: object
-              items: 
-                $ref: "#/components/schemas/user"
+              type: string
       responses:
         "201":
           description: Successo, utente seguito.
@@ -126,9 +120,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              items: 
-                $ref: "#/components/schemas/user"
+              type: string
       responses:
         "200":
           description: "Successo, utente non più seguito"
@@ -144,9 +136,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  items: 
-                    $ref: "#/components/schemas/user"
+                  $ref: "#/components/schemas/user"
   #
   /user/{idUser}/banned/:
     parameters: 
@@ -164,9 +154,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              items:
-                $ref: "#/components/schemas/user"
+              type: integer
       responses:
         "201":
           description: "Successo, utente aggiunto alla ban list"
@@ -177,15 +165,13 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: 
-              type: object
-              items:
-                $ref: "#/components/schemas/user"
+            schema:
+              type: integer
       responses:
         "200": 
           description: "Successo, utente rimosso dalla ban list"
   #
-  /user/{idUser}/immages:  
+  /user/{idUser}/images:  
     parameters: 
     - name: idUser
       in: path
@@ -196,21 +182,19 @@ paths:
         description: es /userProfile/260513
     post:
       summary: Upload di un immagine
-      tags: ["immages"]
+      tags: ["images"]
       operationId: uploadPhoto
       requestBody: 
         content: 
-          multipart/form-data: 
+          application/json: 
             schema:
-              type: object
-              items: 
-                $ref: "#/components/schemas/image"
+              $ref: "#/components/schemas/image"
       responses:
         "201":
           description: Successo, immagine caricata
     delete:
       summary: Rimozione di un immagine
-      tags: ["immages"]
+      tags: ["images"]
       operationId: deletePhoto
       requestBody: 
         content: 
@@ -221,7 +205,7 @@ paths:
         "200":
           description: Successo, immagine eliminata
   #
-  /user/{idUser}/immages/likes:
+  /user/{idUser}/images/likes:
     parameters:
     - name: idUser
       in: path
@@ -231,34 +215,30 @@ paths:
         type: integer
     put:
       summary: inserimento dell'utente nella lista dei like della foto
-      tags: ["immages"]      
+      tags: ["images"]      
       operationId: likePhoto
       requestBody:
         content:
           application/json:
-            schema: 
-              type: object
-              items: 
-                $ref: "#/components/schemas/user"
+            schema:
+              type: integer
       responses:
         "201":
           description: "Successo, utente aggiunto alla lista dei like della foto"
     delete:
       summary: rimozione dell'utente nella lista dei like della foto
-      tags: ["immages"]      
+      tags: ["images"]      
       operationId: unlikePhoto
       requestBody:
         content:
           application/json:
-            schema: 
-              type: object
-              items: 
-                $ref: "#/components/schemas/user"
+            schema:
+              type: integer
       responses:
         "200":
           description: "Successo, utente eliminato dalla lista dei like della foto"
   #
-  /user/{idUser}/immages/comments:
+  /user/{idUser}/images/comments:
     parameters:
       - name: idUser
         in: path
@@ -268,29 +248,25 @@ paths:
           type: integer
     post: 
       summary: inserimento nell'utente nella lista dei commenti della foto
-      tags: ["immages"]
+      tags: ["images"]
       operationId: commentPhoto
       requestBody:
         content:
           application/json:
             schema: 
-              type: object
-              items: 
-                $ref: "#/components/schemas/user"
+              type: integer
       responses:
         "201":
           description: "Successo, utente inserito dalla lista dei commenti della foto"
     delete:
       summary: rimozione dell'utente nella lista dei commenti della foto
-      tags: ["immages"]
+      tags: ["images"]
       operationId: uncommentPhoto
       requestBody:
         content:
           application/json:
             schema: 
-              type: object
-              items: 
-                $ref: "#/components/schemas/user"
+              type: integer
       responses:
         "200":
           description: "Successo, utente eliminato dalla lista dei commenti della foto"
