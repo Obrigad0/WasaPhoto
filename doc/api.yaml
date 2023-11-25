@@ -5,61 +5,82 @@ info:
     Questa API permette agli utenti 
     l'utilizzo di tutti i servizi offerti dal sito
     WasaPhoto.
-  version: 0.0.3
+  version: 0.0.4
 
 components: 
     schemas:
       #
       user:
         title: User structure
+        description: "Questo oggetto rappresenta un singolo utente"
+        type: object
         properties:      
           name:
+            description: Username dell'utente
             type: string
           id:
+            description: Identificatore univoco dell'utente
             type: integer
+            example: 71
           follower:
+            description: Array di identificatori di utenti che seguono questo utente
             type: array
             items: 
               type: integer
           following:
+            description: Array di identificatori di utenti che questo utente segue
             type: array
             items: 
               type: integer
           banList:
+            description: Array di identificatori di utenti che questo utente ha bloccato
             type: array
             items: 
               type: integer
       #
       image:
         title: Image structure
+        description: "Questo oggetto rappresenta una singola immagine"
+        type: object
         properties:
           id: 
+            description: Identificatore univoco dell'immagine
             type: string
+            example: Lu71c
           file:
+            description: Il file che rappresenta l'immagine
             type: string
             format: binary
           descrizione: 
+            description: Descrizione scritta dall'utente che ha postato l'immagine
             type: string
-          likes:
+          like:
+            description: Array di identificatori di utenti che hanno messo like alla foto
             type: array
             items: 
               type: integer
           comments:
+            description: Array di identificatori di utenti che hanno commentato la foto e il loro commento
             type: array
             items:
               type: object
               properties:
+                idComment:
+                  type: string
                 text:
                   type: string
                 commenter:
                   type: integer
           author:
+            description: Identificatore utente che ha postato la foto
             type: integer
+            example: 71
           
 
 paths:
   #
   /user/{idUser}:
+
     parameters: 
     - name: idUser
       in: path
@@ -68,7 +89,8 @@ paths:
       schema:
         type: integer
         description: es /user/260513
-    post:
+
+    put: #patch?
       summary: Modifica o Primo inserimento nome utente
       tags: ["user"]
       operationId: setMyUserName
@@ -80,6 +102,7 @@ paths:
       responses: 
         "201":
           description: Successo, user name modificato.    
+
     get:
       summary: Ritorna il profilo utente
       tags: ["user"]
@@ -91,8 +114,13 @@ paths:
             application/json:
               schema: 
                 $ref: "#/components/schemas/user"
+        "404":
+          description: Errore, utente non trovato!
+
+
   #  
   /user/{idUser}/following/:  
+
     parameters: 
     - name: idUser
       in: path
@@ -100,30 +128,7 @@ paths:
       description: id dell'utente della pagina visitata
       schema:
         type: integer
-    put:
-      summary: follow di un utente
-      tags: ["user"]
-      operationId: followUser
-      requestBody:
-        content:
-          application/json:
-            schema: 
-              type: string
-      responses:
-        "201":
-          description: Successo, utente seguito.
-    delete:
-      summary: unfollow di un utente
-      tags: ["user"]
-      operationId: unfollowUser
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: string
-      responses:
-        "200":
-          description: "Successo, utente non più seguito"
+
     get:
       summary: stream following utente
       tags: ["user"]
@@ -137,8 +142,10 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/user"
+
   #
-  /user/{idUser}/banned/:
+  /user/{idUser}/following/{followedUserId}: 
+
     parameters: 
     - name: idUser
       in: path
@@ -146,32 +153,96 @@ paths:
       description: id dell'utente della pagina visitata
       schema:
         type: integer
+
+    - name: followedUserId
+      in: path
+      required: true
+      description: id dell'utente seguito
+      schema:
+        type: integer
+
+    delete:
+      summary: unfollow di un utente
+      tags: ["user"]
+      operationId: unfollowUser
+      responses:
+        "200":
+          description: "Successo, utente non più seguito"
+
+    post:
+      summary: follow di un utente
+      tags: ["user"]
+      operationId: followUser
+      responses:
+        "201":
+          description: Successo, utente seguito.
+        "404":
+          description: Errore, utente non trovato!
+
+  #
+  /user/{idUser}/banned/:
+
+    parameters: 
+    - name: idUser
+      in: path
+      required: true
+      description: id dell'utente della pagina visitata
+      schema:
+        type: integer
+
+    get:
+      summary: Utenti bloccati dall'utente
+      tags: ["user"]
+      operationId: getMyBanList
+      responses:
+        "200":
+          description: Successo, ricevuto la lista degli utenti bloccati
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/user"
+
+  #
+  /user/{idUser}/banned/{bannedUserId}:
+    parameters: 
+    - name: idUser
+      in: path
+      required: true
+      description: id dell'utente della pagina visitata
+      schema:
+        type: integer
+
+    - name: bannedUserId
+      in: path
+      required: true
+      description: id dell'utente bannato
+      schema:
+        type: integer
+    
     post:
       summary: Ban di un utente
       tags: ["user"]
       operationId: banUser
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: integer
       responses:
         "201":
           description: "Successo, utente aggiunto alla ban list"
+        "404":
+          description: Errore, utente non trovato!
+
     delete:
       summary: unBan di un utente
       tags: ["user"]
       operationId: unbanUser
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: integer
       responses:
         "200": 
           description: "Successo, utente rimosso dalla ban list"
+
+
+
   #
-  /user/{idUser}/images:  
+  /user/{idUser}/images/:
     parameters: 
     - name: idUser
       in: path
@@ -179,7 +250,7 @@ paths:
       description: id dell'utente della pagina visitata
       schema:
         type: integer
-        description: es /userProfile/260513
+
     post:
       summary: Upload di un immagine
       tags: ["images"]
@@ -192,20 +263,33 @@ paths:
       responses:
         "201":
           description: Successo, immagine caricata
+
+  /user/{idUser}/images/{imageId}:
+    parameters: 
+      - name: idUser
+        in: path
+        required: true
+        description: id dell'utente della pagina visitata
+        schema:
+          type: integer
+
+      - name: imageId
+        in: path
+        required: true
+        description: id dell'immagine
+        schema:
+          type: string
+    
     delete:
       summary: Rimozione di un immagine
       tags: ["images"]
       operationId: deletePhoto
-      requestBody: 
-        content: 
-          application/json:
-            schema:
-              type: string
       responses:
         "200":
           description: Successo, immagine eliminata
+
   #
-  /user/{idUser}/images/likes:
+  /user/{idUser}/images/{imageId}/like/:
     parameters:
     - name: idUser
       in: path
@@ -213,32 +297,29 @@ paths:
       description: id dell'utente della pagina visitata
       schema:
         type: integer
-    put:
-      summary: inserimento dell'utente nella lista dei like della foto
-      tags: ["images"]      
-      operationId: likePhoto
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: integer
-      responses:
-        "201":
-          description: "Successo, utente aggiunto alla lista dei like della foto"
-    delete:
-      summary: rimozione dell'utente nella lista dei like della foto
-      tags: ["images"]      
-      operationId: unlikePhoto
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: integer
+
+    - name: imageId
+      in: path
+      required: true
+      description: id dell'immagine
+      schema:
+        type: string
+
+    get:
+      summary: Lista degli utenti che hanno messo like alla foto
+      tags: ["user"]
+      operationId: getMyLike
       responses:
         "200":
-          description: "Successo, utente eliminato dalla lista dei like della foto"
-  #
-  /user/{idUser}/images/comments:
+          description: Successo, ricevuto la lista degli utenti che hanno messo like!
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/user"
+
+  /user/{idUser}/images/{imageId}/like/{likeUserId}:
     parameters:
       - name: idUser
         in: path
@@ -246,30 +327,127 @@ paths:
         description: id dell'utente della pagina visitata
         schema:
           type: integer
-    post: 
-      summary: inserimento nell'utente nella lista dei commenti della foto
+
+      - name: imageId
+        in: path
+        required: true
+        description: id dell'immagine
+        schema:
+          type: string
+
+      - name: likeUserId
+        in: path
+        required: true
+        description: id dell'utente che mette like
+        schema:
+          type: integer
+
+
+    post:
+      summary: inserimento dell'utente nella lista dei like della foto
+      tags: ["images"]      
+      operationId: likePhoto
+      responses:
+        "201":
+          description: "Successo, utente aggiunto alla lista dei like della foto"
+
+    delete:
+      summary: rimozione dell'utente nella lista dei like della foto
+      tags: ["images"]      
+      operationId: unlikePhoto
+      responses:
+        "200":
+          description: "Successo, utente eliminato dalla lista dei like della foto"
+
+
+  #
+  /user/{idUser}/images/{imageId}/comments/:
+    parameters:
+      - name: idUser
+        in: path
+        required: true
+        description: id dell'utente della pagina visitata
+        schema:
+          type: integer
+
+      - name: imageId
+        in: path
+        required: true
+        description: id dell'immagine
+        schema:
+          type: string
+
+    get:
+      summary: Lista degli utenti e dei commenti lasciati sotto la foto
+      tags: ["user"]
+      operationId: getMyComments
+      responses:
+        "200":
+          description: Successo, ricevuto la lista degli utenti che hanno messo like!
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    idComment:
+                      type: string
+                    text:
+                      type: string
+                    commenter:
+                      type: integer
+    
+    post:  # il server deve creare l'id del commento
+      summary: inserimento del commento 
       tags: ["images"]
       operationId: commentPhoto
       requestBody:
         content:
           application/json:
             schema: 
-              type: integer
+              type: object
+              properties:
+                Commenter:
+                  type: integer
+                text:
+                  type: string
       responses:
         "201":
           description: "Successo, utente inserito dalla lista dei commenti della foto"
+
+
+  /user/{idUser}/images/{imageId}/comments/{commentId}:
+    parameters:
+      - name: idUser
+        in: path
+        required: true
+        description: id dell'utente della pagina visitata
+        schema:
+          type: integer
+
+      - name: imageId
+        in: path
+        required: true
+        description: id dell'immagine
+        schema:
+          type: string
+
+      - name: commentId
+        in: path
+        required: true
+        description: id del commento
+        schema:
+          type: string
+
     delete:
       summary: rimozione dell'utente nella lista dei commenti della foto
       tags: ["images"]
       operationId: uncommentPhoto
-      requestBody:
-        content:
-          application/json:
-            schema: 
-              type: integer
       responses:
         "200":
-          description: "Successo, utente eliminato dalla lista dei commenti della foto"
+          description: "Successo, commento eliminato dalla foto"
+
   #
   /session:
     post:
