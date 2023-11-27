@@ -5,7 +5,7 @@ info:
     Questa API permette agli utenti 
     l'utilizzo di tutti i servizi offerti dal sito
     WasaPhoto.
-  version: 0.0.4
+  version: 0.0.5
 
 components: 
     schemas:
@@ -90,7 +90,7 @@ paths:
         type: integer
         description: es /user/260513
 
-    put: #patch?
+    put: 
       summary: Modifica o Primo inserimento nome utente
       tags: ["user"]
       operationId: setMyUserName
@@ -119,7 +119,7 @@ paths:
 
 
   #  
-  /user/{idUser}/following/:  
+  /user/{idUser}/following/:  #con o senza / finale
 
     parameters: 
     - name: idUser
@@ -131,7 +131,7 @@ paths:
 
     get:
       summary: stream following utente
-      tags: ["user"]
+      tags: ["following"]
       operationId: getMyStream
       responses:
         "200":
@@ -163,15 +163,15 @@ paths:
 
     delete:
       summary: unfollow di un utente
-      tags: ["user"]
+      tags: ["following"]
       operationId: unfollowUser
       responses:
         "200":
           description: "Successo, utente non più seguito"
 
-    post:
+    put:
       summary: follow di un utente
-      tags: ["user"]
+      tags: ["following"]
       operationId: followUser
       responses:
         "201":
@@ -180,7 +180,7 @@ paths:
           description: Errore, utente non trovato!
 
   #
-  /user/{idUser}/banned/:
+  /user/{idUser}/banned/: #con o senza / finale
 
     parameters: 
     - name: idUser
@@ -192,7 +192,7 @@ paths:
 
     get:
       summary: Utenti bloccati dall'utente
-      tags: ["user"]
+      tags: ["banned"]
       operationId: getMyBanList
       responses:
         "200":
@@ -221,9 +221,9 @@ paths:
       schema:
         type: integer
     
-    post:
+    put:
       summary: Ban di un utente
-      tags: ["user"]
+      tags: ["banned"]
       operationId: banUser
       responses:
         "201":
@@ -233,7 +233,7 @@ paths:
 
     delete:
       summary: unBan di un utente
-      tags: ["user"]
+      tags: ["banned"]
       operationId: unbanUser
       responses:
         "200": 
@@ -242,7 +242,7 @@ paths:
 
 
   #
-  /user/{idUser}/images/:
+  /user/{idUser}/images: #con o senza / finale
     parameters: 
     - name: idUser
       in: path
@@ -288,8 +288,16 @@ paths:
         "200":
           description: Successo, immagine eliminata
 
+    get:
+      summary: Accesso ad un'immagine
+      tags: ["images"]
+      operationId: getTheImage
+      responses:
+        "201":
+          description: Successo, accesso all'immagine 
+
   #
-  /user/{idUser}/images/{imageId}/like/:
+  /user/{idUser}/images/{imageId}/like/: #con o senza / finale
     parameters:
     - name: idUser
       in: path
@@ -307,7 +315,7 @@ paths:
 
     get:
       summary: Lista degli utenti che hanno messo like alla foto
-      tags: ["user"]
+      tags: ["like"]
       operationId: getMyLike
       responses:
         "200":
@@ -343,9 +351,9 @@ paths:
           type: integer
 
 
-    post:
+    put:
       summary: inserimento dell'utente nella lista dei like della foto
-      tags: ["images"]      
+      tags: ["like"]      
       operationId: likePhoto
       responses:
         "201":
@@ -353,7 +361,7 @@ paths:
 
     delete:
       summary: rimozione dell'utente nella lista dei like della foto
-      tags: ["images"]      
+      tags: ["like"]      
       operationId: unlikePhoto
       responses:
         "200":
@@ -361,7 +369,7 @@ paths:
 
 
   #
-  /user/{idUser}/images/{imageId}/comments/:
+  /user/{idUser}/images/{imageId}/comments/: #con o senza / finale
     parameters:
       - name: idUser
         in: path
@@ -379,7 +387,7 @@ paths:
 
     get:
       summary: Lista degli utenti e dei commenti lasciati sotto la foto
-      tags: ["user"]
+      tags: ["comment"]
       operationId: getMyComments
       responses:
         "200":
@@ -400,7 +408,7 @@ paths:
     
     post:  # il server deve creare l'id del commento
       summary: inserimento del commento 
-      tags: ["images"]
+      tags: ["comment"]
       operationId: commentPhoto
       requestBody:
         content:
@@ -442,7 +450,7 @@ paths:
 
     delete:
       summary: rimozione dell'utente nella lista dei commenti della foto
-      tags: ["images"]
+      tags: ["comment"]
       operationId: uncommentPhoto
       responses:
         "200":
