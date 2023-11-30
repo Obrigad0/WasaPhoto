@@ -5,7 +5,23 @@ info:
     Questa API permette agli utenti 
     l'utilizzo di tutti i servizi offerti dal sito
     WasaPhoto.
-  version: 0.0.5
+  version: 1.0.0
+
+tags: 
+  - name: "login"
+    description: Gestione del login
+  - name: "user"
+    description: Gestione servizi utente
+  - name: "banned"
+    description: Gestione ban dell'utente
+  - name: "following"
+    description: Gestione following dell'utente
+  - name: "images"
+    description: Gestione immagini dell'utente
+  - name: "comment"
+    description: Gestione dei commenti delle immagini dell'utente
+  - name: "like"
+    description: Gestione dei like delle immagini dell'utente
 
 components: 
     schemas:
@@ -18,23 +34,33 @@ components:
           name:
             description: Username dell'utente
             type: string
-          id:
+            pattern: '^.*?$'
+            example: LikeMrSarri
+            minLength: 3
+            maxLength: 16
+          userId:
             description: Identificatore univoco dell'utente
             type: integer
             example: 71
           follower:
             description: Array di identificatori di utenti che seguono questo utente
             type: array
+            minItems: 0
+            maxItems: 9999
             items: 
               type: integer
           following:
             description: Array di identificatori di utenti che questo utente segue
             type: array
+            minItems: 0
+            maxItems: 9999
             items: 
               type: integer
           banList:
             description: Array di identificatori di utenti che questo utente ha bloccato
             type: array
+            minItems: 0
+            maxItems: 9999
             items: 
               type: integer
       #
@@ -43,39 +69,67 @@ components:
         description: "Questo oggetto rappresenta una singola immagine"
         type: object
         properties:
-          id: 
+          imgId: 
             description: Identificatore univoco dell'immagine
             type: string
-            example: Lu71c
+            pattern: '^.*?$'
+            minLength: 4
+            maxLength: 25
+            example: Lu71cf2g23
           file:
             description: Il file che rappresenta l'immagine
             type: string
+            minLength: 0
+            maxLength: 10000
             format: binary
           descrizione: 
             description: Descrizione scritta dall'utente che ha postato l'immagine
             type: string
+            pattern: '^.*?$'
+            minLength: 0
+            maxLength: 280
+            example: foto al mare! hashtag io volevo andare in montagna
           like:
             description: Array di identificatori di utenti che hanno messo like alla foto
             type: array
+            minItems: 0
+            maxItems: 9999
             items: 
               type: integer
           comments:
             description: Array di identificatori di utenti che hanno commentato la foto e il loro commento
             type: array
+            minItems: 0
+            maxItems: 9999
             items:
               type: object
               properties:
                 idComment:
                   type: string
+                  description: id del commento
+                  pattern: '^.*?$'
+                  minLength: 4
+                  maxLength: 25
+                  example: agfhd029f2f
                 text:
                   type: string
+                  description: testo del commento
+                  pattern: '^.*?$'
+                  minLength: 1
+                  maxLength: 80
+                  example: bella foto!
                 commenter:
+                  description: utente che ha commentato
                   type: integer
           author:
             description: Identificatore utente che ha postato la foto
             type: integer
             example: 71
-          
+      #      
+    securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer      
 
 paths:
   #
@@ -91,7 +145,8 @@ paths:
         description: es /user/260513
 
     put: 
-      summary: Modifica o Primo inserimento nome utente
+      summary: Modifica nome utente
+      description: l'operazione consente la modifica del nome utente 
       tags: ["user"]
       operationId: setMyUserName
       requestBody:
@@ -99,12 +154,27 @@ paths:
           application/json: 
             schema: 
               type: string
+              pattern: '^.*?$'
+              example: LikeMrSarri2
+              minLength: 3
+              maxLength: 16
+              
       responses: 
         "201":
-          description: Successo, user name modificato.    
+          description: Successo, user name modificato.
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/user"
+        "404":
+          description: Errore, utente non trovato!
+
+      security:
+        - bearerAuth: []
 
     get:
       summary: Ritorna il profilo utente
+      description: l'operazione ritorna tutte le informazioni del profilo dell'utente 
       tags: ["user"]
       operationId: getUserProfile
       responses: 
@@ -117,6 +187,9 @@ paths:
         "404":
           description: Errore, utente non trovato!
 
+      security:
+        - bearerAuth: []
+
 
   #  
   /user/{idUser}/following/:  #con o senza / finale
@@ -128,9 +201,11 @@ paths:
       description: id dell'utente della pagina visitata
       schema:
         type: integer
+        description: es /user/260513/following/
 
     get:
       summary: stream following utente
+      description: l'operazione ritorna in un array tutti i followed dell'utente, in modo tale da creare il suo stream
       tags: ["following"]
       operationId: getMyStream
       responses:
@@ -140,8 +215,13 @@ paths:
             application/json:
               schema:
                 type: array
+                minItems: 0
+                maxItems: 999
                 items:
                   $ref: "#/components/schemas/user"
+      
+      security:
+        - bearerAuth: []
 
   #
   /user/{idUser}/following/{followedUserId}: 
@@ -153,6 +233,8 @@ paths:
       description: id dell'utente della pagina visitata
       schema:
         type: integer
+        description: es /user/260513/following/xxx
+
 
     - name: followedUserId
       in: path
@@ -160,24 +242,34 @@ paths:
       description: id dell'utente seguito
       schema:
         type: integer
+        description: es /user/260513/following/150519
+
 
     delete:
       summary: unfollow di un utente
+      description: l'operazione elimina il followedUserId dall'array di seguiti dell'utente
       tags: ["following"]
       operationId: unfollowUser
       responses:
-        "200":
+        "204":
           description: "Successo, utente non più seguito"
+        "404":
+          description: Errore, utente non trovato!
+      security:
+        - bearerAuth: []
 
     put:
       summary: follow di un utente
+      description: l'operazione aggiunge il followedUserId dall'array di seguiti dell'utente
       tags: ["following"]
       operationId: followUser
       responses:
-        "201":
+        "204":
           description: Successo, utente seguito.
         "404":
           description: Errore, utente non trovato!
+      security:
+        - bearerAuth: []
 
   #
   /user/{idUser}/banned/: #con o senza / finale
@@ -189,9 +281,12 @@ paths:
       description: id dell'utente della pagina visitata
       schema:
         type: integer
+        description: es /user/260513/banned/
+
 
     get:
       summary: Utenti bloccati dall'utente
+      description: l'operazione ritorna in un array la tutti gli utenti bloccati dall'utente
       tags: ["banned"]
       operationId: getMyBanList
       responses:
@@ -201,8 +296,12 @@ paths:
             application/json:
               schema:
                 type: array
+                minItems: 0
+                maxItems: 999
                 items:
                   $ref: "#/components/schemas/user"
+      security:
+        - bearerAuth: []
 
   #
   /user/{idUser}/banned/{bannedUserId}:
@@ -213,6 +312,8 @@ paths:
       description: id dell'utente della pagina visitata
       schema:
         type: integer
+        description: es /user/260513/banned/xxx
+
 
     - name: bannedUserId
       in: path
@@ -220,24 +321,34 @@ paths:
       description: id dell'utente bannato
       schema:
         type: integer
+        description: es /user/260513/banned/150519
+
     
     put:
       summary: Ban di un utente
+      description: l'operazione inserisce il bannedUserId dall'array dei bannati dell'utente
       tags: ["banned"]
       operationId: banUser
       responses:
-        "201":
+        "204":
           description: "Successo, utente aggiunto alla ban list"
         "404":
           description: Errore, utente non trovato!
+      security:
+        - bearerAuth: []
 
     delete:
       summary: unBan di un utente
+      description: l'operazione elimina il bannedUserId dall'array dei bannati dell'utente
       tags: ["banned"]
       operationId: unbanUser
       responses:
-        "200": 
+        "204": 
           description: "Successo, utente rimosso dalla ban list"
+        "404":
+          description: Errore, utente non trovato!
+      security:
+        - bearerAuth: []
 
 
 
@@ -250,9 +361,12 @@ paths:
       description: id dell'utente della pagina visitata
       schema:
         type: integer
+        description: es /user/ads34f/images
+
 
     post:
       summary: Upload di un immagine
+      description: l'operazione carica l'immagine inserita dall'utente
       tags: ["images"]
       operationId: uploadPhoto
       requestBody: 
@@ -261,8 +375,10 @@ paths:
             schema:
               $ref: "#/components/schemas/image"
       responses:
-        "201":
+        "204":
           description: Successo, immagine caricata
+      security:
+        - bearerAuth: []
 
   /user/{idUser}/images/{imageId}:
     parameters: 
@@ -272,6 +388,8 @@ paths:
         description: id dell'utente della pagina visitata
         schema:
           type: integer
+          description: es /user/260519/images/xxx
+
 
       - name: imageId
         in: path
@@ -279,22 +397,41 @@ paths:
         description: id dell'immagine
         schema:
           type: string
+          description: es /user/260519/images/afs23f3qf
+          pattern: '^.*?$'
+          minLength: 4
+          maxLength: 25
+          example: dfsvweggssd
     
     delete:
       summary: Rimozione di un immagine
+      description: elimina l'immagine imageId dell'utente
       tags: ["images"]
       operationId: deletePhoto
       responses:
-        "200":
+        "204":
           description: Successo, immagine eliminata
+        "404":
+          description: Errore, immagine non trovata!
+      security:
+        - bearerAuth: []
 
     get:
       summary: Accesso ad un'immagine
+      description: ritorna l'immagine imageId dell'utente
       tags: ["images"]
       operationId: getTheImage
       responses:
-        "201":
+        "200":
           description: Successo, accesso all'immagine 
+          content: 
+            application/json: 
+              schema:
+                $ref: "#/components/schemas/image"
+        "404":
+          description: Errore, immagine non trovata!
+      security:
+        - bearerAuth: []
 
   #
   /user/{idUser}/images/{imageId}/like/: #con o senza / finale
@@ -305,6 +442,7 @@ paths:
       description: id dell'utente della pagina visitata
       schema:
         type: integer
+        description: es /user/260519/images/xxx/like/
 
     - name: imageId
       in: path
@@ -312,9 +450,15 @@ paths:
       description: id dell'immagine
       schema:
         type: string
+        description: es /user/260519/images/23f32ff3/like/
+        pattern: '^.*?$'
+        minLength: 4
+        maxLength: 25
+        example: dfsvweggssd
 
     get:
       summary: Lista degli utenti che hanno messo like alla foto
+      description: ritorna la lista degli utenti che hanno messo like alla foto imageId
       tags: ["like"]
       operationId: getMyLike
       responses:
@@ -324,8 +468,12 @@ paths:
             application/json:
               schema:
                 type: array
+                minItems: 0
+                maxItems: 999
                 items:
                   $ref: "#/components/schemas/user"
+      security:
+        - bearerAuth: []
 
   /user/{idUser}/images/{imageId}/like/{likeUserId}:
     parameters:
@@ -335,6 +483,8 @@ paths:
         description: id dell'utente della pagina visitata
         schema:
           type: integer
+          description: es /user/260519/images/xxx/like/xxx
+
 
       - name: imageId
         in: path
@@ -342,6 +492,11 @@ paths:
         description: id dell'immagine
         schema:
           type: string
+          description: es /user/260519/images/g324gsd/like/xxx
+          pattern: '^.*?$'
+          minLength: 4
+          maxLength: 25
+          example: dfsvweggssd
 
       - name: likeUserId
         in: path
@@ -349,23 +504,34 @@ paths:
         description: id dell'utente che mette like
         schema:
           type: integer
+          description: es /user/260519/images/g324gsd/like/234234
 
 
     put:
       summary: inserimento dell'utente nella lista dei like della foto
+      description: inserisce nell'array dei like della foto (imageId) likeUserId
       tags: ["like"]      
       operationId: likePhoto
       responses:
-        "201":
+        "204":
           description: "Successo, utente aggiunto alla lista dei like della foto"
+        "404":
+          description: Errore, utente non trovato!
+      security:
+        - bearerAuth: []
 
     delete:
       summary: rimozione dell'utente nella lista dei like della foto
+      description: elimina nell'array dei like della foto (imageId) likeUserId
       tags: ["like"]      
       operationId: unlikePhoto
       responses:
-        "200":
+        "204":
           description: "Successo, utente eliminato dalla lista dei like della foto"
+        "404":
+          description: Errore, utente non trovato!
+      security:
+        - bearerAuth: []
 
 
   #
@@ -377,6 +543,7 @@ paths:
         description: id dell'utente della pagina visitata
         schema:
           type: integer
+          description: es /user/2334423/images/xxx/comments/
 
       - name: imageId
         in: path
@@ -384,9 +551,15 @@ paths:
         description: id dell'immagine
         schema:
           type: string
+          description: es /user/2334423/images/asdasd/comments/
+          pattern: '^.*?$'
+          minLength: 4
+          maxLength: 25
+          example: dfsvweggssd
 
     get:
       summary: Lista degli utenti e dei commenti lasciati sotto la foto
+      description: ritorna in un array la lista degli utenti e dei commenti lasciati sotto la foto
       tags: ["comment"]
       operationId: getMyComments
       responses:
@@ -396,18 +569,34 @@ paths:
             application/json:
               schema:
                 type: array
+                minItems: 0
+                maxItems: 999
                 items:
                   type: object
                   properties:
                     idComment:
+                      description: id del commento
                       type: string
+                      pattern: '^.*?$'
+                      minLength: 4
+                      maxLength: 25
+                      example: agfhd029f2f
                     text:
+                      description: testo del commento
                       type: string
+                      pattern: '^.*?$'
+                      minLength: 1
+                      maxLength: 80
+                      example: bella foto!
                     commenter:
+                      description: utente che ha commentato
                       type: integer
+      security:
+        - bearerAuth: []
     
     post:  # il server deve creare l'id del commento
       summary: inserimento del commento 
+      description: invia al server il commento e l'utente che ha commentato la foto, post perche' il server crea l'id del commento
       tags: ["comment"]
       operationId: commentPhoto
       requestBody:
@@ -417,12 +606,20 @@ paths:
               type: object
               properties:
                 Commenter:
+                  description: utente che ha commentato
                   type: integer
                 text:
+                  description: testo del commento
                   type: string
+                  pattern: '^.*?$'
+                  minLength: 1
+                  maxLength: 80
+                  example: bella foto!
       responses:
-        "201":
-          description: "Successo, utente inserito dalla lista dei commenti della foto"
+        "204":
+          description: "Successo, commento inserito dalla lista dei commenti della foto"
+      security:
+        - bearerAuth: []
 
 
   /user/{idUser}/images/{imageId}/comments/{commentId}:
@@ -433,6 +630,7 @@ paths:
         description: id dell'utente della pagina visitata
         schema:
           type: integer
+          description: es /user/2334423/images/xxx/comments/xxx
 
       - name: imageId
         in: path
@@ -440,6 +638,11 @@ paths:
         description: id dell'immagine
         schema:
           type: string
+          description: es /user/2334423/images/f2323f/comments/xxx
+          pattern: '^.*?$'
+          minLength: 4
+          maxLength: 25
+          example: dfsvweggssd
 
       - name: commentId
         in: path
@@ -447,20 +650,29 @@ paths:
         description: id del commento
         schema:
           type: string
+          description: es /user/2334423/images/f2323f/comments/fewfff3
+          pattern: '^.*?$'
+          minLength: 4
+          maxLength: 25
+          example: agfhd029f2f
 
     delete:
       summary: rimozione dell'utente nella lista dei commenti della foto
+      description: elimina nell'array dei commenti della foto (imageId) commentId
       tags: ["comment"]
       operationId: uncommentPhoto
       responses:
-        "200":
+        "204":
           description: "Successo, commento eliminato dalla foto"
+      security:
+        - bearerAuth: []
 
   #
   /session:
     post:
       tags: ["login"]
       summary: Logs in the user
+      description: accede al servizio
       operationId: doLogin
       requestBody:
         description: User details
@@ -470,8 +682,9 @@ paths:
               type: object
               properties:
                 name:   
+                  description: nome dell'utente per il login
                   type: string
-                  example: Maria
+                  example: mariaa
                   pattern: 'ˆ.*?$'
                   minLength: 3
                   maxLength: 16
