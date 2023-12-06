@@ -5,7 +5,7 @@ info:
     Questa API permette agli utenti 
     l'utilizzo di tutti i servizi offerti dal sito
     WasaPhoto.
-  version: 1.0.0
+  version: 1.0.1
 
 tags: 
   - name: "login"
@@ -71,11 +71,8 @@ components:
         properties:
           imgId: 
             description: Identificatore univoco dell'immagine
-            type: string
-            pattern: '^.*?$'
-            minLength: 4
-            maxLength: 25
-            example: Lu71cf2g23
+            type: integer
+            example: 71
           file:
             description: Il file che rappresenta l'immagine
             type: string
@@ -88,7 +85,7 @@ components:
             pattern: '^.*?$'
             minLength: 0
             maxLength: 280
-            example: foto al mare! hashtag io volevo andare in montagna
+            example: foto al mare! hashtag odioIlMare
           like:
             description: Array di identificatori di utenti che hanno messo like alla foto
             type: array
@@ -105,12 +102,8 @@ components:
               type: object
               properties:
                 idComment:
-                  type: string
-                  description: id del commento
-                  pattern: '^.*?$'
-                  minLength: 4
-                  maxLength: 25
-                  example: agfhd029f2f
+                  type: integer
+                  example: 71
                 text:
                   type: string
                   description: testo del commento
@@ -125,6 +118,12 @@ components:
             description: Identificatore utente che ha postato la foto
             type: integer
             example: 71
+          data:
+            description: Data e istante di caricamento dell'immagine
+            type: string
+            format: date-time
+            example: 2013-05-26T19:27:26Z
+            #Bosniaco
       #      
     securitySchemes:
       bearerAuth:
@@ -160,12 +159,12 @@ paths:
               maxLength: 16
               
       responses: 
-        "201":
-          description: Successo, user name modificato.
-          content: 
-            application/json: 
-              schema: 
-                $ref: "#/components/schemas/user"
+        "204":
+          description: Successo, user name modificato
+        "400":
+          description: Errore, nome inserito non valido
+        "401":
+          description: Utente non autorizzato all'operazion o token mancante
         "404":
           description: Errore, utente non trovato!
 
@@ -184,8 +183,12 @@ paths:
             application/json:
               schema: 
                 $ref: "#/components/schemas/user"
+        "401":
+          description: Utente non autorizzato all'operazion o token mancante
         "404":
           description: Errore, utente non trovato!
+        "500":
+          description: Errore interno al server!
 
       security:
         - bearerAuth: []
@@ -205,12 +208,12 @@ paths:
 
     get:
       summary: stream following utente
-      description: l'operazione ritorna in un array tutti i followed dell'utente, in modo tale da creare il suo stream
+      description: l'operazione ritorna in un array tutti i followed dell'utente e le loro ultime foto, in modo tale da creare il suo stream
       tags: ["following"]
       operationId: getMyStream
       responses:
         "200":
-          description: Successo, ricevuto tutti i following dell'utente.
+          description: Successo, ricevuto tutti i following dell'utente e le immagini.
           content:
             application/json:
               schema:
@@ -218,7 +221,12 @@ paths:
                 minItems: 0
                 maxItems: 999
                 items:
-                  $ref: "#/components/schemas/user"
+                  type: object
+                  properties:
+                      utente:
+                        $ref: "#/components/schemas/user"
+                      ultimaImmagine:
+                        $ref: "#/components/schemas/image"
       
       security:
         - bearerAuth: []
@@ -266,8 +274,14 @@ paths:
       responses:
         "204":
           description: Successo, utente seguito.
+        "400":
+          description: Errore, non puoi seguire te stesso!
+        "401":
+          description: Errore, non autorizzato!
         "404":
           description: Errore, utente non trovato!
+        "500":
+          description: Errore, c'e' un ban tra i due utenti o errore del db!
       security:
         - bearerAuth: []
 
@@ -300,6 +314,10 @@ paths:
                 maxItems: 999
                 items:
                   $ref: "#/components/schemas/user"
+        "401":
+          description: Errore, non autorizzato!
+        "500":
+          description: Errore, c'e' un errore con il db!
       security:
         - bearerAuth: []
 
@@ -332,8 +350,12 @@ paths:
       responses:
         "204":
           description: "Successo, utente aggiunto alla ban list"
+        "401":
+          description: Errore, non autorizzato!
         "404":
           description: Errore, utente non trovato!
+        "500":
+          description: Errore, c'e' un errore con il db!
       security:
         - bearerAuth: []
 
@@ -345,8 +367,12 @@ paths:
       responses:
         "204": 
           description: "Successo, utente rimosso dalla ban list"
+        "401":
+          description: Errore, non autorizzato!
         "404":
           description: Errore, utente non trovato!
+        "500":
+          description: Errore, c'e' un errore con il db!
       security:
         - bearerAuth: []
 
@@ -364,7 +390,7 @@ paths:
         description: es /user/ads34f/images
 
 
-    post:
+    post: #il server deve creare l'id dell'immagine
       summary: Upload di un immagine
       description: l'operazione carica l'immagine inserita dall'utente
       tags: ["images"]
@@ -373,10 +399,27 @@ paths:
         content: 
           application/json: 
             schema:
-              $ref: "#/components/schemas/image"
+              type: object
+              properties:
+                file:
+                  description: Il file che rappresenta l'immagine
+                  type: string
+                  format: binary
+                  minLength: 0
+                  maxLength: 10000
+                descrizione:
+                  description: Descrizione immagine
+                  type: string
+                  pattern: '^.*?$'
+                  minLength: 0
+                  maxLength: 280
       responses:
         "204":
           description: Successo, immagine caricata
+        "401":
+          description: Errore, non autorizzato!
+        "500":
+          description: Errore, c'e' un errore con il db!
       security:
         - bearerAuth: []
 
@@ -396,12 +439,8 @@ paths:
         required: true
         description: id dell'immagine
         schema:
-          type: string
-          description: es /user/260519/images/afs23f3qf
-          pattern: '^.*?$'
-          minLength: 4
-          maxLength: 25
-          example: dfsvweggssd
+          type: integer
+          description: es /user/260519/images/234234
     
     delete:
       summary: Rimozione di un immagine
@@ -411,8 +450,12 @@ paths:
       responses:
         "204":
           description: Successo, immagine eliminata
+        "401":
+          description: Errore, non autorizzato!
         "404":
           description: Errore, immagine non trovata!
+        "500":
+          description: Errore, c'e' un errore con il db!
       security:
         - bearerAuth: []
 
@@ -428,8 +471,12 @@ paths:
             application/json: 
               schema:
                 $ref: "#/components/schemas/image"
+        "401":
+          description: Errore, non autorizzato!
         "404":
           description: Errore, immagine non trovata!
+        "500":
+          description: Errore, c'e' un errore con il db!
       security:
         - bearerAuth: []
 
@@ -449,12 +496,8 @@ paths:
       required: true
       description: id dell'immagine
       schema:
-        type: string
-        description: es /user/260519/images/23f32ff3/like/
-        pattern: '^.*?$'
-        minLength: 4
-        maxLength: 25
-        example: dfsvweggssd
+        type: integer
+        description: es /user/260519/images/234342344/like/
 
     get:
       summary: Lista degli utenti che hanno messo like alla foto
@@ -491,12 +534,8 @@ paths:
         required: true
         description: id dell'immagine
         schema:
-          type: string
-          description: es /user/260519/images/g324gsd/like/xxx
-          pattern: '^.*?$'
-          minLength: 4
-          maxLength: 25
-          example: dfsvweggssd
+          type: integer
+          description: es /user/260519/images/234234234/like/xxx
 
       - name: likeUserId
         in: path
@@ -550,12 +589,8 @@ paths:
         required: true
         description: id dell'immagine
         schema:
-          type: string
-          description: es /user/2334423/images/asdasd/comments/
-          pattern: '^.*?$'
-          minLength: 4
-          maxLength: 25
-          example: dfsvweggssd
+          type: integer
+          description: es /user/2334423/images/345345345/comments/
 
     get:
       summary: Lista degli utenti e dei commenti lasciati sotto la foto
@@ -576,11 +611,8 @@ paths:
                   properties:
                     idComment:
                       description: id del commento
-                      type: string
-                      pattern: '^.*?$'
-                      minLength: 4
-                      maxLength: 25
-                      example: agfhd029f2f
+                      type: integer
+                      example: 234234234
                     text:
                       description: testo del commento
                       type: string
@@ -591,6 +623,7 @@ paths:
                     commenter:
                       description: utente che ha commentato
                       type: integer
+                      example: 234234234
       security:
         - bearerAuth: []
     
@@ -605,9 +638,6 @@ paths:
             schema: 
               type: object
               properties:
-                Commenter:
-                  description: utente che ha commentato
-                  type: integer
                 text:
                   description: testo del commento
                   type: string
@@ -637,24 +667,16 @@ paths:
         required: true
         description: id dell'immagine
         schema:
-          type: string
-          description: es /user/2334423/images/f2323f/comments/xxx
-          pattern: '^.*?$'
-          minLength: 4
-          maxLength: 25
-          example: dfsvweggssd
+          type: integer
+          description: es /user/2334423/images/234234234/comments/4234234
 
       - name: commentId
         in: path
         required: true
         description: id del commento
         schema:
-          type: string
-          description: es /user/2334423/images/f2323f/comments/fewfff3
-          pattern: '^.*?$'
-          minLength: 4
-          maxLength: 25
-          example: agfhd029f2f
+          type: integer
+          description: es /user/2334423/images/234234234/comments/4234234
 
     delete:
       summary: rimozione dell'utente nella lista dei commenti della foto
@@ -696,6 +718,10 @@ paths:
             application/json:
               schema: 
                 type: integer
+        "400":
+          description: Errore, il contenuto inviato non e' valido!
+        "500":
+          description: Errore, problema interno al db!
 
 
                     
