@@ -38,27 +38,27 @@ import (
 )
 
 type User struct {
-	name      string
-	uId       int
-	followers []int
-	following []int
-	ban       []int
+	Name      string `json:"name"`
+	UId       int    `json:"userId"`
+	Followers []int  `json:"follower"`
+	Following []int  `json:"following"`
+	Ban       []int  `json:"banList"`
 }
 
 type Image struct {
-	iId         int
-	file        string
-	descrizione string
-	like        []int
-	comments    []Comment
-	data        time.Time
-	author      string
+	IId         int       `json:"imgId"`
+	File        string    `json:"file"`
+	Descrizione string    `json:"descrizione"`
+	Like        []int     `json:"like"`
+	Comments    []Comment `json:"comments"`
+	Data        time.Time `json:"data"`
+	Author      string    `json:"author"`
 }
 
 type Comment struct {
-	cId       int
-	text      string
-	commenter int
+	CId       int    `json:"idComment"`
+	Text      string `json:"text"`
+	Commenter int    `json:"commenter"`
 }
 
 // AppDatabase is the high level interface for the DB
@@ -69,12 +69,12 @@ type AppDatabase interface {
 	ChangeUserName(user User, newName User) error
 	GetUserName(user User) (string, error)
 	GetUser(uId User) (User, error)
-	CreateUser(nome User) error
+	CreateUser(nome User) (int, error)
 	Access(nome User) (int, error)
 	GetStream(uId User) ([]Image, []User, error)
 
 	// FILE db-image.go
-	PostImage(i Image) error
+	PostImage(i Image) (int, error)
 	DeleteImage(author User, iId Image) error
 	GetImage(requester User, iId Image) (Image, error)
 

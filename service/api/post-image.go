@@ -23,8 +23,8 @@ func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 
 	var image Image
-	image.author = strconv.Itoa(uIdint)
-	image.data = time.Now().UTC()
+	image.Author = strconv.Itoa(uIdint)
+	image.Data = time.Now().UTC()
 
 	//ParseMultipartForm analizza il corpo di una richiesta multipart/form-data
 	//30 << 20 e' la dimensione max in byte della rchiesta multipart/form-data
@@ -43,7 +43,7 @@ func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprout
 	descrizione := r.FormValue("descrizione")
 
 	// prendo la descrizione
-	image.descrizione = descrizione
+	image.Descrizione = descrizione
 
 	id, err := rt.db.PostImage(image.ToDatabase())
 	if err != nil {
@@ -53,7 +53,7 @@ func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprout
 
 	// /user/{idUser}/images/{imageId}:
 	// creo il file vuoto per l'immagine
-	out, _ := os.Create(filepath.Join("/user/", strconv.Itoa(uIdint), "/images/", id))
+	out, _ := os.Create(filepath.Join("/user/", strconv.Itoa(uIdint), "/images/", strconv.Itoa(id)))
 	_, _ = io.Copy(out, file)
 	//id e' il nome del file
 

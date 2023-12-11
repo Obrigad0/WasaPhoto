@@ -26,17 +26,17 @@ func (rt *_router) putBan(w http.ResponseWriter, r *http.Request, ps httprouter.
 		return
 	}
 
-	err := rt.db.BanUser(User{uId: uIdint}.ToDatabase(), User{uId: bIdint}.ToDatabase())
+	err := rt.db.BanUser(User{UId: uIdint}.ToDatabase(), User{UId: bIdint}.ToDatabase())
 	if err != nil {
 		http.Error(w, "Errore, errore del db o utente gia bannato", http.StatusInternalServerError)
 	}
 
 	//il ban implica che gli utenti non si vogliano piu seguire
-	err2 := rt.db.UnfollowUser(User{uId: bIdint}.ToDatabase(), User{uId: uIdint}.ToDatabase())
+	err2 := rt.db.UnfollowUser(User{UId: bIdint}.ToDatabase(), User{UId: uIdint}.ToDatabase())
 	if err2 != nil {
 		http.Error(w, "Errore, errore del db", http.StatusInternalServerError)
 	}
-	err3 := rt.db.UnfollowUser(User{uId: uIdint}.ToDatabase(), User{uId: bIdint}.ToDatabase())
+	err3 := rt.db.UnfollowUser(User{UId: uIdint}.ToDatabase(), User{UId: bIdint}.ToDatabase())
 	if err3 != nil {
 		http.Error(w, "Errore, errore del db", http.StatusInternalServerError)
 	}

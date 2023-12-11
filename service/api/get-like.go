@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/database"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -21,9 +22,9 @@ func (rt *_router) getLike(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	var user []User
+	var user []database.User
 	var err error
-	user, err = rt.db.GetLikesList(Image{iId: iIdint}.ToDatabase())
+	user, err = rt.db.GetLikesList(Image{IId: iIdint}.ToDatabase())
 
 	if err != nil {
 		// Errore nell'esecuzione della query

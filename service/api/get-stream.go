@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/database"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -20,11 +21,11 @@ func (rt *_router) getStream(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	var image []Image
-	var user []User
+	var image []database.Image
+	var user []database.User
 	var err error
 	// db-user.go
-	image, user, err = rt.db.GetStream(User{uId: uIdint}.ToDatabase())
+	image, user, err = rt.db.GetStream(User{UId: uIdint}.ToDatabase())
 	if err != nil {
 		// Errore nell'esecuzione della query
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)

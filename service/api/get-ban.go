@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/database"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -19,9 +20,9 @@ func (rt *_router) getBan(w http.ResponseWriter, r *http.Request, ps httprouter.
 		return
 	}
 
-	var user []User
+	var user []database.User
 	var err error
-	user, err = rt.db.GetBanList(User{uId: uIdint}.ToDatabase())
+	user, err = rt.db.GetBanList(User{UId: uIdint}.ToDatabase())
 
 	if err != nil {
 		// Errore nell'esecuzione della query

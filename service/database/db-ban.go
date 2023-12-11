@@ -2,7 +2,7 @@ package database
 
 //BanUser() banna l'utente banned
 func (db *appdbimpl) BanUser(banner User, banned User) error {
-	_, err := db.c.Exec("INSERT INTO ban (banner,banned) VALUES (?, ?)", banner.uId, banned.uId)
+	_, err := db.c.Exec("INSERT INTO ban (banner,banned) VALUES (?, ?)", banner.UId, banned.UId)
 	if err != nil {
 		// Errore nell'esecuzione della query
 		return err
@@ -13,7 +13,7 @@ func (db *appdbimpl) BanUser(banner User, banned User) error {
 
 //UnbanUser() sbanna l'utente banned
 func (db *appdbimpl) UnbanUser(banner User, banned User) error {
-	_, err := db.c.Exec("DELETE FROM ban WHERE banner = ? AND banned = ?", banner.uId, banned.uId)
+	_, err := db.c.Exec("DELETE FROM ban WHERE banner = ? AND banned = ?", banner.UId, banned.UId)
 	if err != nil {
 		// Errore nell'esecuzione della query
 		return err
@@ -24,7 +24,7 @@ func (db *appdbimpl) UnbanUser(banner User, banned User) error {
 
 //GetBanList() ritorna la lista degli utenti bannati dalll'utente
 func (db *appdbimpl) GetBanList(user User) ([]User, error) {
-	rows, err := db.c.Query("SELECT u.uId, u.name FROM user u, ban b WHERE u.uId = b.banned AND b.banner = ?  ", user.uId)
+	rows, err := db.c.Query("SELECT u.uId, u.name FROM user u, ban b WHERE u.uId = b.banned AND b.banner = ?  ", user.UId)
 	if err != nil {
 		// Errore nell'esecuzione della query
 		return nil, err
@@ -37,7 +37,7 @@ func (db *appdbimpl) GetBanList(user User) ([]User, error) {
 
 	for rows.Next() {
 		var user User
-		err := rows.Scan(&user.uId, &user.name)
+		err := rows.Scan(&user.UId, &user.Name)
 		if err != nil {
 			// Errore nella scansione della riga
 			return nil, err
@@ -58,7 +58,7 @@ func (db *appdbimpl) GetBanList(user User) ([]User, error) {
 func (db *appdbimpl) IsBanned(A User, B User) (bool, error) {
 
 	var result bool
-	err := db.c.QueryRow(`SELECT EXISTS ( SELECT 1 FROM ban WHERE banner = ? AND banned = ?) AS isBanned;`, B.uId, A.uId).Scan(&result)
+	err := db.c.QueryRow(`SELECT EXISTS ( SELECT 1 FROM ban WHERE banner = ? AND banned = ?) AS isBanned;`, B.UId, A.UId).Scan(&result)
 	if err != nil {
 		// Errore nell'esecuzione della query
 		return false, err

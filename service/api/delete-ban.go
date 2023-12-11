@@ -22,7 +22,7 @@ func (rt *_router) deleteBan(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 
 	//nessun problema, elimino il ban
-	err := rt.db.UnbanUser(User{uId: uIdint}.ToDatabase(), User{uId: bIdint}.ToDatabase())
+	err := rt.db.UnbanUser(User{UId: uIdint}.ToDatabase(), User{UId: bIdint}.ToDatabase())
 	if err != nil {
 		http.Error(w, "Errore, errore del db", http.StatusInternalServerError)
 	}

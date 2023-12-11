@@ -22,7 +22,7 @@ func (rt *_router) deleteLike(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	//nessun problema, levo il like
-	err := rt.db.UnlikePhoto(User{uId: lIdint}.ToDatabase(), Image{iId: iIdint}.ToDatabase())
+	err := rt.db.UnlikePhoto(User{UId: lIdint}.ToDatabase(), Image{IId: iIdint}.ToDatabase())
 	if err != nil {
 		http.Error(w, "Errore nella comunicazione con il db o like non presente", http.StatusInternalServerError)
 	}

@@ -27,7 +27,7 @@ func (rt *_router) putUsername(w http.ResponseWriter, r *http.Request, ps httpro
 		http.Error(w, "Errore nella richiesta json", http.StatusBadRequest)
 		return
 	}
-	err = rt.db.ChangeUserName(User{uId: uIdint}.ToDatabase(), User{name: newUserName}.ToDatabase())
+	err = rt.db.ChangeUserName(User{UId: uIdint}.ToDatabase(), User{Name: newUserName}.ToDatabase())
 	if err != nil {
 		// Errore nell'esecuzione della query
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)

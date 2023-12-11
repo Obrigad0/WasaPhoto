@@ -3,7 +3,7 @@ package database
 // ChangeUserName() cambia il nome utente
 func (db *appdbimpl) ChangeUserName(user User, newName User) error {
 	// Esecuzione Query per la modifica dell'user name
-	_, err := db.c.Exec("UPDATE user SET name = ? WHERE uId = ?", newName.name, user.uId)
+	_, err := db.c.Exec("UPDATE user SET name = ? WHERE uId = ?", newName.Name, user.UId)
 	if err != nil {
 		//Errore nella modifica del nome utente
 		return err
@@ -17,7 +17,7 @@ func (db *appdbimpl) GetUserName(user User) (string, error) {
 	// Variabile che conterra' il risultato della query (il nome utente)
 	var name string
 	// Esecuzione Query per selezionare il nome utente
-	err := db.c.QueryRow(`SELECT name FROM user WHERE uId = ?`, user.uId).Scan(&name)
+	err := db.c.QueryRow(`SELECT name FROM user WHERE uId = ?`, user.UId).Scan(&name)
 	if err != nil {
 		// Errore nell'esecuzione della Query
 		return "", err
@@ -37,7 +37,7 @@ func (db *appdbimpl) GetUser(uId User) (User, error) {
 		SELECT u.uId, u.name
 		FROM user u
 		WHERE u.uId = ?
-	`, uId.uId).Scan(&utente.uId, &utente.name)
+	`, uId.UId).Scan(&utente.UId, &utente.Name)
 
 	if err != nil {
 		// Errore nell'esecuzione della Query
@@ -51,7 +51,7 @@ func (db *appdbimpl) GetUser(uId User) (User, error) {
 // CreateUser() crea l'utente al primo accesso se l'account non esiste
 func (db *appdbimpl) CreateUser(nome User) (int, error) {
 
-	_, err := db.c.Exec("INSERT INTO user (name) VALUES (?)", nome.name)
+	_, err := db.c.Exec("INSERT INTO user (name) VALUES (?)", nome.Name)
 	if err != nil {
 		// Errore nell'esecuzione della Query
 		return -1, err
@@ -59,7 +59,7 @@ func (db *appdbimpl) CreateUser(nome User) (int, error) {
 	//nessun Errore
 	//Prelevo l'id dell'utente creato
 	var uId int
-	a := db.c.QueryRow(`SELECT uId FROM user WHERE name = ?`, nome.name).Scan(&uId)
+	a := db.c.QueryRow(`SELECT uId FROM user WHERE name = ?`, nome.Name).Scan(&uId)
 	if a != nil {
 		// Errore nell'esecuzione della Query
 		return -1, a
@@ -72,7 +72,7 @@ func (db *appdbimpl) Access(nome User) (int, error) {
 	// E' inizializzato -1 in modo tale che se la query non restituisce un risulato vuol dire che
 	// l'utente non esiste e va creato
 	uId := -1
-	err := db.c.QueryRow("SELECT uId FROM user WHERE name = ?", nome.name).Scan(&uId)
+	err := db.c.QueryRow("SELECT uId FROM user WHERE name = ?", nome.Name).Scan(&uId)
 	if err != nil {
 		// Errore nell'esecuzione della Query
 		return -1, err
@@ -86,7 +86,7 @@ func (db *appdbimpl) GetStream(uId User) ([]Image, []User, error) {
 	var image []Image
 	var users []User
 
-	rows, err := db.c.Query(" SELECT i.imgId, i.author, i.descrizione, i.date, u.uId , u.name FROM image i JOIN user u ON i.author = u.uId WHERE i.author IN ( SELECT A FROM follow WHERE B = ? ) ORDER BY i.date DESC LIMIT 1 ", uId.uId)
+	rows, err := db.c.Query(" SELECT i.imgId, i.author, i.descrizione, i.date, u.uId , u.name FROM image i JOIN user u ON i.author = u.uId WHERE i.author IN ( SELECT A FROM follow WHERE B = ? ) ORDER BY i.date DESC LIMIT 1 ", uId.UId)
 
 	//forse si puo fare piu efficiente
 	if err != nil {
@@ -100,7 +100,7 @@ func (db *appdbimpl) GetStream(uId User) ([]Image, []User, error) {
 	for rows.Next() {
 		var img Image
 		var user User
-		err := rows.Scan(&img.iId, &img.author, &img.descrizione, &img.data, &user.uId, &user.name)
+		err := rows.Scan(&img.IId, &img.Author, &img.Descrizione, &img.Data, &user.UId, &user.Name)
 		if err != nil {
 			return nil, nil, err
 		}

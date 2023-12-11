@@ -28,7 +28,7 @@ func (rt *_router) postComments(w http.ResponseWriter, r *http.Request, ps httpr
 		//verifico che l'Utente A (token) non sia stato bannato dall'Utente B (uIdint)
 		//e viceversa (non puoi commentare il post di una persona che hai bannato)
 		//controllo se A e' stato bannato da B
-		result, err := rt.db.IsBanned(User{uId: uIdint}.ToDatabase(), User{uId: token}.ToDatabase()) // A e' stato bannato da B
+		result, err := rt.db.IsBanned(User{UId: uIdint}.ToDatabase(), User{UId: token}.ToDatabase()) // A e' stato bannato da B
 		if err != nil {
 			http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 			return
@@ -37,7 +37,7 @@ func (rt *_router) postComments(w http.ResponseWriter, r *http.Request, ps httpr
 			http.Error(w, "L'utente e' stato bannato, non e' autorizzato!", http.StatusUnauthorized)
 			return
 		}
-		result2, err2 := rt.db.IsBanned(User{uId: token}.ToDatabase(), User{uId: uIdint}.ToDatabase()) // A e' stato bannato da B
+		result2, err2 := rt.db.IsBanned(User{UId: token}.ToDatabase(), User{UId: uIdint}.ToDatabase()) // A e' stato bannato da B
 		if err2 != nil {
 			http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 			return
@@ -51,15 +51,15 @@ func (rt *_router) postComments(w http.ResponseWriter, r *http.Request, ps httpr
 	}
 
 	var commento Comment
-	err := json.NewDecoder(r.Body).Decode(&commento.text)
+	err := json.NewDecoder(r.Body).Decode(&commento.Text)
 	if err != nil {
 		//errore nella richiesta json
 		http.Error(w, "Errore nella richiesta json", http.StatusBadRequest)
 		return
 	}
-	commento.commenter = token
+	commento.Commenter = token
 
-	err3 := rt.db.CommentPhoto(Image{iId: iIdint}.ToDatabase(), commento.ToDatabase())
+	err3 := rt.db.CommentPhoto(Image{IId: iIdint}.ToDatabase(), commento.ToDatabase())
 	if err3 != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return

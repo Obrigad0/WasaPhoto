@@ -3,7 +3,7 @@ package database
 // GetLikesList() ritorna la lista degli utenti che hanno messo like ad una foto specifica
 func (db *appdbimpl) GetLikesList(image Image) ([]User, error) {
 
-	rows, err := db.c.Query("SELECT u.uId, u.name FROM user u, like l WHERE l.imgId = ? AND u.uId = l.uId ", image.iId)
+	rows, err := db.c.Query("SELECT u.uId, u.name FROM user u, like l WHERE l.imgId = ? AND u.uId = l.uId ", image.IId)
 	if err != nil {
 		// Errore nell'esecuzione della query
 		return nil, err
@@ -15,7 +15,7 @@ func (db *appdbimpl) GetLikesList(image Image) ([]User, error) {
 	var likeList []User
 	for rows.Next() {
 		var user User
-		err := rows.Scan(&user.uId, &user.name)
+		err := rows.Scan(&user.UId, &user.Name)
 		if err != nil {
 			// Errore nella scansione della riga
 			return nil, err
@@ -33,7 +33,7 @@ func (db *appdbimpl) GetLikesList(image Image) ([]User, error) {
 
 //LikePhoto() mette il like dell'utente all'immagine
 func (db *appdbimpl) LikePhoto(user User, image Image) error {
-	_, err := db.c.Exec("INSERT INTO like (iId,uId) VALUES (?, ?)", image.iId, user.uId)
+	_, err := db.c.Exec("INSERT INTO like (iId,uId) VALUES (?, ?)", image.IId, user.UId)
 	if err != nil {
 		// Errore
 		return err
@@ -43,7 +43,7 @@ func (db *appdbimpl) LikePhoto(user User, image Image) error {
 
 //UnlikePhoto()
 func (db *appdbimpl) UnlikePhoto(user User, image Image) error {
-	_, err := db.c.Exec("DELETE FROM like WHERE uId = ? AND iId = ?", user.uId, image.iId)
+	_, err := db.c.Exec("DELETE FROM like WHERE uId = ? AND iId = ?", user.UId, image.IId)
 	if err != nil {
 		// Errore
 		return err

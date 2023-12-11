@@ -2,7 +2,7 @@ package database
 
 //GetComments() ritorna tutti i commnenti di un'immagine
 func (db *appdbimpl) GetComments(image Image) ([]Comment, error) {
-	rows, err := db.c.Query("SELECT uId, text, commenter FROM comments c WHERE imgId = ?", image.iId)
+	rows, err := db.c.Query("SELECT uId, text, commenter FROM comments c WHERE imgId = ?", image.IId)
 	if err != nil {
 		return nil, err
 	}
@@ -12,7 +12,7 @@ func (db *appdbimpl) GetComments(image Image) ([]Comment, error) {
 
 	for rows.Next() {
 		var comment Comment
-		err := rows.Scan(&comment.cId, &comment.text, &comment.commenter)
+		err := rows.Scan(&comment.CId, &comment.Text, &comment.Commenter)
 		if err != nil {
 			// Errore
 			return nil, err
@@ -31,7 +31,7 @@ func (db *appdbimpl) GetComments(image Image) ([]Comment, error) {
 //CommentPhoto() inserisce un commento in un'immagine
 func (db *appdbimpl) CommentPhoto(image Image, commento Comment) error {
 	// commento non contiene l'id perche' verra' creato dal dbms
-	_, err := db.c.Exec("INSERT INTO comment (uId,imgI,text) VALUES (?, ?, ?)", commento.commenter, image.iId, commento.text)
+	_, err := db.c.Exec("INSERT INTO comment (uId,imgI,text) VALUES (?, ?, ?)", commento.Commenter, image.IId, commento.Text)
 	if err != nil {
 		//Errore
 		return err
@@ -43,7 +43,7 @@ func (db *appdbimpl) CommentPhoto(image Image, commento Comment) error {
 //UncommentPhoto() elimina il commento da un immagine
 func (db *appdbimpl) UncommentPhoto(commento Comment) error {
 
-	_, err := db.c.Exec("DELETE FROM comment WHERE idComment = ?", commento.cId)
+	_, err := db.c.Exec("DELETE FROM comment WHERE idComment = ?", commento.CId)
 	if err != nil {
 		//Errore
 		return err
@@ -56,7 +56,7 @@ func (db *appdbimpl) GetTheCommenter(commento Comment) (int, error) {
 
 	var uId int
 	// Esecuzione Query per selezionare il nome utente
-	err := db.c.QueryRow(`SELECT uId FROM comments WHERE idComment = ?`, commento.cId).Scan(&uId)
+	err := db.c.QueryRow(`SELECT uId FROM comments WHERE idComment = ?`, commento.CId).Scan(&uId)
 	if err != nil {
 		// Errore nell'esecuzione della Query
 		return -1, err

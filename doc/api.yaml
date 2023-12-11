@@ -5,7 +5,7 @@ info:
     Questa API permette agli utenti 
     l'utilizzo di tutti i servizi offerti dal sito
     WasaPhoto.
-  version: 1.0.1
+  version: 1.0.2
 
 tags: 
   - name: "login"

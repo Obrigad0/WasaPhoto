@@ -23,7 +23,7 @@ func (rt *_router) deleteComments(w http.ResponseWriter, r *http.Request, ps htt
 	// non puoi eliminare commenti di altre persone
 
 	token := estrazioneToken(r.Header.Get("Authorization"))
-	commentatore, err := rt.db.GetTheCommenter(Comment{cId: cIdint}.ToDatabase())
+	commentatore, err := rt.db.GetTheCommenter(Comment{CId: cIdint}.ToDatabase())
 	if err != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
@@ -33,7 +33,7 @@ func (rt *_router) deleteComments(w http.ResponseWriter, r *http.Request, ps htt
 		return
 	}
 
-	err2 := rt.db.UncommentPhoto(Comment{cId: cIdint}.ToDatabase())
+	err2 := rt.db.UncommentPhoto(Comment{CId: cIdint}.ToDatabase())
 	if err2 != nil {
 		http.Error(w, "Errore nella comunicazione con il db o commento non presente", http.StatusInternalServerError)
 	}

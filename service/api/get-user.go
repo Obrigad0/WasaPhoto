@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/database"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -26,7 +27,7 @@ func (rt *_router) getUser(w http.ResponseWriter, r *http.Request, ps httprouter
 		//se il richiedente del profilo NON e' il proprietario del profilo
 		//verifico che l'Utente A (token) non sia stato bannato dall'Utente B (uId)
 		//controllo se A e' stato bannato da B
-		result, err := rt.db.IsBanned(User{uId: token}.ToDatabase(), User{uId: uIdint}.ToDatabase())
+		result, err := rt.db.IsBanned(User{UId: token}.ToDatabase(), User{UId: uIdint}.ToDatabase())
 		if err != nil {
 			http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 			return
@@ -40,38 +41,38 @@ func (rt *_router) getUser(w http.ResponseWriter, r *http.Request, ps httprouter
 
 	//prelevo il profilo
 
-	var user User
+	var user database.User
 	var follower []int
 	var following []int
 	var ban []int
 
-	user, err := rt.db.GetUser(User{uId: uIdint}.ToDatabase())
+	user, err := rt.db.GetUser(User{UId: uIdint}.ToDatabase())
 	if err != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
 	}
 
-	follower, err2 := rt.db.GetFollowerList(User{uId: uIdint}.ToDatabase())
+	follower, err2 := rt.db.GetFollowerList(User{UId: uIdint}.ToDatabase())
 	if err2 != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
 	}
 
-	following, err3 := rt.db.GetFollowingList(User{uId: uIdint}.ToDatabase())
+	following, err3 := rt.db.GetFollowingList(User{UId: uIdint}.ToDatabase())
 	if err3 != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
 	}
 
-	ban, err4 := rt.db.GetBanListVINT(User{uId: uIdint}.ToDatabase())
+	ban, err4 := rt.db.GetBanListVINT(User{UId: uIdint}.ToDatabase())
 	if err4 != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
 	}
 
-	user.followers = follower
-	user.following = following
-	user.ban = ban
+	user.Followers = follower
+	user.Following = following
+	user.Ban = ban
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")

@@ -22,7 +22,7 @@ func (rt *_router) deleteImage(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	//nessun problema, elimino l'immagine
-	err := rt.db.DeleteImage(User{uId: uIdint}.ToDatabase(), Image{iId: iIdint}.ToDatabase())
+	err := rt.db.DeleteImage(User{UId: uIdint}.ToDatabase(), Image{IId: iIdint}.ToDatabase())
 	if err != nil {
 		http.Error(w, "Errore, errore del db", http.StatusInternalServerError)
 	}

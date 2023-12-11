@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/database"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -26,7 +27,7 @@ func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httproute
 		//se il richiedente del profilo NON e' il proprietario del profilo
 		//verifico che l'Utente A (token) non sia stato bannato dall'Utente B (uId)
 		//controllo se A e' stato bannato da B
-		result, err := rt.db.IsBanned(User{uId: token}.ToDatabase(), User{uId: uIdint}.ToDatabase())
+		result, err := rt.db.IsBanned(User{UId: token}.ToDatabase(), User{UId: uIdint}.ToDatabase())
 		if err != nil {
 			http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 			return
@@ -40,9 +41,9 @@ func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httproute
 
 	//prelevo il profilo
 	// dove inserisco l'utente
-	var image Image
+	var image database.Image
 	// db-image.go
-	image, err := rt.db.GetImage(User{uId: token}.ToDatabase(), Image{iId: iIdint}.ToDatabase())
+	image, err := rt.db.GetImage(User{UId: token}.ToDatabase(), Image{IId: iIdint}.ToDatabase())
 	if err != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
