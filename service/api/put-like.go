@@ -1,55 +1,54 @@
 package api
 
-import{
+import (
+	"net/http"
+	"strconv"
 
 	"github.com/julienschmidt/httprouter"
-	"encoding/json"
-	"net/http"
+)
 
-}
+// putLike() inserisce il like su un'immagine
+func (rt *_router) putLike(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
-//putLike() inserisce il like su un'immagine
-func (rt *_router) putLike(w http.ResponseWriter, r *http.Request, ps httprouter.Params){
+	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))     // proprietario immagine
+	iIdint, _ := strconv.Atoi(ps.ByName("imageId"))    // id foto
+	lIdint, _ := strconv.Atoi(ps.ByName("likeUserId")) // chi mette like, cioe' io
 
-	uId := ps.ByName("idUser")		// proprietario immagine
-	iId := ps.ByName("imageId")		// id foto 
-	lId := ps.ByName("likeUserId")	// chi mette like, cioe' io
-
-	if uId == lId{
+	if uIdint == lIdint {
 		//Non puoi metterti like da sol*, e' triste!!!
 		http.Error(w, "Non puoi metterti like da sol* !!", http.StatusBadRequest)
-		return 
+		return
 	}
 
-	if !verificaToken(lId,r.Header.Get("Authorization")){
+	if !verificaToken(lIdint, r.Header.Get("Authorization")) {
 		// Token non valido, ritorno Errore 401 al client
 		http.Error(w, "Token non valido", http.StatusUnauthorized)
-		return 
+		return
 	}
 
 	//verifico se gli utenti si sono bannati tra di loro prima di aggiungere il like
-	result,err := rt.db.IsBanned(uId.ToDatabase(),lId.ToDatabase())	// A e' stato bannato da B
-	if err != nil{
+	result, err := rt.db.IsBanned(User{uId: uIdint}.ToDatabase(), User{uId: lIdint}.ToDatabase()) // A e' stato bannato da B
+	if err != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
 	}
-	if result{
+	if result {
 		http.Error(w, "L'utente e' stato bannato, non e' autorizzato!", http.StatusUnauthorized)
-		return 
+		return
 	}
-	result,err := rt.db.IsBanned(lId.ToDatabase(),uId.ToDatabase())// A e' stato bannato da B
-	if err != nil{
+	result2, err := rt.db.IsBanned(User{uId: lIdint}.ToDatabase(), User{uId: uIdint}.ToDatabase()) // A e' stato bannato da B
+	if err != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
 	}
-	if result{
+	if result2 {
 		http.Error(w, "L'utente e' stato bannato dall'utente attuale", http.StatusUnauthorized)
-		return 
+		return
 	}
 
 	//nessun problema, aggiungo il like
-	err := rt.db.LikePhoto(lId.ToDatabase(),iId.ToDatabase())
-	if(err != nil){
+	err2 := rt.db.LikePhoto(User{uId: lIdint}.ToDatabase(), Image{iId: iIdint}.ToDatabase())
+	if err2 != nil {
 		http.Error(w, "Errore nella comunicazione con il db o like gia messo", http.StatusInternalServerError)
 
 	}

@@ -1,29 +1,29 @@
 package api
 
-import{
+import (
+	"net/http"
+	"strconv"
 
 	"github.com/julienschmidt/httprouter"
-	"encoding/json"
-	"net/http"
+)
 
-}
+//"encoding/json"
 
+func (rt *_router) deleteImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
-func (rt *_router) deleteImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params){
+	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
+	iIdint, _ := strconv.Atoi(ps.ByName("imageId")) // id foto
 
-	uId := ps.ByName("idUser")
-	iId := ps.ByName("imageId")
-
-		// non si possono eliminare immagini di altre persone
-	if !verificaToken(uId,r.Header.Get("Authorization")){
+	// non si possono eliminare immagini di altre persone
+	if !verificaToken(uIdint, r.Header.Get("Authorization")) {
 		// Token non valido, ritorno Errore 401 al client
 		http.Error(w, "Token non valido", http.StatusUnauthorized)
-		return 
+		return
 	}
 
 	//nessun problema, elimino l'immagine
-	err := rt.db.DeleteImage(uId.ToDatabase(),iId.ToDatabase())
-	if(err != nil){
+	err := rt.db.DeleteImage(User{uId: uIdint}.ToDatabase(), Image{iId: iIdint}.ToDatabase())
+	if err != nil {
 		http.Error(w, "Errore, errore del db", http.StatusInternalServerError)
 	}
 

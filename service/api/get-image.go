@@ -1,40 +1,39 @@
 package api
 
-import{
-
-	"github.com/julienschmidt/httprouter"
+import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
-}
+	"github.com/julienschmidt/httprouter"
+)
 
+func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
-func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params){
+	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
+	iIdint, _ := strconv.Atoi(ps.ByName("imageId")) // id foto
 
-	uId := ps.ByName("idUser")
-	iId := ps.ByName("imageId")
-
-	if !verificaLogin(r.Header.Get("Authorization")){
+	if !verificaLogin(r.Header.Get("Authorization")) {
 		// Token non valido, ritorno Errore 401 al client
 		http.Error(w, "Token non valido", http.StatusUnauthorized)
-		return 
+		return
 	}
 
 	//prelevo il token dell' user
 	token := estrazioneToken(r.Header.Get("Authorization"))
 
-	if(uId != token){
+	if uIdint != token {
 		//se il richiedente del profilo NON e' il proprietario del profilo
 		//verifico che l'Utente A (token) non sia stato bannato dall'Utente B (uId)
 		//controllo se A e' stato bannato da B
-		result,err := rt.db.IsBanned(token.ToDatabase(),uId.ToDatabase())
-		if err != nil{
+		result, err := rt.db.IsBanned(User{uId: token}.ToDatabase(), User{uId: uIdint}.ToDatabase())
+		if err != nil {
 			http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 			return
 		}
-		if result{
+		if result {
 			http.Error(w, "L'utente e' stato bannato, non e' autorizzato!", http.StatusUnauthorized)
-			return 
+			return
 		}
 		//tutto ok, continuo
 	}
@@ -43,15 +42,15 @@ func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httproute
 	// dove inserisco l'utente
 	var image Image
 	// db-image.go
-	image,err := rt.db.GetImage(token.ToDatabase(),iId.ToDatabase())
-	if err != nil{
+	image, err := rt.db.GetImage(User{uId: token}.ToDatabase(), Image{iId: iIdint}.ToDatabase())
+	if err != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
 	}
 
+	//non finito
 
-	//non finito 
-	
 	w.WriteHeader(http.StatusOK)
-
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(image)
 }

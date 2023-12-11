@@ -1,48 +1,63 @@
 package api
 
-import{
+import (
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
-	"encoding/json"
-	"net/http"
-	"time"
-	"io"
+)
 
-}
+func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
-
-func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params){
-
-	uId := ps.ByName("idUser")
+	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
 
 	// non si possono caricare immagini per altre persone
-	if !verificaToken(uId,r.Header.Get("Authorization")){
+	if !verificaToken(uIdint, r.Header.Get("Authorization")) {
 		// Token non valido, ritorno Errore 401 al client
 		http.Error(w, "Token non valido", http.StatusUnauthorized)
-		return 
+		return
 	}
 
 	var image Image
-	image.author = uId
+	image.author = strconv.Itoa(uIdint)
 	image.data = time.Now().UTC()
 
-	err := json.NewDecoder(r.Body).Decode(&image.file,&image.descrizione)
+	//ParseMultipartForm analizza il corpo di una richiesta multipart/form-data
+	//30 << 20 e' la dimensione max in byte della rchiesta multipart/form-data
+	err := r.ParseMultipartForm(30 << 20) // << e' lo shift a sinistra per la moltiplicazione
+	if err != nil {
+		http.Error(w, "Impossibile analizzare la richiesta multipart", http.StatusBadRequest)
+		return
+	}
 
-	//controllo tipo di file?
+	// prendo il file dalla richiesta
+	// "file" e' il file vero e proprio in formato binario
+	// "metadata" sono tutti le informazioni associate all'immagine, come il nome, che non ci interessa visto che e' sostituito dall'id dell'immagine creato dal dbms
+	file, _, _ := r.FormFile("file")
+	defer file.Close() //chiudo il file appena preso
 
-	id,err := rt.db.PostImage(image.ToDatabase())
-	if err != nil{
+	descrizione := r.FormValue("descrizione")
+
+	// prendo la descrizione
+	image.descrizione = descrizione
+
+	id, err := rt.db.PostImage(image.ToDatabase())
+	if err != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
 	}
 
 	// /user/{idUser}/images/{imageId}:
 	// creo il file vuoto per l'immagine
-	out, _ := os.Create(filepath.Join("/user/",uId,"/images/",id))
-	_ , _ = io.Copy(out, image.file)
+	out, _ := os.Create(filepath.Join("/user/", strconv.Itoa(uIdint), "/images/", id))
+	_, _ = io.Copy(out, file)
 	//id e' il nome del file
 
 	out.Close()
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusAccepted)
 
 }

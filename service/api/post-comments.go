@@ -1,69 +1,70 @@
 package api
 
-import{
-
-	"github.com/julienschmidt/httprouter"
+import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
-}
+	"github.com/julienschmidt/httprouter"
+)
+
 // postComments()  posta il commento scritto dall'utente
-func (rt *_router) postComments(w http.ResponseWriter, r *http.Request, ps httprouter.Params){
+func (rt *_router) postComments(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
-	uId := ps.ByName("idUser")
-	iId := ps.ByName("imageId")
+	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
+	iIdint, _ := strconv.Atoi(ps.ByName("imageId")) // id foto
 
-	if !verificaLogin(r.Header.Get("Authorization")){
+	if !verificaLogin(r.Header.Get("Authorization")) {
 		// Token non valido, ritorno Errore 401 al client
 		http.Error(w, "Token non valido", http.StatusUnauthorized)
-		return 
+		return
 	}
 
 	// Si puo' commentare il proprio post
 	//prelevo il token dell' user
 	token := estrazioneToken(r.Header.Get("Authorization"))
-	if(uId != token){
+	if uIdint != token {
 		//se la persona che posta il commento NON e' il proprietario del profilo
-		//verifico che l'Utente A (token) non sia stato bannato dall'Utente B (uId)
+		//verifico che l'Utente A (token) non sia stato bannato dall'Utente B (uIdint)
 		//e viceversa (non puoi commentare il post di una persona che hai bannato)
 		//controllo se A e' stato bannato da B
-		result,err := rt.db.IsBanned(uId.ToDatabase(),token.ToDatabase())	// A e' stato bannato da B
-		if err != nil{
+		result, err := rt.db.IsBanned(User{uId: uIdint}.ToDatabase(), User{uId: token}.ToDatabase()) // A e' stato bannato da B
+		if err != nil {
 			http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 			return
 		}
-		if result{
+		if result {
 			http.Error(w, "L'utente e' stato bannato, non e' autorizzato!", http.StatusUnauthorized)
-			return 
+			return
 		}
-		result,err := rt.db.IsBanned(token.ToDatabase(),uId.ToDatabase())// A e' stato bannato da B
-		if err != nil{
+		result2, err2 := rt.db.IsBanned(User{uId: token}.ToDatabase(), User{uId: uIdint}.ToDatabase()) // A e' stato bannato da B
+		if err2 != nil {
 			http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 			return
 		}
-		if result{
+		if result2 {
 			http.Error(w, "L'utente e' stato bannato dall'utente attuale", http.StatusUnauthorized)
-			return 
-		}		
-		
+			return
+		}
+
 		//tutto ok, continuo
 	}
 
 	var commento Comment
 	err := json.NewDecoder(r.Body).Decode(&commento.text)
-	if err != nil{
+	if err != nil {
 		//errore nella richiesta json
 		http.Error(w, "Errore nella richiesta json", http.StatusBadRequest)
-		return 
+		return
 	}
 	commento.commenter = token
 
-	err := rt.db.CommentPhoto(iId.ToDatabase(),commento.ToDatabase())
-	if err != nil{
+	err3 := rt.db.CommentPhoto(Image{iId: iIdint}.ToDatabase(), commento.ToDatabase())
+	if err3 != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusAccepted)
 
 }

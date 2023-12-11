@@ -37,71 +37,73 @@ import (
 	"time"
 )
 
-type User struct{
-	name string 
-	uId integer 
-	followers []integer 
-	following []integer 
-	ban []integer 
+type User struct {
+	name      string
+	uId       int
+	followers []int
+	following []int
+	ban       []int
 }
 
-type Image struct{
-	iId	integer
-	file string
+type Image struct {
+	iId         int
+	file        string
 	descrizione string
-	like []integer 
-	comments []Comment 
-	data time.Time 
-	author string
+	like        []int
+	comments    []Comment
+	data        time.Time
+	author      string
 }
 
-type Comment struct{
-	cId integer 
-	text string 
-	commenter integer 
+type Comment struct {
+	cId       int
+	text      string
+	commenter int
 }
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
 	//Tutte le informazioni sulle funzioni sono scritte nei file corrispondenti
 
-	// FILE db-user.go 
-	ChangeUserName(user User, newName string) error
-	GetUserName(user integer) (string, error)
-	GetUser(uId integer) (user, error)
-	CreateUser(nome string)  error
-	Access(nome string) (integer, error)
-	GetStream(uId integer) ([]integer, error)
+	// FILE db-user.go
+	ChangeUserName(user User, newName User) error
+	GetUserName(user User) (string, error)
+	GetUser(uId User) (User, error)
+	CreateUser(nome User) error
+	Access(nome User) (int, error)
+	GetStream(uId User) ([]Image, []User, error)
 
 	// FILE db-image.go
-	PostImage(i Image)  error
-	DeleteImage(author User, iId integer) error
-	GetImage(requester integer, iId integer) (Image,error)
+	PostImage(i Image) error
+	DeleteImage(author User, iId Image) error
+	GetImage(requester User, iId Image) (Image, error)
 
 	// FILE db-follow.go
 	FollowUser(user User, userToFollow User) error
 	UnfollowUser(user User, followed User) error
+	GetFollowingList(userr User) ([]int, error)
+	GetFollowerList(userr User) ([]int, error)
 
 	// FILE db-ban.go
 	BanUser(banner User, banned User) error
-	UnbanUser(banner integer, banned integer) error
-	GetBanList(user integer) ([]User,error)
-	IsBanned(A integer,B integer) (bool,error)
+	UnbanUser(banner User, banned User) error
+	GetBanList(user User) ([]User, error)
+	IsBanned(A User, B User) (bool, error)
+	GetBanListVINT(user User) ([]int, error)
 
 	//FILE db-like.go
-	GetLikesList(image integer) ([]User, error)
-	LikePhoto(user integer,image integer) error
-	UnlikePhoto(user integer,image integer) error
+	GetLikesList(image Image) ([]User, error)
+	LikePhoto(user User, image Image) error
+	UnlikePhoto(user User, image Image) error
 
 	//FILE db-comments.go
-	GetComments(image integer) ([]Comment, error)
-	CommentPhoto(image integer, commento Comment)  error
-	UncommentPhoto(commento integer) error
-
+	GetComments(image Image) ([]Comment, error)
+	CommentPhoto(image Image, commento Comment) error
+	UncommentPhoto(commento Comment) error
+	GetTheCommenter(commento Comment) (int, error)
 	//POSSIBILI FUNZIONI
 	// GET FOLLOWER
 	//
-
 
 	// Ping controlla se il database e' "Online" attivo, se non lo e' torna errore
 	Ping() error
@@ -117,7 +119,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 	if db == nil {
 		return nil, errors.New("database is required when building a AppDatabase")
 	}
-		//attiva le chiavi primarie
+	//attiva le chiavi primarie
 	_, errPramga := db.Exec(`PRAGMA foreign_keys= ON`)
 	if errPramga != nil {
 		return nil, fmt.Errorf("error setting pragmas: %w", errPramga)
@@ -137,7 +139,6 @@ func New(db *sql.DB) (AppDatabase, error) {
 		c: db,
 	}, nil
 }
-
 
 // crea le tabelle del db
 func createDB(db *sql.DB) error {
@@ -193,10 +194,18 @@ func createDB(db *sql.DB) error {
 				FOREIGN KEY(imgId) REFERENCES image (imgId) ON DELETE CASCADE,
 				FOREIGN KEY(uId) REFERENCES user (uId) ON DELETE CASCADE
 				);`,
-		
-
-		
 	}
+
+	for i := 0; i < len(tables); i++ {
+
+		sqlStmt := tables[i]
+		_, err := db.Exec(sqlStmt)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (db *appdbimpl) Ping() error {

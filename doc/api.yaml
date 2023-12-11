@@ -102,6 +102,7 @@ components:
               type: object
               properties:
                 idComment:
+                  description: id del commento
                   type: integer
                   example: 71
                 text:
@@ -152,6 +153,7 @@ paths:
         content: 
           application/json: 
             schema: 
+              description: nuovo nome utente
               type: string
               pattern: '^.*?$'
               example: LikeMrSarri2
@@ -217,6 +219,7 @@ paths:
           content:
             application/json:
               schema:
+                description: array contentente l'utente e la sua ultima immagine caricata              
                 type: array
                 minItems: 0
                 maxItems: 999
@@ -227,6 +230,7 @@ paths:
                         $ref: "#/components/schemas/user"
                       ultimaImmagine:
                         $ref: "#/components/schemas/image"
+
       
       security:
         - bearerAuth: []
@@ -309,6 +313,7 @@ paths:
           content:
             application/json:
               schema:
+                description: array di utenti bloccati
                 type: array
                 minItems: 0
                 maxItems: 999
@@ -397,8 +402,9 @@ paths:
       operationId: uploadPhoto
       requestBody: 
         content: 
-          application/json: 
+          multipart/form-data:
             schema:
+              description: object contentente file binario e descrizione aggiunta dall'utente
               type: object
               properties:
                 file:
@@ -414,8 +420,8 @@ paths:
                   minLength: 0
                   maxLength: 280
       responses:
-        "204":
-          description: Successo, immagine caricata
+        "202":
+          description: "Successo, richiesta accettata dal server"
         "401":
           description: Errore, non autorizzato!
         "500":
@@ -510,6 +516,7 @@ paths:
           content:
             application/json:
               schema:
+                description: array di utenti
                 type: array
                 minItems: 0
                 maxItems: 999
@@ -603,6 +610,7 @@ paths:
           content:
             application/json:
               schema:
+                description: array contenente  l'id del commento il testo del commento e l'autore del commento, della foto richiesta
                 type: array
                 minItems: 0
                 maxItems: 999
@@ -636,6 +644,7 @@ paths:
         content:
           application/json:
             schema: 
+              description: testo del commento
               type: object
               properties:
                 text:
@@ -646,8 +655,8 @@ paths:
                   maxLength: 80
                   example: bella foto!
       responses:
-        "204":
-          description: "Successo, commento inserito dalla lista dei commenti della foto"
+        "202":
+          description: "Successo, richiesta accettata dal server"
       security:
         - bearerAuth: []
 
@@ -701,13 +710,14 @@ paths:
         content:
           application/json:
             schema:
+              description: login
               type: object
               properties:
                 name:   
                   description: nome dell'utente per il login
                   type: string
                   example: mariaa
-                  pattern: 'ˆ.*?$'
+                  pattern: '^.*?$'
                   minLength: 3
                   maxLength: 16
         required: true
@@ -717,6 +727,7 @@ paths:
           content:   
             application/json:
               schema: 
+                description: id utente 
                 type: integer
         "400":
           description: Errore, il contenuto inviato non e' valido!

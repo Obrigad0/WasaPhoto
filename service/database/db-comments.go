@@ -1,9 +1,8 @@
 package database
 
-
-//GetComments() ritorna tutti i commnenti di un'immagine 
-func (db *appdbimpl) GetComments(image integer) ([]Comment, error) {
-	rows, err := db.c.Query("SELECT uId, text, commenter FROM comments c WHERE imgId = ?", image)
+//GetComments() ritorna tutti i commnenti di un'immagine
+func (db *appdbimpl) GetComments(image Image) ([]Comment, error) {
+	rows, err := db.c.Query("SELECT uId, text, commenter FROM comments c WHERE imgId = ?", image.iId)
 	if err != nil {
 		return nil, err
 	}
@@ -15,7 +14,7 @@ func (db *appdbimpl) GetComments(image integer) ([]Comment, error) {
 		var comment Comment
 		err := rows.Scan(&comment.cId, &comment.text, &comment.commenter)
 		if err != nil {
-			// Errore 
+			// Errore
 			return nil, err
 		}
 		commentList = append(commentList, comment)
@@ -29,12 +28,10 @@ func (db *appdbimpl) GetComments(image integer) ([]Comment, error) {
 	return commentList, nil
 }
 
-
-
 //CommentPhoto() inserisce un commento in un'immagine
-func (db *appdbimpl) CommentPhoto(image integer, commento Comment)  error {
+func (db *appdbimpl) CommentPhoto(image Image, commento Comment) error {
 	// commento non contiene l'id perche' verra' creato dal dbms
-	_, err := db.c.Exec("INSERT INTO comment (uId,imgI,text) VALUES (?, ?, ?)", commento.commenter, image, commento.text)
+	_, err := db.c.Exec("INSERT INTO comment (uId,imgI,text) VALUES (?, ?, ?)", commento.commenter, image.iId, commento.text)
 	if err != nil {
 		//Errore
 		return err
@@ -44,9 +41,9 @@ func (db *appdbimpl) CommentPhoto(image integer, commento Comment)  error {
 }
 
 //UncommentPhoto() elimina il commento da un immagine
-func (db *appdbimpl) UncommentPhoto(commento integer) error {
+func (db *appdbimpl) UncommentPhoto(commento Comment) error {
 
-	_, err := db.c.Exec("DELETE FROM comment WHERE idComment = ?", commento)
+	_, err := db.c.Exec("DELETE FROM comment WHERE idComment = ?", commento.cId)
 	if err != nil {
 		//Errore
 		return err
@@ -55,16 +52,16 @@ func (db *appdbimpl) UncommentPhoto(commento integer) error {
 	return nil
 }
 
-func (db *appdbimpl) GetTheCommenter(commento integer) (integer,error) {
+func (db *appdbimpl) GetTheCommenter(commento Comment) (int, error) {
 
-	var uId integer
+	var uId int
 	// Esecuzione Query per selezionare il nome utente
-	err := db.c.QueryRow(`SELECT uId FROM comments WHERE idComment = ?`, commento).Scan(&uId)
-	if err != nil{
+	err := db.c.QueryRow(`SELECT uId FROM comments WHERE idComment = ?`, commento.cId).Scan(&uId)
+	if err != nil {
 		// Errore nell'esecuzione della Query
-		return "",err
+		return -1, err
 	}
 	//nessun Errore ritorno la tupla idUtente, errore (nil)
-	return uId,nil
+	return uId, nil
 
 }

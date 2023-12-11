@@ -1,57 +1,56 @@
 package api
 
-import{
+import (
+	"net/http"
+	"strconv"
 
 	"github.com/julienschmidt/httprouter"
-	"encoding/json"
-	"net/http"
+)
 
-}
+// putFollow()
+func (rt *_router) putFollow(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
-//putFollow() 
-func (rt *_router) putFollow(w http.ResponseWriter, r *http.Request, ps httprouter.Params){
+	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
+	fIdint, _ := strconv.Atoi(ps.ByName("followedUserId"))
 
-	uId := ps.ByName("idUser")
-	fId := ps.ByName("followedUserId")
-
-	if uId == fId{
+	if uIdint == fIdint {
 		//Non puoi seguire te stess* !!!
 		http.Error(w, "Non ti puoi seguire da sol* !!", http.StatusBadRequest)
-		return 
+		return
 	}
 
 	// non si possono seguire user per altre persone
-	if !verificaToken(uId,r.Header.Get("Authorization")){
+	if !verificaToken(uIdint, r.Header.Get("Authorization")) {
 		// Token non valido, ritorno Errore 401 al client
 		http.Error(w, "Token non valido", http.StatusUnauthorized)
-		return 
+		return
 	}
 
 	//verifico se gli utenti si sono bannati tra di loro prima di aggiungere il follow
 	//Non posso seguire una persona che mi ha bannato
 	//Non posso seguire una persona che ho bannato
-	result,err := rt.db.IsBanned(uId.ToDatabase(),fId.ToDatabase())	// A e' stato bannato da B
-	if err != nil{
+	result, err := rt.db.IsBanned(User{uId: uIdint}.ToDatabase(), User{uId: fIdint}.ToDatabase()) // A e' stato bannato da B
+	if err != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
 	}
-	if result{
+	if result {
 		http.Error(w, "L'utente e' stato bannato, non e' autorizzato!", http.StatusUnauthorized)
-		return 
+		return
 	}
-	result,err := rt.db.IsBanned(fId.ToDatabase(),uId.ToDatabase())// A e' stato bannato da B
-	if err != nil{
+	result2, err2 := rt.db.IsBanned(User{uId: fIdint}.ToDatabase(), User{uId: uIdint}.ToDatabase()) // A e' stato bannato da B
+	if err2 != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
 		return
 	}
-	if result{
+	if result2 {
 		http.Error(w, "L'utente e' stato bannato dall'utente attuale, quindi non puo seguirlo!", http.StatusUnauthorized)
-		return 
+		return
 	}
 
 	//nessun problema, aggiungo il follow
-	err := rt.db.FollowUser(uId.ToDatabase(),fId.ToDatabase())
-	if(err != nil){
+	err3 := rt.db.FollowUser(User{uId: uIdint}.ToDatabase(), User{uId: fIdint}.ToDatabase())
+	if err3 != nil {
 		http.Error(w, "Errore nella comunicazione con il db o utente gia seguito", http.StatusInternalServerError)
 
 	}
