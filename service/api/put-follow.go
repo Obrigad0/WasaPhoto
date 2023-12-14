@@ -4,17 +4,19 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
+
 	"github.com/julienschmidt/httprouter"
 )
 
 // putFollow()
-func (rt *_router) putFollow(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) putFollow(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
 	fIdint, _ := strconv.Atoi(ps.ByName("followedUserId"))
 
 	if uIdint == fIdint {
-		//Non puoi seguire te stess* !!!
+		// Non puoi seguire te stess* !!!
 		http.Error(w, "Non ti puoi seguire da sol* !!", http.StatusBadRequest)
 		return
 	}
@@ -26,9 +28,9 @@ func (rt *_router) putFollow(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	//verifico se gli utenti si sono bannati tra di loro prima di aggiungere il follow
-	//Non posso seguire una persona che mi ha bannato
-	//Non posso seguire una persona che ho bannato
+	// verifico se gli utenti si sono bannati tra di loro prima di aggiungere il follow
+	// Non posso seguire una persona che mi ha bannato
+	// Non posso seguire una persona che ho bannato
 	result, err := rt.db.IsBanned(User{UId: uIdint}.ToDatabase(), User{UId: fIdint}.ToDatabase()) // A e' stato bannato da B
 	if err != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
@@ -48,7 +50,7 @@ func (rt *_router) putFollow(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	//nessun problema, aggiungo il follow
+	// nessun problema, aggiungo il follow
 	err3 := rt.db.FollowUser(User{UId: uIdint}.ToDatabase(), User{UId: fIdint}.ToDatabase())
 	if err3 != nil {
 		http.Error(w, "Errore nella comunicazione con il db o utente gia seguito", http.StatusInternalServerError)

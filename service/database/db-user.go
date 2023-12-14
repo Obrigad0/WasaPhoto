@@ -5,7 +5,7 @@ func (db *appdbimpl) ChangeUserName(user User, newName User) error {
 	// Esecuzione Query per la modifica dell'user name
 	_, err := db.c.Exec("UPDATE user SET name = ? WHERE uId = ?", newName.Name, user.UId)
 	if err != nil {
-		//Errore nella modifica del nome utente
+		// Errore nella modifica del nome utente
 		return err
 	}
 	// Nessun errore, torno nil
@@ -22,7 +22,7 @@ func (db *appdbimpl) GetUserName(user User) (string, error) {
 		// Errore nell'esecuzione della Query
 		return "", err
 	}
-	//nessun Errore ritorno la tupla nome utente, errore (nil)
+	// nessun Errore ritorno la tupla nome utente, errore (nil)
 	return name, nil
 }
 
@@ -43,7 +43,7 @@ func (db *appdbimpl) GetUser(uId User) (User, error) {
 		// Errore nell'esecuzione della Query
 		return utente, err
 	}
-	//nessun Errore ritorno la tupla utente, errore (nil)
+	// nessun Errore ritorno la tupla utente, errore (nil)
 	return utente, nil
 
 }
@@ -56,8 +56,8 @@ func (db *appdbimpl) CreateUser(nome User) (int, error) {
 		// Errore nell'esecuzione della Query
 		return -1, err
 	}
-	//nessun Errore
-	//Prelevo l'id dell'utente creato
+	// nessun Errore
+	// Prelevo l'id dell'utente creato
 	var uId int
 	a := db.c.QueryRow(`SELECT uId FROM user WHERE name = ?`, nome.Name).Scan(&uId)
 	if a != nil {
@@ -77,7 +77,7 @@ func (db *appdbimpl) Access(nome User) (int, error) {
 		// Errore nell'esecuzione della Query
 		return -1, err
 	}
-	//nessun Errore ritorno la tupla utente, errore (nil)
+	// nessun Errore ritorno la tupla utente, errore (nil)
 	return uId, nil
 }
 
@@ -88,7 +88,7 @@ func (db *appdbimpl) GetStream(uId User) ([]Image, []User, error) {
 
 	rows, err := db.c.Query(" SELECT i.imgId, i.author, i.descrizione, i.date, u.uId , u.name FROM image i JOIN user u ON i.author = u.uId WHERE i.author IN ( SELECT A FROM follow WHERE B = ? ) ORDER BY i.date DESC LIMIT 1 ", uId.UId)
 
-	//forse si puo fare piu efficiente
+	// forse si puo fare piu efficiente
 	if err != nil {
 		// Errore nell'esecuzione della Query
 		return nil, nil, err

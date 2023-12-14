@@ -4,17 +4,19 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
+
 	"github.com/julienschmidt/httprouter"
 )
 
 // putBan() inserisce il ban su un utente
-func (rt *_router) putBan(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) putBan(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
 	bIdint, _ := strconv.Atoi(ps.ByName("bannedUserId"))
 
 	if uIdint == bIdint {
-		//Non ci si puo' autobannare !!!
+		// Non ci si puo' autobannare !!!
 		http.Error(w, "Non ti puoi bannare da sol* !!", http.StatusBadRequest)
 		return
 	}
@@ -31,7 +33,7 @@ func (rt *_router) putBan(w http.ResponseWriter, r *http.Request, ps httprouter.
 		http.Error(w, "Errore, errore del db o utente gia bannato", http.StatusInternalServerError)
 	}
 
-	//il ban implica che gli utenti non si vogliano piu seguire
+	// il ban implica che gli utenti non si vogliano piu seguire
 	err2 := rt.db.UnfollowUser(User{UId: bIdint}.ToDatabase(), User{UId: uIdint}.ToDatabase())
 	if err2 != nil {
 		http.Error(w, "Errore, errore del db", http.StatusInternalServerError)

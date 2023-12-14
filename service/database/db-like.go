@@ -31,7 +31,7 @@ func (db *appdbimpl) GetLikesList(image Image) ([]User, error) {
 
 }
 
-//LikePhoto() mette il like dell'utente all'immagine
+// LikePhoto() mette il like dell'utente all'immagine
 func (db *appdbimpl) LikePhoto(user User, image Image) error {
 	_, err := db.c.Exec("INSERT INTO like (iId,uId) VALUES (?, ?)", image.IId, user.UId)
 	if err != nil {
@@ -41,7 +41,7 @@ func (db *appdbimpl) LikePhoto(user User, image Image) error {
 	return nil
 }
 
-//UnlikePhoto()
+// UnlikePhoto()
 func (db *appdbimpl) UnlikePhoto(user User, image Image) error {
 	_, err := db.c.Exec("DELETE FROM like WHERE uId = ? AND iId = ?", user.UId, image.IId)
 	if err != nil {

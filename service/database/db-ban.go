@@ -1,6 +1,6 @@
 package database
 
-//BanUser() banna l'utente banned
+// BanUser() banna l'utente banned
 func (db *appdbimpl) BanUser(banner User, banned User) error {
 	_, err := db.c.Exec("INSERT INTO ban (banner,banned) VALUES (?, ?)", banner.UId, banned.UId)
 	if err != nil {
@@ -11,7 +11,7 @@ func (db *appdbimpl) BanUser(banner User, banned User) error {
 	return nil
 }
 
-//UnbanUser() sbanna l'utente banned
+// UnbanUser() sbanna l'utente banned
 func (db *appdbimpl) UnbanUser(banner User, banned User) error {
 	_, err := db.c.Exec("DELETE FROM ban WHERE banner = ? AND banned = ?", banner.UId, banned.UId)
 	if err != nil {
@@ -22,7 +22,7 @@ func (db *appdbimpl) UnbanUser(banner User, banned User) error {
 	return nil
 }
 
-//GetBanList() ritorna la lista degli utenti bannati dalll'utente
+// GetBanList() ritorna la lista degli utenti bannati dalll'utente
 func (db *appdbimpl) GetBanList(user User) ([]User, error) {
 	rows, err := db.c.Query("SELECT u.uId, u.name FROM user u, ban b WHERE u.uId = b.banned AND b.banner = ?  ", user.UId)
 	if err != nil {
@@ -54,7 +54,7 @@ func (db *appdbimpl) GetBanList(user User) ([]User, error) {
 	return banList, nil
 }
 
-//IsBanned() controlla se A e' stato bannato da B
+// IsBanned() controlla se A e' stato bannato da B
 func (db *appdbimpl) IsBanned(A User, B User) (bool, error) {
 
 	var result bool
@@ -67,7 +67,7 @@ func (db *appdbimpl) IsBanned(A User, B User) (bool, error) {
 	return result, nil
 }
 
-//GetBanList() ritorna la lista degli utenti bannati dalll'utente, ma torna solo gli id
+// GetBanList() ritorna la lista degli utenti bannati dalll'utente, ma torna solo gli id
 func (db *appdbimpl) GetBanListVINT(user User) ([]int, error) {
 
 	rows, err := db.c.Query("SELECT banned FROM ban WHERE banner = ?", user)

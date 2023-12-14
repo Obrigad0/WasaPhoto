@@ -8,10 +8,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
+
 	"github.com/julienschmidt/httprouter"
 )
 
-func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
 
@@ -26,8 +28,8 @@ func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprout
 	image.Author = strconv.Itoa(uIdint)
 	image.Data = time.Now().UTC()
 
-	//ParseMultipartForm analizza il corpo di una richiesta multipart/form-data
-	//30 << 20 e' la dimensione max in byte della rchiesta multipart/form-data
+	// ParseMultipartForm analizza il corpo di una richiesta multipart/form-data
+	// 30 << 20 e' la dimensione max in byte della rchiesta multipart/form-data
 	err := r.ParseMultipartForm(30 << 20) // << e' lo shift a sinistra per la moltiplicazione
 	if err != nil {
 		http.Error(w, "Impossibile analizzare la richiesta multipart", http.StatusBadRequest)
@@ -55,7 +57,7 @@ func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprout
 	// creo il file vuoto per l'immagine
 	out, _ := os.Create(filepath.Join("/user/", strconv.Itoa(uIdint), "/images/", strconv.Itoa(id)))
 	_, _ = io.Copy(out, file)
-	//id e' il nome del file
+	// id e' il nome del file
 
 	out.Close()
 	w.WriteHeader(http.StatusAccepted)

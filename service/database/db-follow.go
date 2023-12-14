@@ -10,7 +10,7 @@ func (db *appdbimpl) FollowUser(user User, userToFollow User) error { //A e' seg
 		// Errore nell'esecuzione della Query
 		return err
 	}
-	//nessun Errore
+	// nessun Errore
 	return nil
 }
 
@@ -22,13 +22,13 @@ func (db *appdbimpl) UnfollowUser(user User, followed User) error { //A e' segui
 		// Errore nell'esecuzione della Query
 		return err
 	}
-	//nessun Errore
+	// nessun Errore
 	return nil
 }
 
-//get my follower
+// get my follower
 
-func (db *appdbimpl) GetFollowingList(userr User) ([]int, error) { //A e' seguito da B
+func (db *appdbimpl) GetFollowingList(userr User) ([]int, error) { // A e' seguito da B
 
 	rows, err := db.c.Query("SELECT A FROM follow WHERE B = ?  ", userr.UId)
 	if err != nil {
@@ -60,7 +60,7 @@ func (db *appdbimpl) GetFollowingList(userr User) ([]int, error) { //A e' seguit
 
 }
 
-func (db *appdbimpl) GetFollowerList(userr User) ([]int, error) { //A e' seguito da B
+func (db *appdbimpl) GetFollowerList(userr User) ([]int, error) { // A e' seguito da B
 
 	rows, err := db.c.Query("SELECT B FROM follow WHERE A = ?  ", userr.UId)
 	if err != nil {

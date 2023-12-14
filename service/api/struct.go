@@ -9,7 +9,7 @@ import (
 type User struct {
 	Name      string `json:"name"`      // nome dell'utente
 	UId       int    `json:"userId"`    // id dell'utente
-	Followers []int  `json:"follower"`  //insieme degli id degli utenti che seguono l'utente
+	Followers []int  `json:"follower"`  // insieme degli id degli utenti che seguono l'utente
 	Following []int  `json:"following"` // insieme degli id degli utenti seguti dall'utente
 	Ban       []int  `json:"banList"`   // insieme degli id degli utenti bannati dall'utente
 }

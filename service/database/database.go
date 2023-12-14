@@ -63,7 +63,7 @@ type Comment struct {
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
-	//Tutte le informazioni sulle funzioni sono scritte nei file corrispondenti
+	// Tutte le informazioni sulle funzioni sono scritte nei file corrispondenti
 
 	// FILE db-user.go
 	ChangeUserName(user User, newName User) error
@@ -91,17 +91,17 @@ type AppDatabase interface {
 	IsBanned(A User, B User) (bool, error)
 	GetBanListVINT(user User) ([]int, error)
 
-	//FILE db-like.go
+	// FILE db-like.go
 	GetLikesList(image Image) ([]User, error)
 	LikePhoto(user User, image Image) error
 	UnlikePhoto(user User, image Image) error
 
-	//FILE db-comments.go
+	// FILE db-comments.go
 	GetComments(image Image) ([]Comment, error)
 	CommentPhoto(image Image, commento Comment) error
 	UncommentPhoto(commento Comment) error
 	GetTheCommenter(commento Comment) (int, error)
-	//POSSIBILI FUNZIONI
+	// POSSIBILI FUNZIONI
 	// GET FOLLOWER
 	//
 
@@ -119,7 +119,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 	if db == nil {
 		return nil, errors.New("database is required when building a AppDatabase")
 	}
-	//attiva le chiavi primarie
+	// attiva le chiavi primarie
 	_, errPramga := db.Exec(`PRAGMA foreign_keys= ON`)
 	if errPramga != nil {
 		return nil, fmt.Errorf("error setting pragmas: %w", errPramga)

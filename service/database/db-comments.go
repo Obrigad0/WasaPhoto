@@ -1,6 +1,6 @@
 package database
 
-//GetComments() ritorna tutti i commnenti di un'immagine
+// GetComments() ritorna tutti i commnenti di un'immagine
 func (db *appdbimpl) GetComments(image Image) ([]Comment, error) {
 	rows, err := db.c.Query("SELECT uId, text, commenter FROM comments c WHERE imgId = ?", image.IId)
 	if err != nil {
@@ -28,24 +28,24 @@ func (db *appdbimpl) GetComments(image Image) ([]Comment, error) {
 	return commentList, nil
 }
 
-//CommentPhoto() inserisce un commento in un'immagine
+// CommentPhoto() inserisce un commento in un'immagine
 func (db *appdbimpl) CommentPhoto(image Image, commento Comment) error {
 	// commento non contiene l'id perche' verra' creato dal dbms
 	_, err := db.c.Exec("INSERT INTO comment (uId,imgI,text) VALUES (?, ?, ?)", commento.Commenter, image.IId, commento.Text)
 	if err != nil {
-		//Errore
+		// Errore
 		return err
 	}
 
 	return nil
 }
 
-//UncommentPhoto() elimina il commento da un immagine
+// UncommentPhoto() elimina il commento da un immagine
 func (db *appdbimpl) UncommentPhoto(commento Comment) error {
 
 	_, err := db.c.Exec("DELETE FROM comment WHERE idComment = ?", commento.CId)
 	if err != nil {
-		//Errore
+		// Errore
 		return err
 	}
 
@@ -61,7 +61,7 @@ func (db *appdbimpl) GetTheCommenter(commento Comment) (int, error) {
 		// Errore nell'esecuzione della Query
 		return -1, err
 	}
-	//nessun Errore ritorno la tupla idUtente, errore (nil)
+	// nessun Errore ritorno la tupla idUtente, errore (nil)
 	return uId, nil
 
 }

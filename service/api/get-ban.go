@@ -5,12 +5,14 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
+
 	"github.com/Obrigad0/WasaPhoto/service/database"
 	"github.com/julienschmidt/httprouter"
 )
 
 // getBan() ritorna tutta la lista degli utenti bannati dall'utente
-func (rt *_router) getBan(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) getBan(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
 

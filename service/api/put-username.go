@@ -5,11 +5,13 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
+
 	"github.com/julienschmidt/httprouter"
 )
 
 // putUsername() cambia nome utente dell'utente, se autorizzato
-func (rt *_router) putUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) putUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
 
@@ -34,6 +36,6 @@ func (rt *_router) putUsername(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	//tutto ok, l'operazione di modifica e' stata effettuata con successo
+	// tutto ok, l'operazione di modifica e' stata effettuata con successo
 	w.WriteHeader(http.StatusNoContent)
 }

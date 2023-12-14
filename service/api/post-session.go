@@ -6,14 +6,16 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
+
 	"github.com/julienschmidt/httprouter"
 )
 
-func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	//dobbiamo tornare il token, l'id che rappresenta l'utente
+func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	// dobbiamo tornare il token, l'id che rappresenta l'utente
 	w.Header().Set("Content-Type", "application/json")
 
-	//nome inserito dall'utente
+	// nome inserito dall'utente
 	var username string
 	err := json.NewDecoder(r.Body).Decode(&username)
 
@@ -22,7 +24,7 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	//controllo se l'utente esiste
+	// controllo se l'utente esiste
 	var uId int
 	uId, err2 := rt.db.Access(User{Name: username}.ToDatabase())
 
@@ -32,7 +34,7 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	if uId < 0 {
-		//Errore, l'utente non esiste va creato!
+		// Errore, l'utente non esiste va creato!
 		uId, err := rt.db.CreateUser(User{Name: username}.ToDatabase())
 		// la funzione mi torna anche l'id dell'utente creato
 		if err != nil || uId < 0 {
@@ -44,10 +46,14 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 		// /user/id/image
 		//	FORSE CAMBIARE
 		path := "/user/" + strconv.Itoa(uId) + "/image"
-		os.MkdirAll(path, os.ModePerm)
+		err2 := os.MkdirAll(path, os.ModePerm)
+		if err2 != nil {
+			http.Error(w, "Errore nella creazione della dir dell'utente", http.StatusInternalServerError)
+			return
+		}
 
 	}
-	//tutto fatto!
+	// tutto fatto!
 	// invio l'id all'utente
 	w.WriteHeader(http.StatusAccepted)
 	err = json.NewEncoder(w).Encode(uId)

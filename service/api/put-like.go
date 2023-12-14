@@ -4,18 +4,20 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
+
 	"github.com/julienschmidt/httprouter"
 )
 
 // putLike() inserisce il like su un'immagine
-func (rt *_router) putLike(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) putLike(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))     // proprietario immagine
 	iIdint, _ := strconv.Atoi(ps.ByName("imageId"))    // id foto
 	lIdint, _ := strconv.Atoi(ps.ByName("likeUserId")) // chi mette like, cioe' io
 
 	if uIdint == lIdint {
-		//Non puoi metterti like da sol*, e' triste!!!
+		// Non puoi metterti like da sol*, e' triste!!!
 		http.Error(w, "Non puoi metterti like da sol* !!", http.StatusBadRequest)
 		return
 	}
@@ -26,7 +28,7 @@ func (rt *_router) putLike(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	//verifico se gli utenti si sono bannati tra di loro prima di aggiungere il like
+	// verifico se gli utenti si sono bannati tra di loro prima di aggiungere il like
 	result, err := rt.db.IsBanned(User{UId: uIdint}.ToDatabase(), User{UId: lIdint}.ToDatabase()) // A e' stato bannato da B
 	if err != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
@@ -46,7 +48,7 @@ func (rt *_router) putLike(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	//nessun problema, aggiungo il like
+	// nessun problema, aggiungo il like
 	err2 := rt.db.LikePhoto(User{UId: lIdint}.ToDatabase(), Image{IId: iIdint}.ToDatabase())
 	if err2 != nil {
 		http.Error(w, "Errore nella comunicazione con il db o like gia messo", http.StatusInternalServerError)

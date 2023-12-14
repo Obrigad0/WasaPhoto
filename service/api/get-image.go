@@ -5,11 +5,13 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
+
 	"github.com/Obrigad0/WasaPhoto/service/database"
 	"github.com/julienschmidt/httprouter"
 )
 
-func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
 	iIdint, _ := strconv.Atoi(ps.ByName("imageId")) // id foto
@@ -20,13 +22,13 @@ func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httproute
 		return
 	}
 
-	//prelevo il token dell' user
+	// prelevo il token dell' user
 	token := estrazioneToken(r.Header.Get("Authorization"))
 
 	if uIdint != token {
-		//se il richiedente del profilo NON e' il proprietario del profilo
-		//verifico che l'Utente A (token) non sia stato bannato dall'Utente B (uId)
-		//controllo se A e' stato bannato da B
+		// se il richiedente del profilo NON e' il proprietario del profilo
+		// verifico che l'Utente A (token) non sia stato bannato dall'Utente B (uId)
+		// controllo se A e' stato bannato da B
 		result, err := rt.db.IsBanned(User{UId: token}.ToDatabase(), User{UId: uIdint}.ToDatabase())
 		if err != nil {
 			http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
@@ -36,10 +38,10 @@ func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httproute
 			http.Error(w, "L'utente e' stato bannato, non e' autorizzato!", http.StatusUnauthorized)
 			return
 		}
-		//tutto ok, continuo
+		// tutto ok, continuo
 	}
 
-	//prelevo il profilo
+	//  prelevo il profilo
 	// dove inserisco l'utente
 	var image database.Image
 	// db-image.go
@@ -49,7 +51,7 @@ func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httproute
 		return
 	}
 
-	//non finito
+	// non finito
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")

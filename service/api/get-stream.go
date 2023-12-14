@@ -5,16 +5,18 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
+
 	"github.com/Obrigad0/WasaPhoto/service/database"
 	"github.com/julienschmidt/httprouter"
 )
 
 // getStream() preleva l'ultima immagine caricata per ogni utente seguito dal richiedente
-func (rt *_router) getStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) getStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
 
-	//solo il proprietario dell'account puo' vedere il proprio stream
+	// solo il proprietario dell'account puo' vedere il proprio stream
 	if !verificaToken(uIdint, r.Header.Get("Authorization")) {
 		// Token non valido, ritorno Errore 401 al client
 		http.Error(w, "Token non valido", http.StatusUnauthorized)

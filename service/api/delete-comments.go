@@ -4,11 +4,13 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
+
 	"github.com/julienschmidt/httprouter"
 )
 
 // deleteComments() elimina il proprio commento da una foto
-func (rt *_router) deleteComments(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) deleteComments(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	cIdint, _ := strconv.Atoi(ps.ByName("commentId")) // id commento
 	// token : chi effettua l'operazione
