@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"path/filepath"
 	"strconv"
 
 	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
@@ -41,7 +42,7 @@ func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httproute
 		// tutto ok, continuo
 	}
 
-	//  prelevo il profilo
+	// prelevo il profilo
 	// dove inserisco l'utente
 	var image database.Image
 	// db-image.go
@@ -51,9 +52,14 @@ func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httproute
 		return
 	}
 
-	// non finito
-
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+
+	// invio le informazioni dell'immagine
+	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(image)
+
+	// invio l'immagine
+
+	path := filepath.Join("/user/", strconv.Itoa(uIdint), "/images/", strconv.Itoa(iIdint))
+	http.ServeFile(w, r, path)
 }
