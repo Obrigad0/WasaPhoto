@@ -3,7 +3,7 @@ package database
 // lo stream dell'utente e' stato messo all'interno di db-user
 
 //  FollowUser() permette all'utente user di seguire userToFollow
-func (db *appdbimpl) FollowUser(user User, userToFollow User) error { //A e' seguito da B
+func (db *appdbimpl) FollowUser(user User, userToFollow User) error { // A e' seguito da B
 	_, err := db.c.Exec("INSERT INTO follow (A,B) VALUES (?, ?)", userToFollow.UId, user.UId)
 
 	if err != nil {
@@ -15,7 +15,7 @@ func (db *appdbimpl) FollowUser(user User, userToFollow User) error { //A e' seg
 }
 
 // UnfollowUser() permette all'utente di smettere di seguire followed
-func (db *appdbimpl) UnfollowUser(user User, followed User) error { //A e' seguito da B
+func (db *appdbimpl) UnfollowUser(user User, followed User) error { // A e' seguito da B
 	_, err := db.c.Exec("DELETE FROM follow WHERE A = ? AND B = ?", followed.UId, user.UId)
 
 	if err != nil {
@@ -60,7 +60,7 @@ func (db *appdbimpl) GetFollowingList(userr User) ([]int, error) { // A e' segui
 
 }
 
-func (db *appdbimpl) GetFollowerList(userr User) ([]int, error) { // A e' seguito da B
+func (db *appdbimpl) GetFollowerList(userr User) ([]int, error) { //  A e' seguito da B
 
 	rows, err := db.c.Query("SELECT B FROM follow WHERE A = ?  ", userr.UId)
 	if err != nil {

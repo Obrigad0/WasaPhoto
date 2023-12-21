@@ -116,8 +116,10 @@ func (db *appdbimpl) GetStream(uId User) ([]Image, []User, error) {
 	return image, users, nil
 }
 
-//IdsTOUsers()	trasforma un array di integer che rappresentano id di utenti in un array di utenti
 /*
+
+ IdsTOUsers() trasforma un array di integer che rappresentano id di utenti in un array di utenti
+
 func (db *appdbimpl) IdToUsers(id []integer) ([]User error) {
 
 	var users []User

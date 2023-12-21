@@ -40,7 +40,7 @@ func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprout
 	// "file" e' il file vero e proprio in formato binario
 	// "metadata" sono tutti le informazioni associate all'immagine, come il nome, che non ci interessa visto che e' sostituito dall'id dell'immagine creato dal dbms
 	file, _, _ := r.FormFile("file")
-	defer file.Close() //chiudo il file appena preso
+	defer file.Close() // chiudo il file appena preso
 
 	descrizione := r.FormValue("descrizione")
 
@@ -53,7 +53,7 @@ func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	// /user/{idUser}/images/{imageId}:
+	// user/{idUser}/images/{imageId}:
 	// creo il file vuoto per l'immagine
 	out, _ := os.Create(filepath.Join("/user/", strconv.Itoa(uIdint), "/images/", strconv.Itoa(id)))
 	_, _ = io.Copy(out, file)

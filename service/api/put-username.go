@@ -25,7 +25,7 @@ func (rt *_router) putUsername(w http.ResponseWriter, r *http.Request, ps httpro
 	var newUserName string
 	err := json.NewDecoder(r.Body).Decode(&newUserName)
 	if err != nil {
-		//errore nella richiesta json
+		// errore nella richiesta json
 		http.Error(w, "Errore nella richiesta json", http.StatusBadRequest)
 		return
 	}

@@ -485,9 +485,7 @@ paths:
                     format: binary
                     minLength: 0
                     maxLength: 10000
-                    example: 1010101
                   info:
-                    description: tutte le informazioni dell'immagine
                     $ref: "#/components/schemas/image"
         "401":
           description: Errore, non autorizzato!
