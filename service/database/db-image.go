@@ -3,7 +3,7 @@ package database
 // PostImage() posta l'immagine caricata dall'utente
 func (db *appdbimpl) PostImage(i Image) (int, error) {
 	// la struttura inviata ha nel campo iId nil, perche' non ancora creato
-	_, err := db.c.Exec("INSERT INTO image (author,descrizione,file,data) VALUES (?,?,?,?)", i.Author, i.Descrizione, i.File, i.Data)
+	_, err := db.c.Exec("INSERT INTO image (author,descrizione,data) VALUES (?,?,?)", i.Author, i.Descrizione, i.Data)
 
 	if err != nil {
 		// Errore nell'esecuzione della Query
