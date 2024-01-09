@@ -103,7 +103,6 @@ type AppDatabase interface {
 	GetTheCommenter(commento Comment) (int, error)
 	// POSSIBILI FUNZIONI
 	// GET FOLLOWER
-	//
 
 	// Ping controlla se il database e' "Online" attivo, se non lo e' torna errore
 	Ping() error

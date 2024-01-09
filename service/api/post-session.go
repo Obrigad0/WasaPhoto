@@ -44,7 +44,7 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 		// uso l'id per creare la dir dell'utente nel server
 		// /user/id
 		// /user/id/image
-		//	FORSE CAMBIARE
+		// FORSE CAMBIARE
 		path := "/user/" + strconv.Itoa(uId) + "/image"
 		err2 := os.MkdirAll(path, os.ModePerm)
 		if err2 != nil {

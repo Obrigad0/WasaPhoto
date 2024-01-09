@@ -2,7 +2,7 @@ package database
 
 // lo stream dell'utente e' stato messo all'interno di db-user
 
-//  FollowUser() permette all'utente user di seguire userToFollow
+// FollowUser() permette all'utente user di seguire userToFollow
 func (db *appdbimpl) FollowUser(user User, userToFollow User) error { // A e' seguito da B
 	_, err := db.c.Exec("INSERT INTO follow (A,B) VALUES (?, ?)", userToFollow.UId, user.UId)
 

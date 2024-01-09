@@ -81,7 +81,7 @@ func (db *appdbimpl) Access(nome User) (int, error) {
 	return uId, nil
 }
 
-//  GetStream() restituisce un array di immagini contenenti l'ultima foto postata da ogni utente e l'utente che l'ha postata,
+// GetStream() restituisce un array di immagini contenenti l'ultima foto postata da ogni utente e l'utente che l'ha postata,
 func (db *appdbimpl) GetStream(uId User) ([]Image, []User, error) {
 	var image []Image
 	var users []User
