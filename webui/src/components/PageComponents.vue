@@ -11,11 +11,13 @@
           <h1 class="titolo">WASAPHOTO</h1>
         </div>
         <div style="display: flex; align-items: center;">
-          <input class="input" type="text" placeholder="cerca utenti">
-          <button class="cerca" @click="" style="padding: 2px 8px; background-color: #734f59; color: #fff; border: none; cursor: pointer;">find</button>
+          <form action="/ProfileList" >
+            <input class="input" type="text" placeholder="cerca utenti">
+            <button class="cerca" @click="" style="padding: 2px 8px; background-color: #734f59; color: #fff; border: none; cursor: pointer;">find</button>
+          </form>
         </div>
       </div>
-      <div class="box" style="height: 85vh; background-color: white;">
+      <div class="box" style="height: 84vh; background-color: white;">
         <slot></slot>
       </div>
       <div class="box" style="height: 8vh; padding-top: 10px;background-color: #f1f1f1;" >
@@ -56,7 +58,6 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    color: #fff;
     font-size: 20px;
     box-sizing: border-box;
   }

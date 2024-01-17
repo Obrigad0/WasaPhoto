@@ -1,10 +1,60 @@
 <script>
 import PageComonents from '@/components/PageComponents.vue';
+import Image from '@/components/Image.vue';
 
 
 export default {
   data: function() {
 		return {
+      arrayDiPost: [
+        {
+          autore: 'Autore1',
+          like: [1,3,4,5,6,7,7,8],
+          commenti: ['Commento 1', 'Commento 2'],
+          data: '',
+          iId: 1,
+          desc: 'Descrizione del post 1',
+          url: 'https://www.laziostylestore.com/images/lazio/products/large/LZ22A03_16.webp'
+        },
+        {
+          autore: 'Autore2',
+          like: [1,5,45,71,5,33,8],
+          commenti: ['Commento 3', 'Commento 4'],
+          data: 'Data del post 2',
+          iId: 1,
+          desc: 'Descrizione del post 2',
+          url: 'https://www.laziostylestore.com/images/lazio/products/small/LZ22A03_9.webp'
+        },
+        {
+          autore: 'Autore2',
+          like: [1,5,45,71,5,33,8],
+          commenti: ['Commento 3', 'Commento 4'],
+          data: 'Data del post 2',
+          iId: 1,
+          desc: 'Descrizione del post 2',
+          url: 'https://www.laziostylestore.com/images/lazio/products/small/LZ22A03_9.webp'
+        },
+        {
+          autore: 'Autore2',
+          like: [1,5,45,71,5,33,8],
+          commenti: ['Commento 3', 'Commento 4'],
+          data: 'Data del post 2',
+          iId: 1,
+          desc: 'Descrizione del post 2',
+          url: 'https://www.laziostylestore.com/images/lazio/products/small/LZ22A03_9.webp'
+        },
+        {
+          autore: 'Autore2',
+          like: [1,5,45,71,5,33,8],
+          commenti: ['Commento 3', 'Commento 4'],
+          data: 'Data del post 2',
+          iId: 1,
+          desc: 'Descrizione del post 2',
+          url: 'https://www.laziostylestore.com/images/lazio/products/small/LZ22A03_9.webp'
+        },
+
+      ],
+      
       username: "Username",
       followerN: 0,
       followingN: 0,
@@ -17,9 +67,10 @@ export default {
       banned: false,
     }
   },
-  components: {
-    PageComonents,
-  },
+    components: {
+      PageComonents,
+      Image,
+    },
 
   created() { 
     // al caricamento della pagina vengono recuperate tutte le informazioni sull'utente
@@ -38,7 +89,7 @@ export default {
       itsMe(){
         //controlla se l'utente del profilo visitato e' l'utente proprietario del profilo
         //return localStorage.getItem('token') === this.$route.params.id
-        return true // da levare
+        return false // da levare
         // la funzione e' utilizzata per mostrare certi elementi solo all'utente proprietario della pagian
       },
 
@@ -49,6 +100,7 @@ export default {
       isFollowed(){
         //controlla se l'utente e' nell'array di followed dell'utente visitato 
         //se si il pulsante per seguire diventa per smettere di seguire
+        this.seguito = !this.seguito //da levare
         return this.follower.includes(localStorage.getItem('token'))
       },
        
@@ -58,10 +110,10 @@ export default {
           console.log("cliccato segui") 
           if(this.seguito){
             //leva il follow
-            this.followerN -= 1
+            this.followerN += 1
           }else{
             //seguo l'utente
-            this.followerN += 1
+            this.followerN -= 1
           }
           //this.seguito = !this.seguito
         }catch(e){
@@ -128,7 +180,7 @@ export default {
 
 <template>
   <PageComonents> 
-    <div class="box" style="height: 13vh; background-color: white;">
+    <div class="box" style="height: 13vh;">
         <div class="titoli">
               <h1 id="username">{{username}}</h1>
         </div>
@@ -141,7 +193,18 @@ export default {
               <button @click="" v-if="itsMe()" class="operazioni">Posta Foto</button>
         </div>
     </div>
-    <div class="box" style="height: 72vh; background-color: #e74c3c;">foto</div>
+    <div class="box2" style="height: 72vh;">
+        <Image v-for="(post, index) in arrayDiPost"
+            :key="index"
+            :autore="post.autore"
+            :like="post.like"
+            :commenti="post.commenti"
+            :data="post.data"
+            :iId="post.iId"
+            :desc="post.desc"
+            :url="post.url">
+        </Image>
+    </div>
   </PageComonents>
 </template>
 
@@ -164,6 +227,18 @@ export default {
     font-size: 20px;
     box-sizing: border-box;
   }
+
+  .box2 {
+    border: 1px solid #ccc; 
+    display: flex;
+    justify-content: space-evenly;
+    gap: 2%;
+    box-sizing: border-box;
+    overflow-y: auto;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
   #username{
     text-align: center;
     font-size: 5vw;

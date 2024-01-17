@@ -2,32 +2,23 @@
 export default {
   data() {
     return {
-        imageUrl:  'https://www.laziostylestore.com/images/lazio/products/large/LZ22A03_16.webp',
+        imageUrl: "",
         descrizione: 'Forza Forza Lazio!',
         isLiked: false,
         comments: [],
-        usersLike: [],
+        likes: [],
         comment: '',
         post: true,
         likeP: false,
         errore: "",
         token: null,
         coloreCommento: "black",
-        /*
-        idCommento: null,
-        autore: null,
-        like: null,
-        commenti: null,
-        data: null,
-        iId: null,
-        desc: null,
-        */
 
     };
     
   },
 
-  //props: ['autore','like','commenti',"data","iId","desc"], //,"token" ??
+  props: ['autore','like','commenti',"data","iId","desc","url"], //,"token" ??
 
   methods: {
     async toggleLike() {  //funzione
@@ -56,7 +47,7 @@ export default {
         }
       }
       console.log("qui")
-      this.isLiked = !this.isLiked;
+      //this.isLiked = !this.isLiked;
 
     },
 
@@ -101,27 +92,32 @@ export default {
         //poi dovrei cambiare il js nel html
         this.likes = this.like
         this.comments = this.commenti
+        this.imageUrl = this.url
+        console.log(this.comments)
         //
         this.descrizione = this.desc
-        this.imageUrl = __API_URL__+ "/user/"+this.autore+"/images/"+this.iId
+        //this.imageUrl = __API_URL__+ "/user/"+this.autore+"/images/"+this.iId
       }catch(e){
         this.errore = "{"+ e +"}"
       }
     },
 
-    changeColor(stato){
+    changeColor(){
+      console.log("sopra")
       if(this.autore == localStorage.getItem('token')){
+        console.log("cambio il colore")
         //se l'utente che ha postato il commento passa sul proprio commento
         //puo' elimnare il commento
-      }else{
-
+        var commento = document.getElementById("comP");
+        commento.style.color = "red";
       }
-
+        var commento = document.getElementById("comP");
+        commento.style.color = "red";
     }
   },
 
   async mounted(){
-    //await this.getPost();
+    await this.getPost();
   }
 
 };
@@ -141,8 +137,8 @@ export default {
           <img  src="../assets/images/invia.png">
         </button>
       </div>
-      <p v-if="errore === ''" class="descrizione">{{ descrizione }}</p>
-      <p v-if="errore !== ''" class="descrizione">{{ errore }}</p>
+      <p class="descrizione">{{ descrizione }}</p>
+      <!-- v-if="errore === ''"  <p v-if="errore !== ''" class="descrizione">{{ errore }}</p> -->
       <div class="com">
         <button @click="toComment" >commenti</button>
         <button @click="toLikes" >like</button>
@@ -151,14 +147,17 @@ export default {
     </div>
     <div v-if="!post" class="commenti">
       <div  class="testo">
-        <p  @mouseover="changeColor(true)" v-for="(comment, index) in comments" :key="index" @click="removeComment()">{{ comment }}</p>
+        <p  id="comP" class="cambiacolore" v-for="(comments, index) in comments" :key="index" @click="removeComment()">{{ comments }}</p>
       </div>
       <div class="com2">
         <button @click="toComment" >post</button>
       </div>   
     </div>
     <div v-if="likeP" class="commenti">
-      <p>likes yeah</p>
+    
+    <div  class="testo">
+        <p  id="comP" class="cambiacolore" v-for="(likes, index) in likes" :key="index" @click="removeComment()">{{ likes }}</p>
+      </div>
       <div class="com2">
           <button @click="toLikes">post</button>
       </div>  
@@ -191,6 +190,7 @@ export default {
     }
     .descrizione {
         margin-top: 10px;
+        color: black;
     }
     
     .like{
@@ -225,6 +225,7 @@ export default {
       max-height: 200px; /* Imposta l'altezza massima del container dei commenti */
       overflow-y: auto;
       width: 100%;
+      color: black;
     }
     .com2 {
          display: flex;
@@ -267,4 +268,5 @@ export default {
     .cambiacolore:hover{
       color: red;
     }
+
   </style>
