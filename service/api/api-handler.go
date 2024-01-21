@@ -18,6 +18,7 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.PUT("/user/:idUser/banned/:bannedUserId", rt.wrap(rt.putBan))
 	rt.router.DELETE("/user/:idUser/banned/:bannedUserId", rt.wrap(rt.deleteBan))
 	rt.router.POST("/user/:idUser/images", rt.wrap(rt.postImage))
+	rt.router.GET("/user/:idUser/images", rt.wrap(rt.getAllImage))
 	rt.router.DELETE("/user/:idUser/images/:imageId", rt.wrap(rt.deleteImage))
 	rt.router.GET("/user/:idUser/images/:imageId", rt.wrap(rt.getImage))
 	rt.router.PUT("/user/:idUser/images/:imageId/like/:likeUserId", rt.wrap(rt.putLike))

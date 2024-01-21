@@ -473,6 +473,33 @@ paths:
       security:
         - bearerAuth: []
 
+    get:
+      summary: Ritorna le immagini
+      description: l'operazione ritorna tutte le immagini di un utente
+      tags: ["images"]
+      operationId: getImages
+      responses:
+        "200":
+          description: Successo, accesso alle immagini
+          content: 
+            application/json:
+              schema:
+                description: array di immagini
+                type: array
+                minItems: 0
+                maxItems: 999
+                items:
+                  $ref: "#/components/schemas/image"
+        "401":
+          description: Errore, non autorizzato!
+        "404":
+          description: Errore, immagine non trovata!
+        "500":
+          description: Errore, c'e' un errore con il db!
+      security:
+        - bearerAuth: []  
+  
+
   /user/{idUser}/images/{imageId}:
     parameters: 
       - name: idUser

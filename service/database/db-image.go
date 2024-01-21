@@ -46,3 +46,34 @@ func (db *appdbimpl) GetImage(requester User, iId Image) (Image, error) {
 	return image, err
 
 }
+
+// GetImage() recupera tutte le immagini
+func (db *appdbimpl) GetAllImage(requester User) ([]Image, error) {
+
+	var images []Image
+	//commenti!!!!!!!!!
+
+	rows, err := db.c.Query(" SELECT *  from image WHERE author = ?", requester.UId)
+
+	if err != nil {
+		// Errore nell'esecuzione della Query
+		return nil, err
+	}
+	// uso defer per ritardare l'operazione rows.close() fino alla fine della funzione
+	defer rows.Close()
+
+	for rows.Next() {
+		var image Image
+		err := rows.Scan(&image.IId, &image.Author, &image.Descrizione, &image.Data)
+		if err != nil {
+			return nil, err
+		}
+		images = append(images, image)
+	}
+
+	if rows.Err() != nil {
+		return nil, err
+	}
+
+	return images, nil
+}

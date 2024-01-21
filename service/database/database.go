@@ -78,6 +78,7 @@ type AppDatabase interface {
 	PostImage(i Image) (int, error)
 	DeleteImage(author User, iId Image) error
 	GetImage(requester User, iId Image) (Image, error)
+	GetAllImage(requester User) ([]Image, error)
 
 	// FILE db-follow.go
 	FollowUser(user User, userToFollow User) error
