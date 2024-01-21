@@ -1,5 +1,19 @@
 <script>
   export default {
+    data: function() {
+		  return {
+        token: localStorage.getItem('token')
+      }
+    },
+
+    methods:{
+      toHome(){
+        this.$router.replace("/users/"+localStorage.getItem('token')+"/following/")
+      },
+      toSearch(){
+        this.$router.replace("/search")
+      }
+    }
 
   };
 </script>
@@ -8,12 +22,12 @@
   <div class="id">
       <div class="top">
         <div>
-          <h1 class="titolo">WASAPHOTO</h1>
+          <h1 @click="toHome()" class="titolo">WASAPHOTO</h1>
         </div>
         <div style="display: flex; align-items: center;">
           <form action="/ProfileList" >
             <input class="input" type="text" placeholder="cerca utenti">
-            <button class="cerca" @click="" style="padding: 2px 8px; background-color: #734f59; color: #fff; border: none; cursor: pointer;">find</button>
+            <button class="cerca" @click="toSearch()" style="padding: 2px 8px; background-color: #734f59; color: #fff; border: none; cursor: pointer;">find</button>
           </form>
         </div>
       </div>

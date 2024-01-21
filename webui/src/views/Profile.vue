@@ -43,16 +43,6 @@ export default {
           desc: 'Descrizione del post 2',
           url: 'https://www.laziostylestore.com/images/lazio/products/small/LZ22A03_9.webp'
         },
-        {
-          autore: 'Autore2',
-          like: [1,5,45,71,5,33,8],
-          commenti: ['Commento 3', 'Commento 4'],
-          data: 'Data del post 2',
-          iId: 1,
-          desc: 'Descrizione del post 2',
-          url: 'https://www.laziostylestore.com/images/lazio/products/small/LZ22A03_9.webp'
-        },
-
       ],
       
       username: "Username",
@@ -65,6 +55,7 @@ export default {
       seguito: false, //usati da utente che visita il profilo che non siamo noi
       bannato: false, //usati da utente che visita il profilo che non siamo noi
       banned: false,
+
     }
   },
     components: {
@@ -140,7 +131,7 @@ export default {
       async profileInfos(){ //usato al caricamento della pagina
         try{
           //prelevo le informazioni
-          let response = await this.$axios.get("/users/"+this.$route.params.id);
+          let response = await this.$axios.get("/users/"+this.$route.params.idUser);
 
           if (response.status === 401 || response.status === 500){
              console.log("Errore, informazioni non recuperabili")
