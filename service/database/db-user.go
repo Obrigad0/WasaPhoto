@@ -116,6 +116,37 @@ func (db *appdbimpl) GetStream(uId User) ([]Image, []User, error) {
 	return image, users, nil
 }
 
+// Funzione che torna una lista di utenti cercati per nome utente
+func (db *appdbimpl) GetSearchUser(query User) ([]User, error) {
+
+	var users []User
+
+	rows, err := db.c.Query(" SELECT * from user WHERE name LIKE ? AND uId NOT IN (SELECT banner FROM ban WHERE banned = ?)", query.Name, query.UId)
+
+	if err != nil {
+		// Errore nell'esecuzione della Query
+		return nil, err
+	}
+	// uso defer per ritardare l'operazione rows.close() fino alla fine della funzione
+	defer rows.Close()
+
+	// Scorrimento delle righe restituite dalla query
+	for rows.Next() {
+		var user User
+		err := rows.Scan(&user.UId, &user.Name)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	if rows.Err() != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
 /*
 
  IdsTOUsers() trasforma un array di integer che rappresentano id di utenti in un array di utenti

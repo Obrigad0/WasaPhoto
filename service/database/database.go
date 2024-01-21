@@ -72,6 +72,7 @@ type AppDatabase interface {
 	CreateUser(nome User) (int, error)
 	Access(nome User) (int, error)
 	GetStream(uId User) ([]Image, []User, error)
+	GetSearchUser(query User) ([]User, error)
 
 	// FILE db-image.go
 	PostImage(i Image) (int, error)

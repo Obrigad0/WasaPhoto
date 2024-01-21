@@ -22,6 +22,8 @@ tags:
     description: Gestione dei commenti delle immagini dell'utente
   - name: "like"
     description: Gestione dei like delle immagini dell'utente
+  - name: "search"
+    description: Gestione ricerca utenti
 
 components: 
     schemas:
@@ -133,6 +135,48 @@ components:
 
 paths:
   #
+  /user:
+    get:
+      summary: Array di utenti cercati per nome utente
+      operationId: searchUsers
+      tags: ["search"]
+      description: Restituisce una lista di utenti il cui nome inizia con il testo inserito dall'utente. Es, se l'utente inserisce 'Flavio', la risposta include 'Flavio1', 'Flavio2', etc...
+      parameters:
+      - name: queryNomeUtente
+        in: path
+        required: true
+        description: testo contenete un nome utente cercato dall'utente
+        schema:
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: "Bosnia71"
+
+      responses: 
+        "200":
+          description: Successo, ricevuto l'array degli utenti.
+          content:
+            application/json:
+              schema:
+                description: array di utenti
+                type: array
+                minItems: 0
+                maxItems: 999
+                items:
+                  $ref: "#/components/schemas/user"
+        "401":
+          description: Utente non autorizzato all'operazion o token mancante
+        "404":
+          description: Errore, utente non trovato!
+        "500":
+          description: Errore interno al server!
+
+    security:
+      - bearerAuth: []
+
+
+
   /user/{idUser}:
 
     parameters: 

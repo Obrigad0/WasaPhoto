@@ -8,6 +8,7 @@ import (
 func (rt *_router) Handler() http.Handler {
 
 	rt.router.POST("/session", rt.wrap(rt.postSession))
+	rt.router.GET("/user", rt.wrap(rt.getSearchUser))
 	rt.router.PUT("/user/:idUser", rt.wrap(rt.putUsername))
 	rt.router.GET("/user/:idUser", rt.wrap(rt.getUser))
 	rt.router.GET("/user/:idUser/following/", rt.wrap(rt.getStream))
