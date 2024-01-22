@@ -52,7 +52,9 @@ export default {
           }
     this.users = response.data.utente != null ? response.data.utente : [] //attenzione da cambiare
   },
-
+  mounted(){
+    this.query = this.$route.query.searchValue || '';
+  }
 };
 
 </script>
@@ -64,7 +66,8 @@ export default {
                   :key = "index"
                   :nome = "users.username"
                   :follower = "users.follower"
-                  :following = "users.following">
+                  :following = "users.following"
+                  :uId = "null">
                 </ProfilePreview>
         </div>
     </PageComponents> 

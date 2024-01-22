@@ -117,6 +117,8 @@ export default {
             },
             
         ],
+        nome: 'giusepe',
+
         }
     },
 
@@ -144,7 +146,9 @@ export default {
                 :data="post.data"
                 :iId="post.iId"
                 :desc="post.desc"
-                :url="post.url">
+                :url="post.url"
+                :isProfile="false"
+                :username="nome">
           </Image>
         </div>
         <div class="sinistra">

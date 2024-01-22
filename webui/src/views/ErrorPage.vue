@@ -12,7 +12,7 @@ export default {
     },
 
     toHome(){
-        this.$router.replace("/users/"+localStorage.getItem('token')+"/following/")
+        this.$router.replace("/home")
     },
 }
 </script>
@@ -21,7 +21,7 @@ export default {
     <PageComponents>
         <div class="errore">
              <img src="../assets/images/ErroR.jpg" title="Sfortunatamente non riusciamo a gestirlo...">
-             <p style="color: red;">C'è stato un errore!</p>
+             <p style="color: red;">Oops c'è stato un errore!</p>
              <p style="font-size: 30px;">Prova a tornare alla pagina <u class="uho" @click="toHome()">principale</u></p>
         </div>
     </PageComponents> 

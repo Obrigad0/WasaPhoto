@@ -8,10 +8,10 @@
 
     methods:{
       toHome(){
-        this.$router.replace("/users/"+localStorage.getItem('token')+"/following/")
+        this.$router.replace("/home")
       },
       toSearch(){
-        this.$router.replace("/search")
+        this.$router.push({ path: '/search', query: { searchValue: this.username } });
       }
     }
 
@@ -25,10 +25,8 @@
           <h1 @click="toHome()" class="titolo">WASAPHOTO</h1>
         </div>
         <div style="display: flex; align-items: center;">
-          <form action="/ProfileList" >
-            <input class="input" type="text" placeholder="cerca utenti">
+            <input class="input" type="text" placeholder="cerca utenti" v-model="username">
             <button class="cerca" @click="toSearch()" style="padding: 2px 8px; background-color: #734f59; color: #fff; border: none; cursor: pointer;">find</button>
-          </form>
         </div>
       </div>
       <div class="box" style="height: 84vh; background-color: white;">

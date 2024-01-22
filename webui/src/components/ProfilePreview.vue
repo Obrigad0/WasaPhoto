@@ -6,14 +6,19 @@ export default {
     };
   },
 
-  props: ["nome","follower","following"], 
+  props: ["nome","follower","following","uId"], 
 
+  methods: {
+    goToProfile(){
+      this.$router.replace("/profile/"+this.uId)
+    }
+  }
 }
 </script>
 
 <template>
     <div class="profile">        
-      <div><p class="usnme">{{ nome }}</p></div>
+      <div><p class="usnme" @click="goToProfile()">{{ nome }}</p></div>
       <div><p> Follower: {{ follower }}  Following: {{ following }}</p></div>
     </div>
 </template>

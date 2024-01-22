@@ -13,12 +13,13 @@ export default {
         errore: "",
         token: null,
         coloreCommento: "black",
-
+        isP: true,
+        nomeAutore: "",
     };
     
   },
 
-  props: ['autore','like','commenti',"data","iId","desc","url"], //,"token" ??
+  props: ['autore','like','commenti',"data","iId","desc","url","isProfile","username"], //,"token" ??
 
   methods: {
     async toggleLike() {  //funzione
@@ -92,8 +93,10 @@ export default {
         //poi dovrei cambiare il js nel html
         this.likes = this.like
         this.comments = this.commenti
-        this.imageUrl = this.url
+        this.imageUrl = this.url// LEVARE e scommentare this.imageurl...
         console.log(this.comments)
+        this.isP = this.isProfile
+        this.nomeAutore = this.username
         //
         this.descrizione = this.desc
         //this.imageUrl = __API_URL__+ "/user/"+this.autore+"/images/"+this.iId
@@ -113,6 +116,10 @@ export default {
       }
         var commento = document.getElementById("comP");
         commento.style.color = "red";
+    },
+
+    goToProfile(){
+      this.$router.replace("/profile/"+this.autore)
     }
   },
 
@@ -125,6 +132,7 @@ export default {
 
 <template>
   <div class="principale">
+    <div v-if="!isP" @click="">{{this.nomeAutore}}</div>
     <div v-if="post && !likeP"  class="post">
       <img :src="imageUrl"  class="immagine">
       <div class="feedback">

@@ -193,7 +193,9 @@ export default {
             :data="post.data"
             :iId="post.iId"
             :desc="post.desc"
-            :url="post.url">
+            :url="post.url"
+            :isProfile="true"
+            :username="null">
         </Image>
     </div>
   </PageComonents>
