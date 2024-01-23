@@ -16,7 +16,7 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 	w.Header().Set("Content-Type", "application/json")
 
 	// nome inserito dall'utente
-	var username string
+	var username User
 	err := json.NewDecoder(r.Body).Decode(&username)
 
 	if err != nil {
@@ -26,7 +26,7 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// controllo se l'utente esiste
 	var uId int
-	uId, err2 := rt.db.Access(User{Name: username}.ToDatabase())
+	uId, err2 := rt.db.Access(User{Name: username.Name}.ToDatabase())
 
 	if err2 != nil {
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
@@ -35,7 +35,7 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 
 	if uId < 0 {
 		// Errore, l'utente non esiste va creato!
-		uId, err := rt.db.CreateUser(User{Name: username}.ToDatabase())
+		uId, err := rt.db.CreateUser(User{Name: username.Name}.ToDatabase())
 		// la funzione mi torna anche l'id dell'utente creato
 		if err != nil || uId < 0 {
 			http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)

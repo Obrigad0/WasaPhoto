@@ -15,10 +15,11 @@ export default {
       console.log("errore:"+this.errore);
 
       try {
-        //Richiesta POST al path /session per l'accesso
+
         let response = await this.$axios.post("/session",{
 					name: this.userName.trim()
 				});
+
         //memorizziamo il token 
         localStorage.setItem("token",response.data.userId);
         //ci spostiamo nella pagina principale di wasaphoto, ovvero la pagina dello stream dell'utente
