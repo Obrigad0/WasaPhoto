@@ -36,9 +36,14 @@ func (rt *_router) getStream(w http.ResponseWriter, r *http.Request, ps httprout
 
 	w.WriteHeader(http.StatusOK)
 
+	// Prelevo tutti i commenti di tutte le immagini
+	for i := 0; i < len(image); i++ {
+		image[i].Comments, err = rt.db.GetComments(Image{IId: image[i].IId}.ToDatabase())
+	}
+
 	combinedArray := map[string]interface{}{
-		"images": image,
-		"users":  user,
+		"utente":         user,
+		"ultimaImmagine": image,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

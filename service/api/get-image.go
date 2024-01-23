@@ -52,6 +52,9 @@ func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httproute
 		return
 	}
 
+	// Prelevo tutti i commenti di tutte le immagini
+	image.Comments, err = rt.db.GetComments(Image{IId: image.IId}.ToDatabase())
+
 	w.Header().Set("Content-Type", "application/json")
 
 	// invio le informazioni dell'immagine

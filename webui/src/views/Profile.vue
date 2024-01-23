@@ -7,6 +7,7 @@ import LoadImage from '@/components/LoadImage.vue';
 export default {
   data: function() {
 		return {
+      modifica: true,
       arrayDiPost: [
         {
           autore: 'Autore1',
@@ -65,6 +66,7 @@ export default {
       followingN: 0,
       follower: [],
       following: [],
+      banList: [],
       images: [],
       errore: null,
       seguito: false, //usati da utente che visita il profilo che non siamo noi
@@ -100,8 +102,17 @@ export default {
         // la funzione e' utilizzata per mostrare certi elementi solo all'utente proprietario della pagian
       },
 
-      cambiaUsername() { 
-
+      async cambiaUsername() { 
+          let newUN = document.getElementById('username')
+          if(newUN.length > 3 ){
+            try{
+              await this.$axios.put("/user/"+this.$route.params.id,{name: this.newUN,})
+            }catch(e){
+              this.errore = e.toString();
+            }
+          }else{
+            console.log("Errore stringa troppo corta")
+          }
       },
         
       isFollowed(){
@@ -128,14 +139,16 @@ export default {
         }
       },
         
-      async ban(){  //usato da terzo
+      async ban(){  
         this.bannato = !this.bannato  //da levare
         try{
           console.log("cliccato banna") 
           if(this.bannato){
             //leva il ban
+            await this.$axios.delete("/user/"+localStorage.getItem('token')+"/banned/"+ this.$route.params.idUser);
           }else{
             //banno l'utente
+            await this.$axios.put("/user/"+localStorage.getItem('token')+"/banned/"+ this.$route.params.idUser);
           }
           //this.bannato = !this.bannato
         }catch(e){
@@ -144,38 +157,64 @@ export default {
       },
       
       
-      async profileInfos(){ //usato al caricamento della pagina
+      async profileInfos(){ // usato al caricamento della pagina
         try{
           //prelevo le informazioni
-          let response = await this.$axios.get("/users/"+this.$route.params.idUser);
+          let response = await this.$axios.get("/user/"+this.$route.params.idUser);
 
           if (response.status === 401 || response.status === 500){
              console.log("Errore, informazioni non recuperabili")
              this.banned = true
              //mi sposto nella pagina errorpage
+             this.$router.replace("/Error")
              return
           }
 
-          this.username = response.data.username
+          this.username = response.data.name
           //controlla se l'array ricevuto e' null, se si viene iserito in follower un array vuoto
           this.follower = response.data.follower != null ? response.data.follower : []
           this.following = response.data.following != null ? response.data.following : []
+          //qua fare get all images
           this.images = response.data.images != null ? response.data.images : []
+
           //controllo se l'array e' null, se si inserisco 0 in followerN, altrimenti inserisco la lunghezza dell'array
           this.followerN = response.data.follower != null ? response.data.follower.length : 0
           this.followingN = response.data.following != null ? response.data.following.length : 0
+
+          //usata solo se e' il nostro profilo
+          this.banList = response.data.banList != null ? response.data.banList: [] 
+
           //controllo se l'utente segue l'utente visitato
           this.seguito =  isFollowed();
 
+          //faccio una chiamata al db per il mio profilo dove prendo i miei ban e vedo se ho bannato questo utente.
+          if(this.$route.params.idUser !== localStorage.getItem("token")){
+              let response2 = await this.$axios.get("/user/"+localStorage.getItem("token"));
+
+              if (response2.status === 401 || response2.status === 500){
+                console.log("Errore, informazioni non recuperabili")
+                //mi sposto nella pagina errorpage
+                this.$router.replace("/Error")
+                return
+              }
+
+              if(response2.data.banList.includes(this.$route.params.idUser)){
+                this.bannato = true
+                //testoBottoneBan() ??
+              }
+
+          }
 
         }catch(e){
            //mi sposto nella pagina errorpage
-
           this.banned = true
         }
 
       }, 
       
+      unm(){
+        this.modifica = !this.modifica
+      }
       
 
   }
@@ -189,15 +228,16 @@ export default {
   <PageComonents> 
     <div class="box" style="height: 13vh;">
         <div class="titoli">
-              <h1 id="username">{{username}}</h1>
+              <h1 v-if="!modifica" id="username">{{username}}</h1>
+              <input id="nuovoUsername" v-if="modifica" class="input" type="text" placeholder="inserisci nuovo username">
+              <button @click="cambiaUsername()" v-if="modifica" >invia</button>
         </div>
         <div class="titoli2">
               <p style="color: black; margin-right: 10px;">follower: {{followerN}}     followed: {{followingN}}</p>
               <button @click="follow()" v-if="!itsMe()" class="operazioni">{{testoBottoneFollow()}}</button>
               <button @click="ban()" v-if="!itsMe()" class="operazioni">{{testoBottoneBan()}}</button>
-              <button @click="" v-if="itsMe()" class="operazioni">BANLIST</button>
-              <button @click="" v-if="itsMe()" class="operazioni">Username</button>
-              <button @click="" v-if="itsMe()" class="operazioni">Posta Foto</button>
+              <!--<button @click="" v-if="itsMe()" class="operazioni">BANLIST</button>-->
+              <button  @click="unm()" v-if="itsMe()" class="operazioni">Username</button>
         </div>
     </div>
     <div class="box2" style="height: 72vh;">
