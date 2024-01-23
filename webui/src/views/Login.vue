@@ -17,12 +17,12 @@ export default {
       try {
         //Richiesta POST al path /session per l'accesso
         let response = await this.$axios.post("/session",{
-					userId: this.userName.trim()
+					name: this.userName.trim()
 				});
         //memorizziamo il token 
         localStorage.setItem("token",response.data.userId);
         //ci spostiamo nella pagina principale di wasaphoto, ovvero la pagina dello stream dell'utente
-        this.$router.replace("/user/" + localStorage.getItem('token') + "/following/")
+        this.$router.replace("/home")
 
         //this.$emit('updatedLoggedChild',true)
         console.log("Tutto ok, loggato");
@@ -40,7 +40,7 @@ export default {
     //verifica se l'utente e' gia loggato
 		if (localStorage.getItem('token')){
       //se gia loggato non puo rimanere nella pagina di login e viene spostato alla sua home
-      this.$router.replace("/user/" + localStorage.getItem('token') + "/following/")
+      this.$router.replace("/home")
 		}
 	},
 };
