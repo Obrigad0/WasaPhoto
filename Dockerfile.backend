@@ -1,0 +1,12 @@
+FROM golang:1.19.1 AS backend_compiler
+RUN mkdir /Executable/
+WORKDIR /GoFiles/
+COPY . .
+RUN go build -o /Executable/ ./cmd/webapi
+
+### Create final container
+FROM debian:stable
+WORKDIR /executable_backend/
+COPY --from=backend_compiler /Executable/ .
+EXPOSE 3000
+CMD ["./webapi"]
