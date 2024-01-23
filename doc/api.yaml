@@ -143,10 +143,10 @@ paths:
       description: Restituisce una lista di utenti il cui nome inizia con il testo inserito dall'utente. Es, se l'utente inserisce 'Flavio', la risposta include 'Flavio1', 'Flavio2', etc...
       parameters:
       - name: queryNomeUtente
-        in: path
-        required: true
+        in: query
         description: testo contenete un nome utente cercato dall'utente
         schema:
+          description: nome utente
           type: string
           pattern: '^.*?$'
           minLength: 3
@@ -172,8 +172,8 @@ paths:
         "500":
           description: Errore interno al server!
 
-    security:
-      - bearerAuth: []
+      security:
+        - bearerAuth: []
 
 
 

@@ -51,7 +51,7 @@ func (db *appdbimpl) GetImage(requester User, iId Image) (Image, error) {
 func (db *appdbimpl) GetAllImage(requester User) ([]Image, error) {
 
 	var images []Image
-	//commenti!!!!!!!!!
+	// commenti!!!!!!!!!
 
 	rows, err := db.c.Query(" SELECT *  from image WHERE author = ?", requester.UId)
 

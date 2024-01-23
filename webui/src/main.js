@@ -8,6 +8,10 @@ import LoadingSpinner from './components/LoadingSpinner.vue'
 import Image from  './components/Image.vue'
 import PageComponents from  './components/PageComponents.vue'
 import ProfilePreview from  './components/ProfilePreview.vue'
+import CommentsPreview from  './components/CommentsPreview.vue'
+import LoadImage from  './components/LoadImage.vue'
+
+
 //import from './components/.vue'
 
 import './assets/dashboard.css'
@@ -21,6 +25,10 @@ app.component("LoadingSpinner", LoadingSpinner);
 app.component("Image",Image);
 app.component("PageComponents",PageComponents);
 app.component("ProfilePreview",ProfilePreview);
+app.component("CommentsPreview",CommentsPreview);
+app.component("LoadImage",LoadImage);
+
+
 //app.component("",);
 
 app.use(router)

@@ -1,6 +1,7 @@
 <script>
 import PageComonents from '@/components/PageComponents.vue';
 import Image from '@/components/Image.vue';
+import LoadImage from '@/components/LoadImage.vue';
 
 
 export default {
@@ -10,16 +11,36 @@ export default {
         {
           autore: 'Autore1',
           like: [1,3,4,5,6,7,7,8],
-          commenti: ['Commento 1', 'Commento 2'],
+          commenti: [
+            { testo: 'Commento 1', cId: 1, uId: 101 },
+            { testo: 'Commento 2', cId: 2, uId: 102 },
+            { testo: 'Commento 2', cId: 2, uId: 102 },
+            { testo: 'Commento 2', cId: 2, uId: 102 }
+          ],
           data: '',
           iId: 1,
           desc: 'Descrizione del post 1',
-          url: 'https://www.laziostylestore.com/images/lazio/products/large/LZ22A03_16.webp'
+          url: 'https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/bltc1d5f3f76cbaa905/64ba66893452d45bae678aca/lazio_HD.jpg?auto=webp&format=pjpg&width=3840&quality=60'
         },
         {
           autore: 'Autore2',
           like: [1,5,45,71,5,33,8],
-          commenti: ['Commento 3', 'Commento 4'],
+          commenti: [
+            { testo: 'Commento 1', cId: 1, uId: 101 },
+            { testo: 'Commento 2', cId: 2, uId: 102 }
+          ],
+          data: 'Data del post 2',
+          iId: 1,
+          desc: 'Descrizione del post 2',
+          url: 'https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/blt214f00e4cf476695/643a3a34ebdc0d4ea06f21e3/Lazio.jpg?auto=webp&format=pjpg&width=3840&quality=60'
+        },
+        {
+          autore: 'Autore2',
+          like: [1,5,45,71,5,33,8],
+          commenti: [
+            { testo: 'Commento 1', cId: 1, uId: 101 },
+            { testo: 'Commento 2', cId: 2, uId: 102 }
+          ],
           data: 'Data del post 2',
           iId: 1,
           desc: 'Descrizione del post 2',
@@ -28,20 +49,14 @@ export default {
         {
           autore: 'Autore2',
           like: [1,5,45,71,5,33,8],
-          commenti: ['Commento 3', 'Commento 4'],
+          commenti: [
+            { testo: 'Commento 1', cId: 1, uId: 101 },
+            { testo: 'Commento 2', cId: 2, uId: 102 }
+          ],
           data: 'Data del post 2',
           iId: 1,
           desc: 'Descrizione del post 2',
-          url: 'https://www.laziostylestore.com/images/lazio/products/small/LZ22A03_9.webp'
-        },
-        {
-          autore: 'Autore2',
-          like: [1,5,45,71,5,33,8],
-          commenti: ['Commento 3', 'Commento 4'],
-          data: 'Data del post 2',
-          iId: 1,
-          desc: 'Descrizione del post 2',
-          url: 'https://www.laziostylestore.com/images/lazio/products/small/LZ22A03_9.webp'
+          url: 'https://cdn.studenti.stbm.it/images/2022/10/07/ricerca-sulla-regione-lazio-orig.jpeg'
         },
       ],
       
@@ -61,6 +76,7 @@ export default {
     components: {
       PageComonents,
       Image,
+      LoadImage,
     },
 
   created() { 
@@ -80,7 +96,7 @@ export default {
       itsMe(){
         //controlla se l'utente del profilo visitato e' l'utente proprietario del profilo
         //return localStorage.getItem('token') === this.$route.params.id
-        return false // da levare
+        return true // da levare
         // la funzione e' utilizzata per mostrare certi elementi solo all'utente proprietario della pagian
       },
 
@@ -197,6 +213,7 @@ export default {
             :isProfile="true"
             :username="null">
         </Image>
+        <LoadImage v-if="itsMe()"></LoadImage>
     </div>
   </PageComonents>
 </template>

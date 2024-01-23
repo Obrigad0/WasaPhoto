@@ -6,7 +6,7 @@ import Login from '../views/Login.vue'
 //import PostImagePage from '../views/PostImagePage.vue'
 import Profile from '../views/Profile.vue'
 //import ProfileList from '../views/ProfileList.vue'
-import Search from '../views/ProfileList.vue'
+import Search from '../views/ProfilesList.vue'
 
 
 const router = createRouter({

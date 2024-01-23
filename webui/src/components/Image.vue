@@ -1,4 +1,7 @@
 <script>
+
+import CommentsPreview from '@/components/CommentsPreview.vue';
+
 export default {
   data() {
     return {
@@ -17,6 +20,9 @@ export default {
         nomeAutore: "",
     };
     
+  },
+  components: {
+    CommentsPreview,
   },
 
   props: ['autore','like','commenti',"data","iId","desc","url","isProfile","username"], //,"token" ??
@@ -57,7 +63,8 @@ export default {
       try {
           await this.$axios.post("/user/"+ this.autore +"/images/"+this.iId+"/comments/", {text: comment}) 
           if (this.comment.trim() !== '') {
-            this.comments.push(this.comment);
+            let com = { testo: this.comment, cId: 1, uId: "arrizzabalga" } //cambiare
+            this.comments.push(com);
             this.comment = '';
           }
       }catch (e){
@@ -65,7 +72,8 @@ export default {
       }
       
       if (this.comment.trim() !== '') { //LEVARE!!!
-            this.comments.push(this.comment);
+        let com = { testo: this.comment, cId: 1, uId: "arrizzabalga" } //cambiare
+            this.comments.push(com);
             this.comment = '';
       }
     },
@@ -91,10 +99,11 @@ export default {
         //funzione
       try{
         //poi dovrei cambiare il js nel html
+        this.token = localStorage.getItem('token')
         this.likes = this.like
         this.comments = this.commenti
         this.imageUrl = this.url// LEVARE e scommentare this.imageurl...
-        console.log(this.comments)
+        //console.log(this.comments)
         this.isP = this.isProfile
         this.nomeAutore = this.username
         //
@@ -155,7 +164,15 @@ export default {
     </div>
     <div v-if="!post" class="commenti">
       <div  class="testo">
-        <p  id="comP" class="cambiacolore" v-for="(comments, index) in comments" :key="index" @click="removeComment()">{{ comments }}</p>
+        <CommentsPreview v-for="(commentoa, index) in comments"
+          :key="index"
+          :uId="commentoa.uId"
+          :cId="commentoa.cId"
+          :testo="commentoa.testo"
+          :iId="this.iId"
+          :autore="this.autore">
+        </CommentsPreview>
+        <!-- <p  id="comP" class="cambiacolore" v-for="(comments, index) in comments" :key="index" @click="removeComment()">{{ comments }}</p> -->
       </div>
       <div class="com2">
         <button @click="toComment" >post</button>
