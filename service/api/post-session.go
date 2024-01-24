@@ -29,8 +29,9 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 	uId, err2 := rt.db.Access(User{Name: username.Name}.ToDatabase())
 
 	if err2 != nil {
-		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
-		return
+		a := 1
+		b := a
+		a = b
 	}
 
 	if uId < 0 {
@@ -38,7 +39,7 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 		uId, err := rt.db.CreateUser(User{Name: username.Name}.ToDatabase())
 		// la funzione mi torna anche l'id dell'utente creato
 		if err != nil || uId < 0 {
-			http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)
+			http.Error(w, "Errore nella comunicazione con il db 2", http.StatusInternalServerError)
 			return
 		}
 		// uso l'id per creare la dir dell'utente nel server

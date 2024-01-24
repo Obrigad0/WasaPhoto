@@ -75,7 +75,7 @@ func (db *appdbimpl) Access(nome User) (int, error) {
 	err := db.c.QueryRow("SELECT uId FROM user WHERE name = ?", nome.Name).Scan(&uId)
 	if err != nil {
 		// Errore nell'esecuzione della Query
-		return -1, err
+		return -1, nil
 	}
 	// nessun Errore ritorno la tupla utente, errore (nil)
 	return uId, nil
