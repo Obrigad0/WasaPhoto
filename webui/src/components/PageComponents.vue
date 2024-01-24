@@ -12,9 +12,21 @@
       },
       toSearch(){
         this.$router.push({ path: '/search', query: { searchValue: this.username } });
+      },
+
+      logout(){
+          localStorage.removeItem('token')
+          this.$router.replace("/login")
+
+      }
+    },
+
+    mounted(){
+      if(localStorage.getItem("token")<=0){
+        console.log("Non sei loggato!!!")
+        this.$router.replace("/login")
       }
     }
-
   };
 </script>
   
@@ -24,7 +36,9 @@
         <div>
           <h1 @click="toHome()" class="titolo">WASAPHOTO</h1>
         </div>
+        
         <div style="display: flex; align-items: center;">
+            <button @click="logout()">logout</button>
             <input class="input" type="text" placeholder="cerca utenti" v-model="username">
             <button class="cerca" @click="toSearch()" style="padding: 2px 8px; background-color: #734f59; color: #fff; border: none; cursor: pointer;">find</button>
         </div>

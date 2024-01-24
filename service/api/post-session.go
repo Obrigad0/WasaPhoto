@@ -56,7 +56,7 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 	// tutto fatto!
 	// invio l'id all'utente
-	w.WriteHeader(http.StatusAccepted)
+	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(uId)
 	if err != nil {
 		http.Error(w, "Errore nella richiesta json", http.StatusBadRequest)

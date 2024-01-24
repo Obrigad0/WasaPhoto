@@ -20,8 +20,10 @@ export default {
 					name: this.userName.trim()
 				});
 
+        console.log("id inviato dal db:"+response.data);
+
         //memorizziamo il token 
-        localStorage.setItem("token",response.data.userId);
+        localStorage.setItem("token",response.data);
         //ci spostiamo nella pagina principale di wasaphoto, ovvero la pagina dello stream dell'utente
         this.$router.replace("/home")
 
@@ -41,6 +43,7 @@ export default {
     //verifica se l'utente e' gia loggato
 		if (localStorage.getItem('token')){
       //se gia loggato non puo rimanere nella pagina di login e viene spostato alla sua home
+      console.log("sei gia loggato!!");
       this.$router.replace("/home")
 		}
 	},
