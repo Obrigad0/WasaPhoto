@@ -27,6 +27,7 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// controllo se l'utente esiste
 	var uId int
+	var contenitore int
 	uId, err2 := rt.db.Access(User{Name: username.Name}.ToDatabase())
 
 	if err2 != nil {
@@ -47,15 +48,19 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 		// /wp/id
 		// /wp/id/image
 		path := filepath.Join(cartellaPrincipale, strconv.Itoa(uId))
-		err2 := os.MkdirAll(filepath.Join(path, "image"), os.ModePerm)
+		err2 := os.MkdirAll(filepath.Join(path, "imgUs"), os.ModePerm)
 		if err2 != nil {
 			http.Error(w, "Errore nella creazione della dir dell'utente", http.StatusInternalServerError)
 			return
 		}
+		contenitore = uId
 
 	}
 	// tutto fatto!
 	// invio l'id all'utente
+	if uId == -1 {
+		uId = contenitore
+	}
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(uId)
 	if err != nil {

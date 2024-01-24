@@ -18,7 +18,12 @@
           localStorage.removeItem('token')
           this.$router.replace("/login")
 
-      }
+      },
+
+      toMyProfile(){
+        this.$router.replace("/profile/"+localStorage.getItem('token'))
+
+      },
     },
 
     mounted(){
@@ -27,6 +32,7 @@
         this.$router.replace("/login")
       }
     }
+    
   };
 </script>
   
@@ -39,6 +45,7 @@
         
         <div style="display: flex; align-items: center;">
             <button @click="logout()">logout</button>
+            <button @click="toMyProfile()">il mio profilo</button>
             <input class="input" type="text" placeholder="cerca utenti" v-model="username">
             <button class="cerca" @click="toSearch()" style="padding: 2px 8px; background-color: #734f59; color: #fff; border: none; cursor: pointer;">find</button>
         </div>
