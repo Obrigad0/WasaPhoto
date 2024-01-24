@@ -39,11 +39,14 @@ package api
 import (
 	"errors"
 	"net/http"
+	"path/filepath"
 
 	"github.com/Obrigad0/WasaPhoto/service/database"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
 )
+
+var cartellaPrincipale = filepath.Join("/tmp", "wp")
 
 // Config is used to provide dependencies and configuration to the New function.
 type Config struct {

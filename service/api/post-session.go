@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
@@ -43,11 +44,10 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 			return
 		}
 		// uso l'id per creare la dir dell'utente nel server
-		// /user/id
-		// /user/id/image
-		// FORSE CAMBIARE
-		path := "/user/" + strconv.Itoa(uId) + "/image"
-		err2 := os.MkdirAll(path, os.ModePerm)
+		// /wp/id
+		// /wp/id/image
+		path := filepath.Join(cartellaPrincipale, strconv.Itoa(uId))
+		err2 := os.MkdirAll(filepath.Join(path, "image"), os.ModePerm)
 		if err2 != nil {
 			http.Error(w, "Errore nella creazione della dir dell'utente", http.StatusInternalServerError)
 			return
