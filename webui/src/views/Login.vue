@@ -58,7 +58,7 @@ export default {
       <h1 class="titolo">WASAPHOTO</h1>
       <div class="form">
         <input type="text" placeholder="Inserisci username" class="input" v-model="userName" maxlength="16" minlength="3"/>
-        <button class="login" @click="login" :disabled="userName == null || userName.length > 16 || userName.length < 3 || userName.trim().length < 3">Login</button>
+        <button class="login" @click="login()" :disabled="userName == null || userName.length > 16 || userName.length < 3 || userName.trim().length < 3">Login</button>
         <p class="messaggioErrore" v-if="errore">{{ errore }}</p>
       </div>
     </div>

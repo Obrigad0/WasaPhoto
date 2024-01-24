@@ -5,7 +5,7 @@ import router from './router'
 import axios from './services/axios.js';
 import ErrorMsg from './components/ErrorMsg.vue'
 import LoadingSpinner from './components/LoadingSpinner.vue'
-import Image from  './components/Image.vue'
+import ImageStructure from  './components/ImageStructure.vue'
 import PageComponents from  './components/PageComponents.vue'
 import ProfilePreview from  './components/ProfilePreview.vue'
 import CommentsPreview from  './components/CommentsPreview.vue'
@@ -22,7 +22,7 @@ app.config.globalProperties.$axios = axios;
 
 app.component("ErrorMsg", ErrorMsg);
 app.component("LoadingSpinner", LoadingSpinner);
-app.component("Image",Image);
+app.component("ImageStructure",ImageStructure);
 app.component("PageComponents",PageComponents);
 app.component("ProfilePreview",ProfilePreview);
 app.component("CommentsPreview",CommentsPreview);

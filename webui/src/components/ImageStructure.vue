@@ -19,6 +19,7 @@ export default {
         isP: true,
         nomeAutore: "",
         nomiLike: [],
+        eliminato: false,
     };
     
   },
@@ -26,7 +27,7 @@ export default {
     CommentsPreview,
   },
 
-  props: ['autore','like','commenti',"data","iId","desc","isProfile","username"],
+  props: ['autore','like','commenti',"data","iId","desc","isProfile"],
 
   methods: {
     async toggleLike() {  //funzione
@@ -39,7 +40,7 @@ export default {
           //rimuovo il like
           try {
             await this.$axios.delete("/user/"+ this.autore +"/images/"+this.iId+"/like/"+ localStorage.getItem('token')) 
-            this.like.pop(localStorage.getItem('token'))
+            this.likes.pop(localStorage.getItem('token'))
           }catch (e){
             this.errore = "{"+ e +"}"
           }
@@ -47,7 +48,7 @@ export default {
           //aggiungo il like
           try {
             await this.$axios.put("/user/"+ this.autore +"/images/"+this.iId+"/like/"+ localStorage.getItem('token'))
-            this.like.push(localStorage.getItem('token'))
+            this.likes.push(localStorage.getItem('token'))
           }catch (e){
             this.errore = "{"+ e +"}"
           }
@@ -60,9 +61,9 @@ export default {
     async addComment() {  //funzione
       
       try {
-          await this.$axios.post("/user/"+ this.autore +"/images/"+this.iId+"/comments/", {text: this.comment.trim()}) 
-          if (this.comment.trim() !== '') {
-            let com = { testo: this.comment, cId: 1, uId: localStorage.getItem("token") } //cambiare
+        if (this.comment.trim() !== '') {
+            await this.$axios.post("/user/"+ this.autore +"/images/"+this.iId+"/comments/", {text: this.comment.trim()}) 
+            let com = { testo: this.comment, cId: getCommentId(), uId: localStorage.getItem("token") } //cambiare
             this.comments.push(com);
             this.comment = '';
           }
@@ -80,6 +81,15 @@ export default {
     toLikes(){
         this.likeP = !this.likeP;
     },
+    async getCommentId(){
+      try{
+        let response = await this.$axios.get("/user/"+localStorage.getItem('token')+"/iamges/"+this.iId+"/comments/");
+        let commenti = response.data
+        return commenti[0].idComment
+      }catch(e){  
+        console.log(e)
+      }
+    },
 
     getPost(){
         //funzione
@@ -89,10 +99,14 @@ export default {
         this.comments = this.commenti
         //console.log(this.comments)
         this.isP = this.isProfile
-        this.nomeAutore = this.username
+        if(!this.isP){ this.nomeAutore = this.idToNameAutore(this.autore) }
         this.descrizione = this.desc
         //get image, ritorna anche le informazioni dell'immagine, ma prendo solo il file mandato
         this.imageUrl = __API_URL__+ "/user/"+this.autore+"/imgUs/"+this.iId
+
+        if(this.isLike()){
+          this.isLiked = true
+        }
       }catch(e){
         this.errore = "{"+ e +"}"
       }
@@ -122,7 +136,28 @@ export default {
         }catch (e){
             this.errore = "{"+ e +"}"
       }
-    }
+    },
+
+    async idToNameAutore(id){
+        try {
+          let response = await this.$axios.get("/user/"+ id) 
+          return response.data.name
+        }catch (e){
+            this.errore = "{"+ e +"}"
+      }
+    },
+
+    async eliminaPost(){
+      try {
+        await this.$axios.delete("/user/"+ this.autore +"/images/"+this.iId) 
+        this.eliminato = true
+      }catch (e){
+        this.errore = "{"+ e +"}"
+      }
+    },
+    isLike(){
+        return this.likes.includes(localStorage.getItem('token'))
+    },
   },
 
   async mounted(){
@@ -137,41 +172,42 @@ export default {
 
 <template>
   <div class="principale">
-    <div v-if="!isP" @click="">{{this.nomeAutore}}</div>
+    <div v-if="!isP">{{this.nomeAutore}}</div>
     <div v-if="post && !likeP"  class="post">
-      <img :src="imageUrl"  class="immagine">
+      <img v-if="!eliminato"  :src="imageUrl"  class="immagine">
+      <p v-if="eliminato" style="color: red;">ricarica la pagina</p>
       <div class="feedback">
-        <button @click="toggleLike" class="like">
+        <button @click="toggleLike()" class="like">
             <img v-if = "!isLiked" src="../assets/images/noLike.png">
             <img v-if = "isLiked"  src="../assets/images/like.png">
         </button>
         <input v-model="comment" @keyup.enter="addComment" placeholder="Aggiungi commento...">
-        <button @click="addComment">
+        <button @click="addComment()">
           <img  src="../assets/images/invia.png">
         </button>
       </div>
       <p class="descrizione">{{ descrizione }}</p>
       <!-- v-if="errore === ''"  <p v-if="errore !== ''" class="descrizione">{{ errore }}</p> -->
       <div class="com">
-        <button @click="toComment" >commenti</button>
-        <button @click="toLikes" >like</button>
-        <button  >elimina</button>
+        <button @click="toComment()" >commenti</button>
+        <button @click="toLikes()" >like</button>
+        <button @click="eliminaPost()" v-if="isP">elimina</button>
       </div>   
     </div>
     <div v-if="!post" class="commenti">
       <div  class="testo">
         <CommentsPreview v-for="(commentoa, index) in comments"
           :key="index"
-          :uId="commentoa.uId"
-          :cId="commentoa.cId"
-          :testo="commentoa.testo"
+          :uId="commentoa.commenter"
+          :cId="commentoa.idComment"
+          :testo="commentoa.text"
           :iId="this.iId"
           :autore="this.autore">
         </CommentsPreview>
         <!-- <p  id="comP" class="cambiacolore" v-for="(comments, index) in comments" :key="index" @click="removeComment()">{{ comments }}</p> -->
       </div>
       <div class="com2">
-        <button @click="toComment" >post</button>
+        <button @click="toComment()" >post</button>
       </div>   
     </div>
     <div v-if="likeP" class="commenti">
@@ -180,7 +216,7 @@ export default {
         <p  id="comP" class="cambiacolore" v-for="(likes, index) in nomiLike" :key="index">{{ likes }}</p>
       </div>
       <div class="com2">
-          <button @click="toLikes">post</button>
+          <button @click="toLikes()">post</button>
       </div>  
     </div>
   </div>

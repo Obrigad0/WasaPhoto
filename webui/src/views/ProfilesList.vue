@@ -23,13 +23,14 @@ export default {
   methods: {
       async getProfilesSearch(){
         //prend i profili della ricerca
-        let response = await this.$axios.get("/user/",{ params: {name: this.query ,},}); //cambiare
+        let response = await this.$axios.get("/user",{ params: {Username: this.query ,},}); //cambiare
               if (response.status === 401 || response.status === 500){
                 console.log("Errore, informazioni non recuperabili")
                 //mi sposto nella pagina errorpage
+                this.$router.replace("/Error")
                 return
               }
-        this.users = response.data.profiles != null ? response.data.profiles : [] //attenzione da cambiare
+        this.users = response.data //gestione se array vuoto?
       },
   },
   

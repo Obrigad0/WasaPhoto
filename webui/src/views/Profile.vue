@@ -1,6 +1,6 @@
 <script>
 import PageComonents from '@/components/PageComponents.vue';
-import Image from '@/components/Image.vue';
+import ImageStructure from '@/components/ImageStructure.vue';
 import LoadImage from '@/components/LoadImage.vue';
 
 
@@ -24,7 +24,7 @@ export default {
   },
     components: {
       PageComonents,
-      Image,
+      ImageStructure,
       LoadImage,
     },
 
@@ -106,7 +106,18 @@ export default {
         }
       },
       
-      
+      async getBans(){
+        try{
+            let response = await this.$axios.get("/user/"+localStorage.getItem('token')+"/banned/");
+            let dati = response.data
+            if(dati){
+              console.log("ok!")
+            }
+        }catch(e){
+          this.errore = e.toString();
+        }
+      },
+
       async profileInfos(){ // usato al caricamento della pagina
         try{
           //prelevo le informazioni
@@ -127,7 +138,7 @@ export default {
 
           // prendo tutte le immagini dell'utente
           let response2 = await this.$axios.get("/user/"+this.$route.params.idUser+"/images");
-          this.images = response2.data.images != null ? response2.data.images : []
+          this.images = response2.data //gestione se array vuoto?
 
           //controllo se l'array e' null, se si inserisco 0 in followerN, altrimenti inserisco la lunghezza dell'array
           this.followerN = response.data.follower != null ? response.data.follower.length : 0
@@ -187,7 +198,7 @@ export default {
               <button @click="cambiaUsername()" v-if="modifica" >invia</button>
         </div>
         <div class="titoli2">
-              <p style="color: black; margin-right: 10px;">follower: {{followerN}}     followed: {{followingN}}</p>
+              <p style="color: black; margin-right: 10px;">follower: {{followerN}} followed: {{followingN}}</p>
               <button @click="follow()" v-if="!itsMe()" class="operazioni">{{testoBottoneFollow()}}</button>
               <button @click="ban()" v-if="!itsMe()" class="operazioni">{{testoBottoneBan()}}</button>
               <!--<button @click="" v-if="itsMe()" class="operazioni">BANLIST</button>-->
@@ -195,7 +206,7 @@ export default {
         </div>
     </div>
     <div class="box2" style="height: 72vh;">
-        <Image v-for="(post, index) in images"
+        <ImageStructure v-for="(post, index) in images"
             :key="index"
             :autore="post.author"
             :like="post.like"
@@ -203,10 +214,8 @@ export default {
             :data="post.data"
             :iId="post.imgId"
             :desc="post.descrizione"
-            :url="post.url"
-            :isProfile=itsMe()
-            :username=this.username>
-        </Image>
+            :isProfile=itsMe()>
+        </ImageStructure>
         <LoadImage v-if="itsMe()"></LoadImage>
     </div>
   </PageComonents>
