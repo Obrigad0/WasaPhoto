@@ -63,6 +63,6 @@ func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httproute
 
 	// invio l'immagine
 
-	path := filepath.Join("/user/", strconv.Itoa(uIdint), "/images/", strconv.Itoa(iIdint))
+	path := filepath.Join(cartellaPrincipale, strconv.Itoa(uIdint), "/imgUs/", strconv.Itoa(iIdint))
 	http.ServeFile(w, r, path)
 }

@@ -18,6 +18,7 @@ export default {
         coloreCommento: "black",
         isP: true,
         nomeAutore: "",
+        nomiLike: [],
     };
     
   },
@@ -25,11 +26,10 @@ export default {
     CommentsPreview,
   },
 
-  props: ['autore','like','commenti',"data","iId","desc","url","isProfile","username"], //,"token" ??
+  props: ['autore','like','commenti',"data","iId","desc","isProfile","username"],
 
   methods: {
     async toggleLike() {  //funzione
-      this.isLiked = !this.isLiked;//levare
 
       if(this.autore == localStorage.getItem('token')){
         //niente autolike sorry user
@@ -38,7 +38,7 @@ export default {
         if(this.isLiked){
           //rimuovo il like
           try {
-            await this.$axios.delete("/user/"+ this.autore  +"/images/"+this.iId+"/like/"+ localStorage.getItem('token')) 
+            await this.$axios.delete("/user/"+ this.autore +"/images/"+this.iId+"/like/"+ localStorage.getItem('token')) 
             this.like.pop(localStorage.getItem('token'))
           }catch (e){
             this.errore = "{"+ e +"}"
@@ -54,38 +54,24 @@ export default {
         }
       }
       console.log("qui")
-      //this.isLiked = !this.isLiked;
 
     },
 
     async addComment() {  //funzione
       
       try {
-          await this.$axios.post("/user/"+ this.autore +"/images/"+this.iId+"/comments/", {text: comment}) 
+          await this.$axios.post("/user/"+ this.autore +"/images/"+this.iId+"/comments/", {text: this.comment.trim()}) 
           if (this.comment.trim() !== '') {
-            let com = { testo: this.comment, cId: 1, uId: "arrizzabalga" } //cambiare
+            let com = { testo: this.comment, cId: 1, uId: localStorage.getItem("token") } //cambiare
             this.comments.push(com);
             this.comment = '';
           }
       }catch (e){
             this.errore = "{"+ e +"}"
       }
-      
-      if (this.comment.trim() !== '') { //LEVARE!!!
-        let com = { testo: this.comment, cId: 1, uId: "arrizzabalga" } //cambiare
-            this.comments.push(com);
-            this.comment = '';
-      }
+
     },
     
-    async removeComment() {
-      try {
-          await this.$axios.delete("/user/"+ this.autore +"/images/"+this.iId+"/comments/"+ this.idCommento) 
-      }catch (e){
-            this.errore = "{"+ e +"}"
-      }
-        this.comments.pop(this.idCommento);
-    },
     
     toComment(){  //stile
         this.post = !this.post;
@@ -98,17 +84,15 @@ export default {
     getPost(){
         //funzione
       try{
-        //poi dovrei cambiare il js nel html
         this.token = localStorage.getItem('token')
         this.likes = this.like
         this.comments = this.commenti
-        this.imageUrl = this.url// LEVARE e scommentare this.imageurl...
         //console.log(this.comments)
         this.isP = this.isProfile
         this.nomeAutore = this.username
-        //
         this.descrizione = this.desc
-        //this.imageUrl = __API_URL__+ "/user/"+this.autore+"/images/"+this.iId
+        //get image, ritorna anche le informazioni dell'immagine, ma prendo solo il file mandato
+        this.imageUrl = __API_URL__+ "/user/"+this.autore+"/imgUs/"+this.iId
       }catch(e){
         this.errore = "{"+ e +"}"
       }
@@ -129,11 +113,23 @@ export default {
 
     goToProfile(){
       this.$router.replace("/profile/"+this.autore)
+    },
+
+    async idToName(id){
+        try {
+          let response = await this.$axios.get("/user/"+ id) 
+          this.nomiLike.push(response.data.name) 
+        }catch (e){
+            this.errore = "{"+ e +"}"
+      }
     }
   },
 
   async mounted(){
     await this.getPost();
+    for (let i = 0; i < this.likes.length; i++) {
+      await idToName(this.likes[i])
+    }
   }
 
 };
@@ -181,7 +177,7 @@ export default {
     <div v-if="likeP" class="commenti">
     
     <div  class="testo">
-        <p  id="comP" class="cambiacolore" v-for="(likes, index) in likes" :key="index" @click="removeComment()">{{ likes }}</p>
+        <p  id="comP" class="cambiacolore" v-for="(likes, index) in nomiLike" :key="index">{{ likes }}</p>
       </div>
       <div class="com2">
           <button @click="toLikes">post</button>

@@ -8,59 +8,6 @@ export default {
   data: function() {
 		return {
       modifica: true,
-      arrayDiPost: [
-        {
-          autore: 'Autore1',
-          like: [1,3,4,5,6,7,7,8],
-          commenti: [
-            { testo: 'Commento 1', cId: 1, uId: 101 },
-            { testo: 'Commento 2', cId: 2, uId: 102 },
-            { testo: 'Commento 2', cId: 2, uId: 102 },
-            { testo: 'Commento 2', cId: 2, uId: 102 }
-          ],
-          data: '',
-          iId: 1,
-          desc: 'Descrizione del post 1',
-          url: 'https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/bltc1d5f3f76cbaa905/64ba66893452d45bae678aca/lazio_HD.jpg?auto=webp&format=pjpg&width=3840&quality=60'
-        },
-        {
-          autore: 'Autore2',
-          like: [1,5,45,71,5,33,8],
-          commenti: [
-            { testo: 'Commento 1', cId: 1, uId: 101 },
-            { testo: 'Commento 2', cId: 2, uId: 102 }
-          ],
-          data: 'Data del post 2',
-          iId: 1,
-          desc: 'Descrizione del post 2',
-          url: 'https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/blt214f00e4cf476695/643a3a34ebdc0d4ea06f21e3/Lazio.jpg?auto=webp&format=pjpg&width=3840&quality=60'
-        },
-        {
-          autore: 'Autore2',
-          like: [1,5,45,71,5,33,8],
-          commenti: [
-            { testo: 'Commento 1', cId: 1, uId: 101 },
-            { testo: 'Commento 2', cId: 2, uId: 102 }
-          ],
-          data: 'Data del post 2',
-          iId: 1,
-          desc: 'Descrizione del post 2',
-          url: 'https://www.laziostylestore.com/images/lazio/products/small/LZ22A03_9.webp'
-        },
-        {
-          autore: 'Autore2',
-          like: [1,5,45,71,5,33,8],
-          commenti: [
-            { testo: 'Commento 1', cId: 1, uId: 101 },
-            { testo: 'Commento 2', cId: 2, uId: 102 }
-          ],
-          data: 'Data del post 2',
-          iId: 1,
-          desc: 'Descrizione del post 2',
-          url: 'https://cdn.studenti.stbm.it/images/2022/10/07/ricerca-sulla-regione-lazio-orig.jpeg'
-        },
-      ],
-      
       username: "Username",
       followerN: 0,
       followingN: 0,
@@ -97,8 +44,11 @@ export default {
       
       itsMe(){
         //controlla se l'utente del profilo visitato e' l'utente proprietario del profilo
-        //return localStorage.getItem('token') === this.$route.params.id
-        return true // da levare
+        if(localStorage.getItem('token') == this.$route.params.id){
+          console.log("Sono io!")
+        }
+        return localStorage.getItem('token') == this.$route.params.id
+        //return true // da levare
         // la funzione e' utilizzata per mostrare certi elementi solo all'utente proprietario della pagian
       },
 
@@ -106,7 +56,7 @@ export default {
           let newUN = document.getElementById('username')
           if(newUN.length > 3 ){
             try{
-              await this.$axios.put("/user/"+this.$route.params.id,{name: this.newUN,})
+              await this.$axios.put("/user/"+this.$route.params.id,this.newUN,)
             }catch(e){
               this.errore = e.toString();
             }
@@ -118,29 +68,29 @@ export default {
       isFollowed(){
         //controlla se l'utente e' nell'array di followed dell'utente visitato 
         //se si il pulsante per seguire diventa per smettere di seguire
-        this.seguito = !this.seguito //da levare
+        //this.seguito = !this.seguito //da levare
         return this.follower.includes(localStorage.getItem('token'))
       },
        
       async follow(){ //usato da terzo
-        this.seguito = !this.seguito //da levare
         try{
           console.log("cliccato segui") 
           if(this.seguito){
             //leva il follow
-            this.followerN += 1
+            await this.$axios.delete("/user/"+localStorage.getItem('token')+"/following/"+ this.$route.params.idUser);
+            this.followerN -= 1
           }else{
             //seguo l'utente
-            this.followerN -= 1
+            await this.$axios.put("/user/"+localStorage.getItem('token')+"/following/"+ this.$route.params.idUser);
+            this.followerN += 1
           }
-          //this.seguito = !this.seguito
+          this.seguito = !this.seguito
         }catch(e){
           this.errore = e.toString();
         }
       },
         
       async ban(){  
-        this.bannato = !this.bannato  //da levare
         try{
           console.log("cliccato banna") 
           if(this.bannato){
@@ -150,7 +100,7 @@ export default {
             //banno l'utente
             await this.$axios.put("/user/"+localStorage.getItem('token')+"/banned/"+ this.$route.params.idUser);
           }
-          //this.bannato = !this.bannato
+          this.bannato = !this.bannato
         }catch(e){
           this.errore = e.toString();
         }
@@ -174,8 +124,10 @@ export default {
           //controlla se l'array ricevuto e' null, se si viene iserito in follower un array vuoto
           this.follower = response.data.follower != null ? response.data.follower : []
           this.following = response.data.following != null ? response.data.following : []
-          //qua fare get all images
-          this.images = response.data.images != null ? response.data.images : []
+
+          // prendo tutte le immagini dell'utente
+          let response2 = await this.$axios.get("/user/"+this.$route.params.idUser+"/images");
+          this.images = response2.data.images != null ? response2.data.images : []
 
           //controllo se l'array e' null, se si inserisco 0 in followerN, altrimenti inserisco la lunghezza dell'array
           this.followerN = response.data.follower != null ? response.data.follower.length : 0
@@ -183,6 +135,7 @@ export default {
 
           //usata solo se e' il nostro profilo
           this.banList = response.data.banList != null ? response.data.banList: [] 
+          //forse
 
           //controllo se l'utente segue l'utente visitato
           this.seguito =  isFollowed();
@@ -199,6 +152,7 @@ export default {
               }
 
               if(response2.data.banList.includes(this.$route.params.idUser)){
+                // ho bannato questo profilo, quindi il pulsante cambia (e il tipo di operazione quando premuto)
                 this.bannato = true
                 //testoBottoneBan() ??
               }
@@ -241,17 +195,17 @@ export default {
         </div>
     </div>
     <div class="box2" style="height: 72vh;">
-        <Image v-for="(post, index) in arrayDiPost"
+        <Image v-for="(post, index) in images"
             :key="index"
-            :autore="post.autore"
+            :autore="post.author"
             :like="post.like"
-            :commenti="post.commenti"
+            :commenti="post.comments"
             :data="post.data"
-            :iId="post.iId"
-            :desc="post.desc"
+            :iId="post.imgId"
+            :desc="post.descrizione"
             :url="post.url"
-            :isProfile="true"
-            :username="null">
+            :isProfile=itsMe()
+            :username=this.username>
         </Image>
         <LoadImage v-if="itsMe()"></LoadImage>
     </div>
@@ -321,3 +275,54 @@ export default {
   }
 
 </style>
+
+<!-- {
+          autore: 'Autore1',
+          like: [1,3,4,5,6,7,7,8],
+          commenti: [
+            { testo: 'Commento 1', cId: 1, uId: 101 },
+            { testo: 'Commento 2', cId: 2, uId: 102 },
+            { testo: 'Commento 2', cId: 2, uId: 102 },
+            { testo: 'Commento 2', cId: 2, uId: 102 }
+          ],
+          data: '',
+          iId: 1,
+          desc: 'Descrizione del post 1',
+          url: 'https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/bltc1d5f3f76cbaa905/64ba66893452d45bae678aca/lazio_HD.jpg?auto=webp&format=pjpg&width=3840&quality=60'
+        },
+        {
+          autore: 'Autore2',
+          like: [1,5,45,71,5,33,8],
+          commenti: [
+            { testo: 'Commento 1', cId: 1, uId: 101 },
+            { testo: 'Commento 2', cId: 2, uId: 102 }
+          ],
+          data: 'Data del post 2',
+          iId: 1,
+          desc: 'Descrizione del post 2',
+          url: 'https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/blt214f00e4cf476695/643a3a34ebdc0d4ea06f21e3/Lazio.jpg?auto=webp&format=pjpg&width=3840&quality=60'
+        },
+        {
+          autore: 'Autore2',
+          like: [1,5,45,71,5,33,8],
+          commenti: [
+            { testo: 'Commento 1', cId: 1, uId: 101 },
+            { testo: 'Commento 2', cId: 2, uId: 102 }
+          ],
+          data: 'Data del post 2',
+          iId: 1,
+          desc: 'Descrizione del post 2',
+          url: 'https://www.laziostylestore.com/images/lazio/products/small/LZ22A03_9.webp'
+        },
+        {
+          autore: 'Autore2',
+          like: [1,5,45,71,5,33,8],
+          commenti: [
+            { testo: 'Commento 1', cId: 1, uId: 101 },
+            { testo: 'Commento 2', cId: 2, uId: 102 }
+          ],
+          data: 'Data del post 2',
+          iId: 1,
+          desc: 'Descrizione del post 2',
+          url: 'https://cdn.studenti.stbm.it/images/2022/10/07/ricerca-sulla-regione-lazio-orig.jpeg'
+        }, -->

@@ -7,11 +7,10 @@ export default {
 		return {
             typeOfSearch: null,
             query: "",
-            users: [
-              { username: 'Utente1', follower: 100, following: 50 },
-              { username: 'Utente2', follower: 150, following: 75 },
-              { username: 'Utente3', follower: 80, following: 40 },
-            ], //array utenti
+            users: [], //array utenti
+            //{ username: 'Utente1', follower: 100, following: 50 },
+            //{ username: 'Utente2', follower: 150, following: 75 },
+            //{ username: 'Utente3', follower: 80, following: 40 },
         }
     },
 
@@ -20,28 +19,21 @@ export default {
       ProfilePreview,
     },
 
-    created() { 
-    // al caricamento della pagina vengono recuperate tutti gli utenti
 
-    if(this.typeOfSearch === 0){    //ricerca utenti
-        this.getProfilesSearch();
-    }else if(this.typeOfSearch === 1){
-        this.getProfilesFollow();   //get follow 
-    }
-
+  methods: {
+      async getProfilesSearch(){
+        //prend i profili della ricerca
+        let response = await this.$axios.get("/user/",{ params: {name: this.query ,},}); //cambiare
+              if (response.status === 401 || response.status === 500){
+                console.log("Errore, informazioni non recuperabili")
+                //mi sposto nella pagina errorpage
+                return
+              }
+        this.users = response.data.profiles != null ? response.data.profiles : [] //attenzione da cambiare
+      },
   },
-
-  async getProfilesSearch(){
-    //prend i profili della ricerca
-    let response = await this.$axios.get("/user/",{ params: {name: this.query ,},}); //cambiare
-          if (response.status === 401 || response.status === 500){
-             console.log("Errore, informazioni non recuperabili")
-             //mi sposto nella pagina errorpage
-             return
-          }
-    this.users = response.data.profiles != null ? response.data.profiles : [] //attenzione da cambiare
-  },
-
+  
+  /*
   async getProfilesFollow(){
     //prende i profili seguiti
     let response = await this.$axios.get("/user/"+this.$route.params.idUser+"/following/"); //cambiare
@@ -52,8 +44,10 @@ export default {
           }
     this.users = response.data.utente != null ? response.data.utente : [] //attenzione da cambiare
   },
+  */
   mounted(){
-    this.query = this.$route.query.searchValue || '';
+    this.query = this.$route.query.searchValue || ''
+    this.getProfilesSearch()
   }
 };
 

@@ -14,7 +14,7 @@ export default {
   methods: {
 
     goToProfile(){
-      this.$router.replace("/profile/"+this.uId)
+      this.$router.replace("/profile/"+this.uId) //uId e' ; autore del commento
     },
 
     checkSeMio(){
@@ -32,14 +32,13 @@ export default {
     },
     
     async removeComment() {
-        if(this.tokenn == this.cId){
+        if(checkSeMio()){
             try {
                 await this.$axios.delete("/user/"+ this.autore +"/images/"+this.iId+"/comments/"+ this.cId) 
-                //this.comments.pop(this.idCommento); //rimettere
+                this.comments.pop(this.idCommento); //rimettere
             }catch (e){
                     this.errore = "{"+ e +"}"
             }
-                this.comments.pop(this.idCommento); // levare!!
         }
     },
 
@@ -55,7 +54,8 @@ export default {
 
   mounted(){
     this.tokenn = localStorage.getItem("token")
-    console.log(this.testo)
+    idToName()
+    //console.log(this.testo)
   }
 }
 </script>

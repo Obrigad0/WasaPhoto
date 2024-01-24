@@ -12,7 +12,6 @@ export default {
 
           let fileCaricato = document.getElementById('file')
           let descrizione = document.getElementById('descrizione')
-          console.log("quiaaa")
           if(fileCaricato !== undefined && this.$route.params.id == localStorage.getItem("token")){
               //prendo solo il primo file caricato
               fileCaricato = fileCaricato.files[0]
