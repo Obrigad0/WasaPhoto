@@ -33,11 +33,7 @@ func (db *appdbimpl) GetUser(uId User) (User, error) {
 	var utente User
 
 	// Esecuzione Query per selezionare l'utente
-	err := db.c.QueryRow(`
-		SELECT u.uId, u.name
-		FROM user u
-		WHERE u.uId = ?
-	`, uId.UId).Scan(&utente.UId, &utente.Name)
+	err := db.c.QueryRow(`SELECT * FROM user WHERE uId = ? `, uId.UId).Scan(&utente.UId, &utente.Name)
 
 	if err != nil {
 		// Errore nell'esecuzione della Query

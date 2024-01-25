@@ -163,7 +163,7 @@ export default {
   async mounted(){
     await this.getPost();
     for (let i = 0; i < this.likes.length; i++) {
-      await idToName(this.likes[i])
+      await  this.idToName(this.likes[i])
     }
   }
 

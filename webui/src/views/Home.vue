@@ -34,7 +34,7 @@ export default {
     },
 
     mounted(){
-        getMyFeed()
+      this.getMyStream()
     }
 
 }

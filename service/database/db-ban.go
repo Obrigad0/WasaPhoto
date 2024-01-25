@@ -70,7 +70,7 @@ func (db *appdbimpl) IsBanned(A User, B User) (bool, error) {
 // GetBanList() ritorna la lista degli utenti bannati dalll'utente, ma torna solo gli id
 func (db *appdbimpl) GetBanListVINT(user User) ([]int, error) {
 
-	rows, err := db.c.Query("SELECT banned FROM ban WHERE banner = ?", user)
+	rows, err := db.c.Query("SELECT banned FROM ban WHERE banner = ?", user.UId)
 	if err != nil {
 		// Errore nell'esecuzione della query
 		return nil, err

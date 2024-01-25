@@ -54,7 +54,7 @@ export default {
 
   mounted(){
     this.tokenn = localStorage.getItem("token")
-    idToName()
+    this.idToName()
     //console.log(this.testo)
   }
 }

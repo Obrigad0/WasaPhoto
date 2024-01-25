@@ -44,10 +44,11 @@ export default {
       
       itsMe(){
         //controlla se l'utente del profilo visitato e' l'utente proprietario del profilo
-        if(localStorage.getItem('token') == this.$route.params.id){
+        if(localStorage.getItem('token') == this.$route.params.idUser){
           console.log("Sono io!")
+          return true
         }
-        return localStorage.getItem('token') == this.$route.params.id
+        return false
         //return true // da levare
         // la funzione e' utilizzata per mostrare certi elementi solo all'utente proprietario della pagian
       },
@@ -56,7 +57,7 @@ export default {
           let newUN = document.getElementById('username')
           if(newUN.length > 3 ){
             try{
-              await this.$axios.put("/user/"+this.$route.params.id,this.newUN,)
+              await this.$axios.put("/user/"+this.$route.params.idUser,this.newUN,)
             }catch(e){
               this.errore = e.toString();
             }
@@ -149,7 +150,7 @@ export default {
           //forse
 
           //controllo se l'utente segue l'utente visitato
-          this.seguito =  isFollowed();
+          this.seguito =  this.isFollowed();
 
           //faccio una chiamata al db per il mio profilo dove prendo i miei ban e vedo se ho bannato questo utente.
           if(this.$route.params.idUser !== localStorage.getItem("token")){
