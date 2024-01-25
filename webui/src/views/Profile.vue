@@ -7,8 +7,9 @@ import LoadImage from '@/components/LoadImage.vue';
 export default {
   data: function() {
 		return {
-      modifica: true,
+      modifica: false,
       username: "Username",
+      nuovoUsername: "",
       followerN: 0,
       followingN: 0,
       follower: [],
@@ -54,15 +55,17 @@ export default {
       },
 
       async cambiaUsername() { 
-          let newUN = document.getElementById('username')
+          let newUN = this.nuovoUsername
           if(newUN.length > 3 ){
             try{
-              await this.$axios.put("/user/"+this.$route.params.idUser,this.newUN,)
+              console.log("username inserito:"+newUN)
+              await this.$axios.put("/user/"+this.$route.params.idUser, {username: newUN} , { headers: { 'Content-Type': 'application/json' }});
+              location.reload(true)
             }catch(e){
               this.errore = e.toString();
             }
           }else{
-            console.log("Errore stringa troppo corta")
+            console.log("Errore username troppo corto")
           }
       },
         
@@ -133,6 +136,7 @@ export default {
           }
 
           this.username = response.data.name
+          console.log("USername profilo visitato:"+this.username)
           //controlla se l'array ricevuto e' null, se si viene iserito in follower un array vuoto
           this.follower = response.data.follower != null ? response.data.follower : []
           this.following = response.data.following != null ? response.data.following : []
@@ -195,7 +199,7 @@ export default {
     <div class="box" style="height: 13vh;">
         <div class="titoli">
               <h1 v-if="!modifica" id="username">{{username}}</h1>
-              <input id="nuovoUsername" v-if="modifica" class="input" type="text" placeholder="inserisci nuovo username">
+              <input v-model="nuovoUsername" v-if="modifica" class="input" type="text" placeholder="inserisci nuovo username">
               <button @click="cambiaUsername()" v-if="modifica" >invia</button>
         </div>
         <div class="titoli2">

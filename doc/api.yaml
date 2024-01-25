@@ -197,12 +197,15 @@ paths:
         content: 
           application/json: 
             schema: 
-              description: nuovo nome utente
-              type: string
-              pattern: '^.*?$'
-              example: LikeMrSarri2
-              minLength: 3
-              maxLength: 16
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Nuovo nome utente
+                  pattern: '^.*?$'
+                  example: LikeMrSarri2
+                  minLength: 3
+                  maxLength: 16
               
       responses: 
         "204":
