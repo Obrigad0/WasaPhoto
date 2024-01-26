@@ -16,7 +16,6 @@ import (
 func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
-
 	// non si possono caricare immagini per altre persone
 	if !verificaToken(uIdint, r.Header.Get("Authorization")) {
 		// Token non valido, ritorno Errore 401 al client
@@ -53,9 +52,8 @@ func (rt *_router) postImage(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	// user/{idUser}/images/{imageId}:
 	// creo il file vuoto per l'immagine
-	out, _ := os.Create(filepath.Join("/user/", strconv.Itoa(uIdint), "/images/", strconv.Itoa(id)))
+	out, _ := os.Create(filepath.Join(cartellaPrincipale, strconv.Itoa(uIdint), "/imgUs/", strconv.Itoa(id)))
 	_, _ = io.Copy(out, file)
 	// id e' il nome del file
 

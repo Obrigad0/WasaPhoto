@@ -83,7 +83,7 @@ export default {
     },
     async getCommentId(){
       try{
-        let response = await this.$axios.get("/user/"+localStorage.getItem('token')+"/iamges/"+this.iId+"/comments/");
+        let response = await this.$axios.get("/user/"+localStorage.getItem('token')+"/images/"+this.iId+"/comments/");
         let commenti = response.data
         return commenti[0].idComment
       }catch(e){  
@@ -102,7 +102,7 @@ export default {
         if(!this.isP){ this.nomeAutore = this.idToNameAutore(this.autore) }
         this.descrizione = this.desc
         //get image, ritorna anche le informazioni dell'immagine, ma prendo solo il file mandato
-        this.imageUrl = __API_URL__+ "/user/"+this.autore+"/imgUs/"+this.iId
+        this.imageUrl = __API_URL__+ "/user/"+this.autore+"/images/"+this.iId
 
         if(this.isLike()){
           this.isLiked = true

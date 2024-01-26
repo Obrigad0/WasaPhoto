@@ -2,7 +2,7 @@
 export default {
     data() {
         return {
-                
+                descrizione: "",
         }
     },
     methods: {
@@ -11,25 +11,27 @@ export default {
           console.log("qui1")
 
           let fileCaricato = document.getElementById('file')
-          let descrizione = document.getElementById('descrizione')
-          if(fileCaricato !== undefined && this.$route.params.id == localStorage.getItem("token")){
+          //let descrizione = document.getElementById('descrizione')
+
+          if(fileCaricato !== undefined && this.$route.params.idUser == localStorage.getItem("token")){
               //prendo solo il primo file caricato
               fileCaricato = fileCaricato.files[0]
               //oggetto reader per leggere il contenuto del file
-              reader = new FileReader();
+              //const reader = new FileReader();
               //Creo l'oggetto formdata che sara' inviato al server 
               let formData = new FormData();
               //memorizziamo l'oggetto come un file binario
-              formData.append('file',reader.readAsArrayBuffer(fileCaricato));
-              formData.append('descrizione', descrizione);
-              reader.onload = async () => {
-                  await this.$axios.post("/user/"+this.$route.params.id+"/images", formData, {
+              formData.append('file',fileCaricato);
+              formData.append('descrizione', this.descrizione);
+              
+              //reader.onload = async () => {
+                  await this.$axios.post("/user/"+this.$route.params.idUser+"/images", formData, {
                       headers: {
                       'Content-Type': 'multipart/form-data',
                       },
                   })
 
-              };
+             // };
 
           }else{
               //errore file non inserito
@@ -49,11 +51,11 @@ export default {
     <div class="ct"><p>Carica Foto</p></div>
     <div class="cf">
       <div class="im">
-        <button type="file" id="file" accept=".jpg, .png">carica foto</button>
+        <input type="file" id="file" accept=".jpg, .png">
       </div>
     </div>
     <div class="cd">
-      <input id="descrizione" placeholder="Aggiungi descrizione...">
+      <input id="descrizione" placeholder="Aggiungi descrizione..." v-model="descrizione">
     </div>
     <div class="go">
       <button @click="creaPost()">CREA POST</button>

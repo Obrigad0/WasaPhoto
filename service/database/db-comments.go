@@ -2,7 +2,7 @@ package database
 
 // GetComments() ritorna tutti i commnenti di un'immagine
 func (db *appdbimpl) GetComments(image Image) ([]Comment, error) {
-	rows, err := db.c.Query("SELECT idComment, text, commenter FROM comments  WHERE imgId = ? ORDER BY idComment DESC", image.IId)
+	rows, err := db.c.Query("SELECT idComment, text, uId FROM comments  WHERE imgId = ? ORDER BY idComment DESC", image.IId)
 	if err != nil {
 		return nil, err
 	}
