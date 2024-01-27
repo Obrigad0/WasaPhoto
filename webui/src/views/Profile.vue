@@ -19,7 +19,7 @@ export default {
       errore: null,
       seguito: false, //usati da utente che visita il profilo che non siamo noi
       bannato: false, //usati da utente che visita il profilo che non siamo noi
-      banned: false,
+      //banned: false,
 
     }
   },
@@ -128,10 +128,7 @@ export default {
           let response = await this.$axios.get("/user/"+this.$route.params.idUser);
 
           if (response.status === 401 || response.status === 500){
-             console.log("Errore, informazioni non recuperabili")
-             this.banned = true
-             //mi sposto nella pagina errorpage
-             this.$router.replace("/Error")
+            
              return
           }
 
@@ -144,6 +141,7 @@ export default {
           // prendo tutte le immagini dell'utente
           let response2 = await this.$axios.get("/user/"+this.$route.params.idUser+"/images");
           this.images = response2.data //gestione se array vuoto?
+          console.log("Ecco i like che ho ricevuto dal server: "+this.images[0])
 
           //controllo se l'array e' null, se si inserisco 0 in followerN, altrimenti inserisco la lunghezza dell'array
           this.followerN = response.data.follower != null ? response.data.follower.length : 0
@@ -158,26 +156,27 @@ export default {
 
           //faccio una chiamata al db per il mio profilo dove prendo i miei ban e vedo se ho bannato questo utente.
           if(this.$route.params.idUser !== localStorage.getItem("token")){
+              console.log("Vedo se ho bannato questo utente")
+              try{
               let response2 = await this.$axios.get("/user/"+localStorage.getItem("token"));
-
-              if (response2.status === 401 || response2.status === 500){
-                console.log("Errore, informazioni non recuperabili")
-                //mi sposto nella pagina errorpage
-                this.$router.replace("/Error")
-                return
-              }
-
-              if(response2.data.banList.includes(this.$route.params.idUser)){
+              
+              if(response2.data.banList.includes(parseInt(this.$route.params.idUser,10))){
                 // ho bannato questo profilo, quindi il pulsante cambia (e il tipo di operazione quando premuto)
+                console.log("Ho bannato questo profilo!")
                 this.bannato = true
                 //testoBottoneBan() ??
               }
+            }catch(e){
+              console.log(e)
+            }
 
           }
 
         }catch(e){
-           //mi sposto nella pagina errorpage
-          this.banned = true
+           //this.banned = true
+           console.log("Errore, informazioni non recuperabili o sei stato bannato dall'utente!")
+             //mi sposto nella pagina errorpage
+           this.$router.replace("/Error")
         }
 
       }, 

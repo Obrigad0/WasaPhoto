@@ -44,7 +44,9 @@ func verificaToken(uId int, token string) bool {
 // verificaLogin() verifica semplicemente che l'utente sia loggato
 func verificaLogin(token string) bool {
 	// Estraggo il token
+
 	tokenId := estrazioneToken(token)
+
 	// se il token non c'e' allora errore
 	if tokenId < 0 {
 		return false

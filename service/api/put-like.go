@@ -17,7 +17,7 @@ func (rt *_router) putLike(w http.ResponseWriter, r *http.Request, ps httprouter
 	lIdint, _ := strconv.Atoi(ps.ByName("likeUserId")) // chi mette like, cioe' io
 
 	if uIdint == lIdint {
-		// Non puoi metterti like da sol*, e' triste!!!
+		// Non puoi metterti like da sol*!
 		http.Error(w, "Non puoi metterti like da sol* !!", http.StatusBadRequest)
 		return
 	}
@@ -44,7 +44,7 @@ func (rt *_router) putLike(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 	if result2 {
-		http.Error(w, "L'utente e' stato bannato dall'utente attuale", http.StatusUnauthorized)
+		http.Error(w, "Hai bannato questo utente non puoi mettergli like", http.StatusUnauthorized)
 		return
 	}
 

@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"fmt"
+
 	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
 
 	"github.com/Obrigad0/WasaPhoto/service/database"
@@ -29,9 +31,15 @@ func (rt *_router) getAllImage(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	// Prelevo tutti i commenti di tutte le immagini, poco efficiente ma ci piace cosi
+	// Prelevo tutti i commenti e likes di tutte le immagini, poco efficiente ma ci piace cosi
 	for i := 0; i < len(image); i++ {
-		image[i].Comments, err = rt.db.GetComments(Image{IId: image[i].IId}.ToDatabase())
+		image[i].Comments, _ = rt.db.GetComments(Image{IId: image[i].IId}.ToDatabase())
+		image[i].Like, _ = rt.db.GetLikesList(Image{IId: image[i].IId}.ToDatabase())
+		for j := 0; j < len(image[i].Like); j++ {
+			fmt.Println("ecco i like giusti!!! :", image[i].Like[j])
+
+		}
+
 	}
 
 	w.Header().Set("Content-Type", "application/json")

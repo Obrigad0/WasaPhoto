@@ -559,8 +559,7 @@ paths:
                     format: binary
                     minLength: 0
                     maxLength: 10000
-                  info:
-                    $ref: "#/components/schemas/image"
+                  
         "401":
           description: Errore, non autorizzato!
         "404":

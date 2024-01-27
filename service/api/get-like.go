@@ -25,9 +25,14 @@ func (rt *_router) getLike(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 
 	var user []database.User
+	var like []int
 	var err error
-	user, err = rt.db.GetLikesList(Image{IId: iIdint}.ToDatabase())
+	like, err = rt.db.GetLikesList(Image{IId: iIdint}.ToDatabase())
 
+	for i := 0; i < len(like); i++ {
+		us := database.User{UId: like[i]}
+		user = append(user, us)
+	}
 	if err != nil {
 		// Errore nell'esecuzione della query
 		http.Error(w, "Errore nella comunicazione con il db", http.StatusInternalServerError)

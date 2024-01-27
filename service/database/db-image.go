@@ -37,13 +37,13 @@ func (db *appdbimpl) GetImage(requester User, iId Image) (Image, error) {
 	// variabile dove andiamo ad inserire l'immagine richiesta
 	var image Image
 	// la query ritornera' l'immagine solamente se l'utente richiedente non e' stato bannato dal """postatore""" (author) dell'immagine
-	err := db.c.QueryRow("SELECT * FROM image WHERE imgId = ? AND author NOT IN (SELECT banner FROM ban WHERE banned = ?)", iId.IId, requester.UId).Scan(&image)
+	err := db.c.QueryRow("SELECT * FROM image WHERE imgId = ? ", iId.IId).Scan(&image)
 	// visto il vincolo in tabella [ban] CHECK (banner != banned) l'utente potra' sempre vedere le proprie foto
 	if err != nil {
 		// Errore nell'esecuzione della Query
 		return image, err
 	}
-	return image, err
+	return image, nil
 
 }
 
@@ -51,7 +51,6 @@ func (db *appdbimpl) GetImage(requester User, iId Image) (Image, error) {
 func (db *appdbimpl) GetAllImage(requester User) ([]Image, error) {
 
 	var images []Image
-	// commenti!!!!!!!!!
 
 	rows, err := db.c.Query(" SELECT *  from image WHERE author = ?", requester.UId)
 

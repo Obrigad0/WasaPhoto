@@ -94,7 +94,7 @@ type AppDatabase interface {
 	GetBanListVINT(user User) ([]int, error)
 
 	// FILE db-like.go
-	GetLikesList(image Image) ([]User, error)
+	GetLikesList(image Image) ([]int, error)
 	LikePhoto(user User, image Image) error
 	UnlikePhoto(user User, image Image) error
 

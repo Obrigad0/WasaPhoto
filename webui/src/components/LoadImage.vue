@@ -38,9 +38,9 @@ export default {
               console.log("errore file non inserito")
           }
           console.log("qui2")
+          location.reload(true)
 
-          fileCaricato.value = ''
-          descrizione.value = ''
+          
       }
   }
 }   

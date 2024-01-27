@@ -36,25 +36,37 @@ export default {
         //niente autolike sorry user
         return
       }else{
+        console.log("is liked era "+this.isLiked)
         if(this.isLiked){
           //rimuovo il like
           try {
+            console.log("levo il like")
             await this.$axios.delete("/user/"+ this.autore +"/images/"+this.iId+"/like/"+ localStorage.getItem('token')) 
             this.likes.pop(localStorage.getItem('token'))
+            this.isLiked = !this.isLiked
           }catch (e){
             this.errore = "{"+ e +"}"
+            console.log(e)
+
           }
         }else{
           //aggiungo il like
           try {
+            console.log("metto il like")
             await this.$axios.put("/user/"+ this.autore +"/images/"+this.iId+"/like/"+ localStorage.getItem('token'))
             this.likes.push(localStorage.getItem('token'))
+            this.isLiked = !this.isLiked
+
           }catch (e){
             this.errore = "{"+ e +"}"
+            console.log(e)
+
           }
         }
+        console.log("is liked ora è "+this.isLiked)
+
       }
-      console.log("qui")
+      console.log("lista like alla foto:"+this.likes)
 
     },
 
@@ -91,18 +103,31 @@ export default {
       }
     },
 
-    getPost(){
+    async getPost(){
         //funzione
       try{
         this.token = localStorage.getItem('token')
-        this.likes = this.like
+        //this.likes = this.like
+        console.log("like ricevuti :"+this.like)
+        this.likes = this.like != null ? this.like : []
+        console.log("lista like alla foto:"+this.likes)
         this.comments = this.commenti
         //console.log(this.comments)
         this.isP = this.isProfile
         if(!this.isP){ this.nomeAutore = this.idToNameAutore(this.autore) }
         this.descrizione = this.desc
-        //get image, ritorna anche le informazioni dell'immagine, ma prendo solo il file mandato
+
+        console.log("id dell'immagine"+this.iId)
+        console.log("url?:::"+__API_URL__)
         this.imageUrl = __API_URL__+ "/user/"+this.autore+"/images/"+this.iId
+        //const response = await axios.get("/user/"+this.autore+"/images/"+this.iId);
+        //this.imageUrl = response.data.file;
+        //this.imageInfo = response.data.info;
+
+
+
+        //get image, ritorna anche le informazioni dell'immagine, ma prendo solo il file mandato
+        //this.imageUrl = __API_URL__+ "/user/"+this.autore+"/images/"+this.iId
 
         if(this.isLike()){
           this.isLiked = true
@@ -162,9 +187,11 @@ export default {
 
   async mounted(){
     await this.getPost();
-    for (let i = 0; i < this.likes.length; i++) {
-      await  this.idToName(this.likes[i])
-    }
+    if(this.likes !== null){
+      for (let i = 0; i < this.likes.length; i++) {
+          await  this.idToName(this.likes[i])
+    }}
+    
   }
 
 };
@@ -226,6 +253,7 @@ export default {
       @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap');
 
     .principale{
+      box-sizing: inherit;
       width: 280px;
       border: 1px solid #ccc; 
       align-items: center;
