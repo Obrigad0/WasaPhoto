@@ -31,7 +31,7 @@ func (db *appdbimpl) GetComments(image Image) ([]Comment, error) {
 // CommentPhoto() inserisce un commento in un'immagine
 func (db *appdbimpl) CommentPhoto(image Image, commento Comment) error {
 	// commento non contiene l'id perche' verra' creato dal dbms
-	_, err := db.c.Exec("INSERT INTO comments (uId,imgI,text) VALUES (?, ?, ?)", commento.Commenter, image.IId, commento.Text)
+	_, err := db.c.Exec("INSERT INTO comments (imgId,uId,text) VALUES (?, ?, ?)", image.IId, commento.Commenter, commento.Text)
 	if err != nil {
 		// Errore
 		return err

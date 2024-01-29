@@ -53,7 +53,8 @@ func (rt *_router) postComments(w http.ResponseWriter, r *http.Request, ps httpr
 	}
 
 	var commento Comment
-	err := json.NewDecoder(r.Body).Decode(&commento.Text)
+	commento.Commenter = uIdint
+	err := json.NewDecoder(r.Body).Decode(&commento)
 	if err != nil {
 		// errore nella richiesta json
 		http.Error(w, "Errore nella richiesta json", http.StatusBadRequest)
