@@ -22,7 +22,6 @@
 
       toMyProfile(){
         this.$router.replace("/profile/"+localStorage.getItem('token'))
-
       },
     },
 

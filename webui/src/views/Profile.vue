@@ -73,7 +73,7 @@ export default {
         //controlla se l'utente e' nell'array di followed dell'utente visitato 
         //se si il pulsante per seguire diventa per smettere di seguire
         //this.seguito = !this.seguito //da levare
-        return this.follower.includes(localStorage.getItem('token'))
+        if(this.follower.includes(parseInt(localStorage.getItem('token'),10))){ console.log("i follower"+this.follower); return true }else{console.log("i follower"+this.follower); return false}
       },
        
       async follow(){ //usato da terzo
@@ -139,8 +139,9 @@ export default {
           this.following = response.data.following != null ? response.data.following : []
 
           // prendo tutte le immagini dell'utente
+          console.log("recupero le immagini")
           let response2 = await this.$axios.get("/user/"+this.$route.params.idUser+"/images");
-          this.images = response2.data //gestione se array vuoto?
+          this.images = response2.data != null ? response2.data : []
           console.log("Ecco i like che ho ricevuto dal server: "+this.images[0])
 
           //controllo se l'array e' null, se si inserisco 0 in followerN, altrimenti inserisco la lunghezza dell'array
@@ -174,6 +175,7 @@ export default {
 
         }catch(e){
            //this.banned = true
+           console.log(e)
            console.log("Errore, informazioni non recuperabili o sei stato bannato dall'utente!")
              //mi sposto nella pagina errorpage
            this.$router.replace("/Error")

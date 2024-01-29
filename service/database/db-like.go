@@ -1,7 +1,5 @@
 package database
 
-import "fmt"
-
 // GetLikesList() ritorna la lista degli utenti che hanno messo like ad una foto specifica
 func (db *appdbimpl) GetLikesList(image Image) ([]int, error) {
 
@@ -18,7 +16,6 @@ func (db *appdbimpl) GetLikesList(image Image) ([]int, error) {
 	for rows.Next() {
 		var user User
 		err := rows.Scan(&user.UId)
-		fmt.Println("chi ha messo like:", user.UId)
 		if err != nil {
 			// Errore nella scansione della riga
 			return nil, err
@@ -26,12 +23,10 @@ func (db *appdbimpl) GetLikesList(image Image) ([]int, error) {
 		likeList = append(likeList, user.UId)
 	}
 	if rows.Err() != nil {
-		fmt.Println("errore errore")
 		// Errore
 		return nil, err
 	}
 	// Nessun errore, ritorno la lista degli utenti che hanno messo like
-	fmt.Println("tutto ok cowboy")
 	return likeList, nil
 
 }

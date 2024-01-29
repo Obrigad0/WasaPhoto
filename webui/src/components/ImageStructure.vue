@@ -18,6 +18,7 @@ export default {
         coloreCommento: "black",
         isP: true,
         nomeAutore: "",
+        idAutore: null,
         nomiLike: [],
         eliminato: false,
     };
@@ -30,6 +31,11 @@ export default {
   props: ['autore','like','commenti',"data","iId","desc","isProfile"],
 
   methods: {
+
+    isLike(){
+        return this.likes.includes(parseInt(localStorage.getItem('token'),10))
+    },
+
     async toggleLike() {  //funzione
 
       if(this.autore == localStorage.getItem('token')){
@@ -42,7 +48,8 @@ export default {
           try {
             console.log("levo il like")
             await this.$axios.delete("/user/"+ this.autore +"/images/"+this.iId+"/like/"+ localStorage.getItem('token')) 
-            this.likes.pop(localStorage.getItem('token'))
+            this.likes.pop(parseInt(localStorage.getItem('token'),10))
+            this.nomiLike = this.nomiLike.filter(elemento => elemento.id !== parseInt(localStorage.getItem('token'),10));
             this.isLiked = !this.isLiked
           }catch (e){
             this.errore = "{"+ e +"}"
@@ -54,7 +61,8 @@ export default {
           try {
             console.log("metto il like")
             await this.$axios.put("/user/"+ this.autore +"/images/"+this.iId+"/like/"+ localStorage.getItem('token'))
-            this.likes.push(localStorage.getItem('token'))
+            this.likes.push(parseInt(localStorage.getItem('token'),10))
+            await this.idToName(parseInt(localStorage.getItem('token'),10))
             this.isLiked = !this.isLiked
 
           }catch (e){
@@ -85,7 +93,10 @@ export default {
 
     },
     
-    
+    toAuthorProfile(){
+      this.$router.replace("/profile/"+this.idAutore)
+    },
+
     toComment(){  //stile
         this.post = !this.post;
     },
@@ -114,7 +125,10 @@ export default {
         this.comments = this.commenti
         //console.log(this.comments)
         this.isP = this.isProfile
-        if(!this.isP){ this.nomeAutore = this.idToNameAutore(this.autore) }
+        if(!this.isP){ 
+          this.nomeAutore = await this.idToNameAutore(this.autore) 
+        }
+        console.log("il nome è:"+this.nomeAutore)
         this.descrizione = this.desc
 
         console.log("id dell'immagine"+this.iId)
@@ -154,10 +168,18 @@ export default {
       this.$router.replace("/profile/"+this.autore)
     },
 
+    goToProfileComm(id){
+      this.$router.replace("/profile/"+id)
+    },
+
     async idToName(id){
         try {
           let response = await this.$axios.get("/user/"+ id) 
-          this.nomiLike.push(response.data.name) 
+          const nuovoElemento = {
+              nome: response.data.name,
+              id: response.data.userId
+          };
+          this.nomiLike.push(nuovoElemento) 
         }catch (e){
             this.errore = "{"+ e +"}"
       }
@@ -166,10 +188,12 @@ export default {
     async idToNameAutore(id){
         try {
           let response = await this.$axios.get("/user/"+ id) 
+          this.idAutore = response.data.userId
           return response.data.name
         }catch (e){
             this.errore = "{"+ e +"}"
       }
+      return "Errore"
     },
 
     async eliminaPost(){
@@ -180,9 +204,7 @@ export default {
         this.errore = "{"+ e +"}"
       }
     },
-    isLike(){
-        return this.likes.includes(localStorage.getItem('token'))
-    },
+
   },
 
   async mounted(){
@@ -199,7 +221,7 @@ export default {
 
 <template>
   <div class="principale">
-    <div v-if="!isP">{{this.nomeAutore}}</div>
+    <div v-if="!isP" @click="toAuthorProfile()" >{{this.nomeAutore}}</div>
     <div v-if="post && !likeP"  class="post">
       <img v-if="!eliminato"  :src="imageUrl"  class="immagine">
       <p v-if="eliminato" style="color: red;">ricarica la pagina</p>
@@ -240,7 +262,7 @@ export default {
     <div v-if="likeP" class="commenti">
     
     <div  class="testo">
-        <p  id="comP" class="cambiacolore" v-for="(likes, index) in nomiLike" :key="index">{{ likes }}</p>
+        <p  id="comP" class="cambiacolore" v-for="(like, index) in nomiLike" :key="index" :id="like.id" @click="goToProfileComm(like.id)"> {{ like.nome }} </p>
       </div>
       <div class="com2">
           <button @click="toLikes()">post</button>
