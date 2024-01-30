@@ -78,12 +78,13 @@ export default {
 
     },
 
-    async addComment() {  //funzione
+    async addComment() {  
       
       try {
         if (this.comment.trim() !== '') {
             await this.$axios.post("/user/"+ this.autore +"/images/"+this.iId+"/comments/", {text: this.comment.trim()}) 
-            let com = { testo: this.comment, cId: getCommentId(), uId: localStorage.getItem("token") } //cambiare
+            let com = { text: this.comment, idComment: await this.getCommentId(), commenter: parseInt(localStorage.getItem('token'),10) } 
+            console.log(com)
             this.comments.push(com);
             this.comment = '';
           }
@@ -105,12 +106,13 @@ export default {
         this.likeP = !this.likeP;
     },
     async getCommentId(){
+      console.log("id da prendere")
       try{
         let response = await this.$axios.get("/user/"+localStorage.getItem('token')+"/images/"+this.iId+"/comments/");
-        let commenti = response.data
-        return commenti[0].idComment
+        // mi preleva tutti i commenti in ordine discendente di id del commento, prendo il primo.
+        return response.data[0].idComment
       }catch(e){  
-        console.log(e)
+        console.log("Errore"+e)
       }
     },
 
@@ -243,7 +245,7 @@ export default {
         <button @click="eliminaPost()" v-if="isP">elimina</button>
       </div>   
     </div>
-    <div v-if="!post" class="commenti">
+    <div v-show="!post" class="commenti">
       <div  class="testo">
         <CommentsPreview v-for="(commentoa, index) in comments"
           :key="index"

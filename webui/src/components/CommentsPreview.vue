@@ -19,7 +19,7 @@ export default {
 
     checkSeMio(){
         //controlla se il commento e' stato creato dall'utewnte attuale
-        if(this.tokenn == this.cId){
+        if(this.tokenn == this.uId){
             return true
         }
         return false
@@ -27,15 +27,17 @@ export default {
 
     cambiaColore(stato) {
         if(this.checkSeMio()){
+            console.log("Il commento è mio")
             this.isMouseOver = stato;
         }
     },
     
     async removeComment() {
-        if(checkSeMio()){
+        if(this.checkSeMio()){
             try {
-                await this.$axios.delete("/user/"+ this.autore +"/images/"+this.iId+"/comments/"+ this.cId) 
-                this.comments.pop(this.idCommento); //rimettere
+                console.log("id del commento:"+this.cId)
+                //await this.$axios.delete("/user/"+ this.autore +"/images/"+this.iId+"/comments/"+ this.cId) 
+                //this.comments.pop(this.idCommento); //rimettere
             }catch (e){
                     this.errore = "{"+ e +"}"
             }
@@ -55,6 +57,8 @@ export default {
   mounted(){
     this.tokenn = localStorage.getItem("token")
     this.idToName()
+    console.log("nuovo commento!, id :"+this.cId)
+
     //console.log(this.testo)
   }
 }
@@ -62,8 +66,8 @@ export default {
 
 <template>
     <div class="commentoP">        
-      <div><p style="font-size: 14px;" class="usnme" @click="goToProfile()">{{ this.uId }} x</p> <p style="font-size: 14px;" >ha scritto:</p></div>
-      <div><p @click="removeComment()" @mouseover="cambiaColore(true)" @mouseout="cambiaColore(false)" :class="{ rosso: isMouseOver }" title="Elimina">  {{ testo }} </p></div>
+      <div><p style="font-size: 14px;" class="usnme" @click="goToProfile()">{{ this.nomeAutoreCommento }}</p> <p style="font-size: 14px;" >ha scritto:</p></div>
+      <div><p @click="removeComment()" @mouseover="this.cambiaColore(true)" @mouseout="this.cambiaColore(false)" :class="{ rosso: isMouseOver }" title="Elimina">  {{ testo }} </p></div>
     </div>
 </template>
 
