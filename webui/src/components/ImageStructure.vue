@@ -84,9 +84,9 @@ export default {
         if (this.comment.trim() !== '') {
             await this.$axios.post("/user/"+ this.autore +"/images/"+this.iId+"/comments/", {text: this.comment.trim()}) 
             let com = { text: this.comment, idComment: await this.getCommentId(), commenter: parseInt(localStorage.getItem('token'),10) } 
-            console.log(com)
-            this.comments.push(com);
+            this.comments.unshift(com);
             this.comment = '';
+            //console.log("pushato")
           }
       }catch (e){
             this.errore = "{"+ e +"}"
@@ -106,7 +106,6 @@ export default {
         this.likeP = !this.likeP;
     },
     async getCommentId(){
-      console.log("id da prendere")
       try{
         let response = await this.$axios.get("/user/"+localStorage.getItem('token')+"/images/"+this.iId+"/comments/");
         // mi preleva tutti i commenti in ordine discendente di id del commento, prendo il primo.
@@ -151,19 +150,6 @@ export default {
       }catch(e){
         this.errore = "{"+ e +"}"
       }
-    },
-
-    changeColor(){
-      console.log("sopra")
-      if(this.autore == localStorage.getItem('token')){
-        console.log("cambio il colore")
-        //se l'utente che ha postato il commento passa sul proprio commento
-        //puo' elimnare il commento
-        var commento = document.getElementById("comP");
-        commento.style.color = "red";
-      }
-        var commento = document.getElementById("comP");
-        commento.style.color = "red";
     },
 
     goToProfile(){
@@ -237,7 +223,9 @@ export default {
           <img  src="../assets/images/invia.png">
         </button>
       </div>
-      <p class="descrizione">{{ descrizione }}</p>
+      <p v-if="!eliminato" class="descrizione">{{ descrizione }}</p>      
+      <p v-if="eliminato" style="color: red;">post elimanto</p>
+
       <!-- v-if="errore === ''"  <p v-if="errore !== ''" class="descrizione">{{ errore }}</p> -->
       <div class="com">
         <button @click="toComment()" >commenti</button>

@@ -17,7 +17,7 @@ const router = createRouter({
 		{path: '/home', component: Home},
 		//{path: '/user/:idUser/images', component: PostImagePage},
 		{path: '/profile/:idUser', component: Profile},
-		{path: '/search/:Username', component: Search}, //aggiungere a yaml
+		{path: '/search', component: Search}, //aggiungere a yaml
 		{path: '/:catchAll(.*)', component: ErrorPage},
 
 	]

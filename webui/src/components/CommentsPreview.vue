@@ -4,8 +4,8 @@ export default {
     return{
         nomeAutoreCommento: "",
         tokenn: null,
-        isMouseOver: false
-
+        isMouseOver: false,
+        eliminato: false,
     };
   },
 
@@ -35,11 +35,11 @@ export default {
     async removeComment() {
         if(this.checkSeMio()){
             try {
-                console.log("id del commento:"+this.cId)
-                //await this.$axios.delete("/user/"+ this.autore +"/images/"+this.iId+"/comments/"+ this.cId) 
-                //this.comments.pop(this.idCommento); //rimettere
+                await this.$axios.delete("/user/"+ this.autore +"/images/"+this.iId+"/comments/"+ this.cId) 
+                console.log("funzionerà pop??")
+                this.eliminato = true
             }catch (e){
-                    this.errore = "{"+ e +"}"
+                this.errore = "{"+ e +"}"
             }
         }
     },
@@ -66,8 +66,9 @@ export default {
 
 <template>
     <div class="commentoP">        
-      <div><p style="font-size: 14px;" class="usnme" @click="goToProfile()">{{ this.nomeAutoreCommento }}</p> <p style="font-size: 14px;" >ha scritto:</p></div>
-      <div><p @click="removeComment()" @mouseover="this.cambiaColore(true)" @mouseout="this.cambiaColore(false)" :class="{ rosso: isMouseOver }" title="Elimina">  {{ testo }} </p></div>
+      <div><p  style="font-size: 14px;" class="usnme" @click="goToProfile()">{{ this.nomeAutoreCommento }}</p> <p style="font-size: 14px;" >ha scritto:</p></div>
+      <div v-show="!eliminato" style=" word-wrap: break-word; "><p @click="removeComment()" :id="this.cId" @mouseover="this.cambiaColore(true)" @mouseout="this.cambiaColore(false)" :class="{ rosso: isMouseOver }" title="Elimina">  {{ this.testo }} </p> </div>
+      <div v-show="eliminato" style=" word-wrap: break-word; "><p :id="this.cId" style="color: red;">  commento eliminato </p> </div>
     </div>
 </template>
 

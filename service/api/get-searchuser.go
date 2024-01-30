@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/Obrigad0/WasaPhoto/service/api/reqcontext"
@@ -14,7 +15,7 @@ import (
 func (rt *_router) getSearchUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	nome := r.URL.Query().Get("queryNomeUtente")
-
+	fmt.Println("Ecco il nome arrivato: ", nome)
 	if !verificaLogin(r.Header.Get("Authorization")) {
 		// Token non valido, ritorno Errore 401 al client
 		http.Error(w, "Token non valido", http.StatusUnauthorized)
@@ -22,6 +23,7 @@ func (rt *_router) getSearchUser(w http.ResponseWriter, r *http.Request, ps http
 	}
 
 	token := estrazioneToken(r.Header.Get("Authorization"))
+	fmt.Println("Ecco il token ", token)
 
 	var users []database.User
 	users, err := rt.db.GetSearchUser(User{UId: token, Name: nome}.ToDatabase())

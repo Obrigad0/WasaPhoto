@@ -2,7 +2,8 @@
   export default {
     data: function() {
 		  return {
-        token: localStorage.getItem('token')
+        token: localStorage.getItem('token'),
+        username: "",
       }
     },
 

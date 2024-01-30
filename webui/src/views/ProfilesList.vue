@@ -23,7 +23,7 @@ export default {
   methods: {
       async getProfilesSearch(){
         //prend i profili della ricerca
-        let response = await this.$axios.get("/user",{ params: {Username: this.query ,},}); //cambiare
+        let response = await this.$axios.get("/user", { params: {queryNomeUtente: this.query ,},} ); //cambiare
               if (response.status === 401 || response.status === 500){
                 console.log("Errore, informazioni non recuperabili")
                 //mi sposto nella pagina errorpage
@@ -31,24 +31,26 @@ export default {
                 return
               }
         this.users = response.data //gestione se array vuoto?
+        console.log("ecco gli utenti"+this.users)
       },
+       /*
+       async getProfilesFollow(){
+        //prende i profili seguiti
+        let response = await this.$axios.get("/user/"+this.$route.params.idUser+"/following/"); //cambiare
+              if (response.status === 401 || response.status === 500){
+                console.log("Errore, informazioni non recuperabili")
+                //mi sposto nella pagina errorpage
+                return
+              }
+        this.users = response.data.utente != null ? response.data.utente : [] //attenzione da cambiare
+        },
+        */
   },
-  
-  /*
-  async getProfilesFollow(){
-    //prende i profili seguiti
-    let response = await this.$axios.get("/user/"+this.$route.params.idUser+"/following/"); //cambiare
-          if (response.status === 401 || response.status === 500){
-             console.log("Errore, informazioni non recuperabili")
-             //mi sposto nella pagina errorpage
-             return
-          }
-    this.users = response.data.utente != null ? response.data.utente : [] //attenzione da cambiare
-  },
-  */
-  mounted(){
+ 
+  async mounted(){
     this.query = this.$route.query.searchValue || ''
-    this.getProfilesSearch()
+    console.log("Ecco la query "+this.query)
+    await this.getProfilesSearch()
   }
 };
 
