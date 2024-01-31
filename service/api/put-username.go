@@ -18,7 +18,6 @@ type DatiInput struct {
 func (rt *_router) putUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
-	// fmt.Println("id richiedente", uIdint)
 
 	if !verificaToken(uIdint, r.Header.Get("Authorization")) {
 		// Token non valido, ritorno Errore 401 al client
@@ -29,11 +28,7 @@ func (rt *_router) putUsername(w http.ResponseWriter, r *http.Request, ps httpro
 	// variabile utilizzta per memorizzare l'username inviato dal clienet
 	var newUserName DatiInput
 	err := json.NewDecoder(r.Body).Decode(&newUserName)
-	// fmt.Println("stampo il body:", body)
-	// fmt.Println("stampo il decoded:", newUserName.Username)
-
 	if err != nil {
-		// fmt.Println("ecco l'errore:", err)
 		// errore nella richiesta json
 		http.Error(w, "Errore nella richiesta json", http.StatusBadRequest)
 		return
