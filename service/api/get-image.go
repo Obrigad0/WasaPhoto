@@ -15,9 +15,9 @@ func (rt *_router) getImage(w http.ResponseWriter, r *http.Request, ps httproute
 	uIdint, _ := strconv.Atoi(ps.ByName("idUser"))
 	iIdint, _ := strconv.Atoi(ps.ByName("imageId")) // id foto
 
-	//w.Header().Set("Content-Type", "application/json")
+	// w.Header().Set("Content-Type", "application/json")
 
-	//w.WriteHeader(http.StatusOK)
+	// w.WriteHeader(http.StatusOK)
 
 	path := filepath.Join(cartellaPrincipale, strconv.Itoa(uIdint), "/imgUs/", strconv.Itoa(iIdint))
 	http.ServeFile(w, r, path)
