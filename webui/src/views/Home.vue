@@ -21,7 +21,7 @@ export default {
           try{
 
             let response = await this.$axios.get("/user/"+localStorage.getItem("token")+"/following/");
-            let data = response.data;
+            let data = response.data
             console.log("ecco come' la struttura dello stream"+data)
             //let user = data.utente; non servono
             // e' un array di immagini

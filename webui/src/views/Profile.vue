@@ -156,17 +156,17 @@ export default {
           this.seguito =  this.isFollowed();
 
           //faccio una chiamata al db per il mio profilo dove prendo i miei ban e vedo se ho bannato questo utente.
-          if(this.$route.params.idUser !== localStorage.getItem("token")){
+          if(this.$route.params.idUser !== parseInt(localStorage.getItem('token'),10)){
               console.log("Vedo se ho bannato questo utente")
               try{
-              let response2 = await this.$axios.get("/user/"+localStorage.getItem("token"));
-              
-              if(response2.data.banList.includes(parseInt(this.$route.params.idUser,10))){
-                // ho bannato questo profilo, quindi il pulsante cambia (e il tipo di operazione quando premuto)
-                console.log("Ho bannato questo profilo!")
-                this.bannato = true
-                //testoBottoneBan() ??
-              }
+                let response2 = await this.$axios.get("/user/"+localStorage.getItem("token"));
+                
+                if(response2.data.banList.includes(parseInt(this.$route.params.idUser,10))){
+                  // ho bannato questo profilo, quindi il pulsante cambia (e il tipo di operazione quando premuto)
+                  console.log("Ho bannato questo profilo!")
+                  this.bannato = true
+                  //testoBottoneBan() ??
+                }
             }catch(e){
               console.log(e)
             }

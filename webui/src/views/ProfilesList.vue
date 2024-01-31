@@ -30,7 +30,7 @@ export default {
                 this.$router.replace("/Error")
                 return
               }
-        this.users = response.data //gestione se array vuoto?
+        this.users = response.data != null ? response.data : [] //gestione se array vuoto?
         console.log("ecco gli utenti"+this.users)
       },
        /*
@@ -58,15 +58,19 @@ export default {
 
 <template>
     <PageComponents>
-        <div class="profili">
+        <div v-if="this.users.length" class="profili">
                 <ProfilePreview  v-for="(users, index) in users"
                   :key = "index"
-                  :nome = "users.username"
+                  :nome = "users.name"
                   :follower = "users.follower"
                   :following = "users.following"
-                  :uId = "null">
+                  :uId = "users.userId">
                 </ProfilePreview>
         </div>
+        <div v-if="!this.users.length" class="profili">
+          <p>Non ho trovato nessun utente</p>
+        </div>
+
     </PageComponents> 
 </template>
 

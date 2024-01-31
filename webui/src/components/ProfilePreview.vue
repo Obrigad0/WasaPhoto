@@ -19,7 +19,7 @@ export default {
 <template>
     <div class="profile">        
       <div><p class="usnme" @click="goToProfile()">{{ nome }}</p></div>
-      <div><p> Follower: {{ follower }}  Following: {{ following }}</p></div>
+      <div><p> Follower: {{ follower != null ? follower.length : 0 }}  Following: {{ following != null ? following.length : 0}}</p></div>
     </div>
 </template>
 

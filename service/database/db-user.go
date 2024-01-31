@@ -117,7 +117,7 @@ func (db *appdbimpl) GetSearchUser(query User) ([]User, error) {
 
 	var users []User
 
-	rows, err := db.c.Query(" SELECT * from user WHERE name LIKE '%?%' AND uId NOT IN (SELECT banner FROM ban WHERE banned = ?)", query.Name, query.UId)
+	rows, err := db.c.Query(" SELECT * FROM user WHERE name LIKE ? AND uId NOT IN (SELECT banner FROM ban WHERE banned = ?)", query.Name+"%", query.UId)
 
 	if err != nil {
 		// Errore nell'esecuzione della Query

@@ -39,7 +39,7 @@ func (rt *_router) getStream(w http.ResponseWriter, r *http.Request, ps httprout
 	// Prelevo tutti i commenti di tutte le immagini
 	// for i := 0; i < len(image); i++ {
 	//	image[i].Comments, err = rt.db.GetComments(Image{IId: image[i].IId}.ToDatabase())
-	//}
+	// }
 
 	for i := 0; i < len(image); i++ {
 		image[i].Comments, _ = rt.db.GetComments(Image{IId: image[i].IId}.ToDatabase())
