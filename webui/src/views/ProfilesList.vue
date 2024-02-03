@@ -33,24 +33,42 @@ export default {
         this.users = response.data != null ? response.data : [] //gestione se array vuoto?
         console.log("ecco gli utenti"+this.users)
       },
-       /*
-       async getProfilesFollow(){
+      
+      async getProfilesBan(){
         //prende i profili seguiti
-        let response = await this.$axios.get("/user/"+this.$route.params.idUser+"/following/"); //cambiare
+        let response = await this.$axios.get("/user/"+localStorage.getItem("token")+"/banned/"); //cambiare
+              if (response.status === 401 || response.status === 500){
+                console.log("Errore, informazioni non recuperabili")
+                //mi sposto nella pagina errorpage
+                return
+              }
+        this.users = response.data != null ? response.data : [] //attenzione da cambiare
+      },
+        
+      async getProfilesFollow(){
+        //prende i profili seguiti
+        let response = await this.$axios.get("/user/"+localStorage.getItem("token")+"/following/"); //cambiare
               if (response.status === 401 || response.status === 500){
                 console.log("Errore, informazioni non recuperabili")
                 //mi sposto nella pagina errorpage
                 return
               }
         this.users = response.data.utente != null ? response.data.utente : [] //attenzione da cambiare
-        },
-        */
+      },
+        
   },
  
   async mounted(){
     this.query = this.$route.query.searchValue || ''
     console.log("Ecco la query "+this.query)
-    await this.getProfilesSearch()
+    if(this.query == "@ban"){
+      await this.getProfilesBan()
+    }else if(this.query == "@follow"){
+      await this.getProfilesFollow()
+    }else{
+      await this.getProfilesSearch()
+    }
+    console.log(this.users)
   }
 };
 

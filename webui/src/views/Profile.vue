@@ -42,6 +42,14 @@ export default {
       testoBottoneBan() {
         return this.bannato ? 'UnBan' : 'Ban';
       },
+
+      toBanList(){
+        this.$router.push({ path: '/search', query: { searchValue: "@ban" } });
+      },
+
+      toFollow(){
+        this.$router.push({ path: '/search', query: { searchValue: "@follow" } });
+      },
       
       itsMe(){
         //controlla se l'utente del profilo visitato e' l'utente proprietario del profilo
@@ -209,6 +217,10 @@ export default {
               <button @click="ban()" v-if="!itsMe()" class="operazioni">{{testoBottoneBan()}}</button>
               <!--<button @click="" v-if="itsMe()" class="operazioni">BANLIST</button>-->
               <button  @click="unm()" v-if="itsMe()" class="operazioni">Username</button>
+              <button  @click="toBanList()" v-if="itsMe()" class="operazioni">Ban list</button>
+              <button  @click="toFollow()" v-if="itsMe()" class="operazioni">Follow</button>
+
+
         </div>
     </div>
     <div class="box2" style="height: 72vh;">
