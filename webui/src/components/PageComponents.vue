@@ -52,10 +52,10 @@
             <button class="cerca" @click="toSearch()" style="padding: 2px 8px; background-color: #734f59; color: #fff; border: none; cursor: pointer;">find</button>
         </div>
       </div>
-      <div class="box" style="height: 84vh; background-color: white;">
+      <div class="box" style="height: 80vh; background-color: white;">
         <slot></slot>
       </div>
-      <div class="box" style="height: 8vh; padding-top: 10px;background-color: #f1f1f1;" >
+      <div class="box" style="height: 50px; padding-top: 10px;background-color: #f1f1f1;" >
       <footer class="footer">
         <p style="color: #540e23">2024 WasaPhoto Flavio Corsetti 1997818</p>
         </footer>
@@ -72,6 +72,8 @@
     margin: 0;
     padding: 0;
     height: 100%;
+    line-height: normal;
+
   }
   .app {
     height: 100%;
@@ -85,9 +87,10 @@
     justify-content: space-between; 
     align-items: center; 
     padding: 0 20px;
-    height: 5vh;
+    height: 44px;
     background-color: #830c2c;
     border-radius: 25px;
+    margin-top: 4px;
   }
   .box {
     justify-content: center;
@@ -103,7 +106,9 @@
   .titolo { 
     padding-left: 2vw;
     text-align: center;
-    font-size: 3vw;
+    font-size: 40px;
+    font-weight: bold;    
+    margin-bottom: 0;
     color: white; 
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Ombra per simulare il bordo nero con dimensione 2px */
   }

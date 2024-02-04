@@ -58,7 +58,7 @@ export default {
       <input id="descrizione" placeholder="Aggiungi descrizione..." v-model="descrizione">
     </div>
     <div class="go">
-      <button @click="creaPost()">CREA POST</button>
+      <button @click="creaPost()">CREA</button>
     </div>
   </div>
 </template>
@@ -67,8 +67,8 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap');
 
     .principale{
-        width: 280px;
-        height: 340px;
+        width: 300px;
+        height: 360px;
         border: 1px solid #ccc; 
         align-items: center;
         font-family: 'Rubik', sans-serif;
@@ -120,11 +120,11 @@ export default {
       justify-content: center;
       align-items: center;
       width: 100%;
-      height: 9%;
+      height: 10%;
     }
 
     button{
-    height: 25px;
+    height: 30px;
     width: 100px;
     margin-right: 10px;
     border-radius: 10px;

@@ -84,6 +84,9 @@ export default {
   }
 
   .centro{
+    border: 1px solid #ccc; 
+    border-top: 0px;
+    border-bottom: 0px;
     height: 100%;
     width: 60%;
     overflow-y: auto;

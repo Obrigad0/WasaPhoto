@@ -266,19 +266,21 @@ export default {
 
     .principale{
       box-sizing: inherit;
-      width: 280px;
       border: 1px solid #ccc; 
       align-items: center;
       font-family: 'Rubik', sans-serif;
     }
     .post {
-        width: 250px; /* Imposta la larghezza del singolo post */
+        width: 420px; /* Imposta la larghezza del singolo post */
+        height: 400px;
         padding: 14px;
     }
     
     .immagine {
         width: 100%;
         height: auto;
+        max-height: 250px;
+
     }
     .commenti{
       max-height: 240px; /* Imposta l'altezza massima del container dei commenti */

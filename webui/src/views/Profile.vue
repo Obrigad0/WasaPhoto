@@ -20,7 +20,6 @@ export default {
       seguito: false, //usati da utente che visita il profilo che non siamo noi
       bannato: false, //usati da utente che visita il profilo che non siamo noi
       //banned: false,
-
     }
   },
     components: {
@@ -212,7 +211,7 @@ export default {
               <button @click="cambiaUsername()" v-if="modifica" >invia</button>
         </div>
         <div class="titoli2">
-              <p style="color: black; margin-right: 10px;">follower: {{followerN}} followed: {{followingN}}</p>
+              <p style="color: black; margin-right: 10px; margin-top: 15px; font-size: 22px;">Follower: {{followerN}} Followed: {{followingN}}</p>
               <button @click="follow()" v-if="!itsMe()" class="operazioni">{{testoBottoneFollow()}}</button>
               <button @click="ban()" v-if="!itsMe()" class="operazioni">{{testoBottoneBan()}}</button>
               <!--<button @click="" v-if="itsMe()" class="operazioni">BANLIST</button>-->
@@ -224,6 +223,7 @@ export default {
         </div>
     </div>
     <div class="box2" style="height: 72vh;">
+    
         <ImageStructure v-for="(post, index) in images"
             :key="index"
             :autore="post.author"
@@ -295,11 +295,12 @@ export default {
   }
 
   .operazioni{
-    height: 25px;
-    width: 100px;
+    height: 30px;
+    width: 125px;
     margin-right: 10px;
     border-radius: 10px;
   }
+
 
 </style>
 
