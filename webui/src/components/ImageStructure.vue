@@ -84,12 +84,16 @@ export default {
         if (this.comment.trim() !== '') {
             await this.$axios.post("/user/"+ this.autore +"/images/"+this.iId+"/comments/", {text: this.comment.trim()}) 
             let com = { text: this.comment, idComment: await this.getCommentId(), commenter: parseInt(localStorage.getItem('token'),10) } 
-            this.comments.unshift(com);
-            this.comment = '';
-            //console.log("pushato")
+            if(this.comments == null){
+              this.comments.push(com)
+            }
+            this.comments.unshift(com)
+            this.comment = ''
+            console.log("pushato")
           }
       }catch (e){
-            this.errore = "{"+ e +"}"
+            this.errore = "{ "+ e +" }"
+            console.log("Errore nel caricamento del commento:"+this.errore)
       }
 
     },
@@ -123,14 +127,14 @@ export default {
         console.log("like ricevuti :"+this.like)
         this.likes = this.like != null ? this.like : []
         console.log("lista like alla foto:"+this.likes)
-        this.comments = this.commenti
+        this.comments = this.commenti != null ? this.commenti : []
         //console.log(this.comments)
         this.isP = this.isProfile
         if(!this.isP){ 
           this.nomeAutore = await this.idToNameAutore(this.autore) 
         }
         console.log("il nome è:"+this.nomeAutore)
-        this.descrizione = this.desc
+        this.descrizione = this.desc != null ? this.desc : ""
 
         console.log("id dell'immagine"+this.iId)
         console.log("url?:::"+__API_URL__)
@@ -218,7 +222,7 @@ export default {
             <img v-if = "!isLiked" src="../assets/images/noLike.png">
             <img v-if = "isLiked"  src="../assets/images/like.png">
         </button>
-        <input v-model="comment" @keyup.enter="addComment" placeholder="Aggiungi commento...">
+        <input v-model="comment" @keyup.enter="addComment()" placeholder="Aggiungi commento...">
         <button @click="addComment()">
           <img  src="../assets/images/invia.png">
         </button>
@@ -283,19 +287,22 @@ export default {
 
     }
     .commenti{
-      max-height: 240px; /* Imposta l'altezza massima del container dei commenti */
-      width: 280px; /* Imposta la larghezza del singolo post */
+      width: 420px;
+      height: 400px;
       min-height: 40px;
     }
     .descrizione {
         margin-top: 10px;
         color: black;
+        overflow-y: scroll;
+        height: 35px;
     }
     
     .like{
         border: none;
         background-color: white;
         cursor: pointer;
+        
     }
     .like img{
         height: 30px;
@@ -321,7 +328,7 @@ export default {
     }
     .testo{
       border: 1px solid #ccc; 
-      max-height: 200px; /* Imposta l'altezza massima del container dei commenti */
+      max-height: 85%;
       overflow-y: auto;
       width: 100%;
       color: black;

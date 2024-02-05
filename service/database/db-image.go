@@ -52,7 +52,7 @@ func (db *appdbimpl) GetAllImage(requester User) ([]Image, error) {
 
 	var images []Image
 
-	rows, err := db.c.Query(" SELECT *  from image WHERE author = ?", requester.UId)
+	rows, err := db.c.Query(" SELECT * from image WHERE author = ? ORDER BY imgId DESC", requester.UId)
 
 	if err != nil {
 		// Errore nell'esecuzione della Query

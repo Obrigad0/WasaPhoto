@@ -217,7 +217,7 @@ export default {
               <!--<button @click="" v-if="itsMe()" class="operazioni">BANLIST</button>-->
               <button  @click="unm()" v-if="itsMe()" class="operazioni">Username</button>
               <button  @click="toBanList()" v-if="itsMe()" class="operazioni">Ban list</button>
-              <button  @click="toFollow()" v-if="itsMe()" class="operazioni">Follow</button>
+              <!--<button  @click="toFollow()" v-if="itsMe()" class="operazioni">Follow</button>-->
 
 
         </div>
