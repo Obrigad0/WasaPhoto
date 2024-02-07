@@ -41,7 +41,7 @@ export default {
   
   mounted(){ 
     //verifica se l'utente e' gia loggato
-		if (localStorage.getItem('token')){
+		if (localStorage.getItem('token') && localStorage.getItem('token')!= 1){
       //se gia loggato non puo rimanere nella pagina di login e viene spostato alla sua home
       console.log("sei gia loggato!!");
       this.$router.replace("/home")
