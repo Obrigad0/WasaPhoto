@@ -60,6 +60,7 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 	// invio l'id all'utente
 	if uId == -1 {
 		uId = contenitore
+		contenitore += 1
 	}
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(uId)

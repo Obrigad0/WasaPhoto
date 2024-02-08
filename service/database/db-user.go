@@ -82,7 +82,7 @@ func (db *appdbimpl) GetStream(uId User) ([]Image, []User, error) {
 	var image []Image
 	var users []User
 
-	rows, err := db.c.Query(" SELECT i.imgId, i.author, i.descrizione, i.data, u.uId , u.name FROM image i JOIN user u ON i.author = u.uId WHERE i.author IN ( SELECT A FROM follow WHERE B = ? ) ORDER BY i.data DESC LIMIT 1 ", uId.UId)
+	rows, err := db.c.Query(" SELECT i.imgId, i.author, i.descrizione, i.data, u.uId , u.name FROM image i JOIN user u ON i.author = u.uId WHERE i.author IN ( SELECT A FROM follow WHERE B = ? ) ORDER BY i.data DESC", uId.UId)
 
 	// forse si puo fare piu efficiente
 	if err != nil {

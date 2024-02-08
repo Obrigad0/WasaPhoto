@@ -12,7 +12,6 @@ export default {
 
       this.errore = null;
       console.log("metodo login avviato");
-      console.log("errore:"+this.errore);
 
       try {
 

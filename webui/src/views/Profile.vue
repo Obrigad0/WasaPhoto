@@ -22,13 +22,14 @@ export default {
       //banned: false,
     }
   },
+
     components: {
       PageComonents,
       ImageStructure,
       LoadImage,
     },
 
-  created() { 
+  mounted() { 
     // al caricamento della pagina vengono recuperate tutte le informazioni sull'utente
     this.profileInfos();
   },
