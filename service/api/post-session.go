@@ -26,17 +26,17 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// controllo se l'utente esiste
-	var uId int
-	var contenitore int
+	uId := 0
 	uId, err2 := rt.db.Access(User{Name: username.Name}.ToDatabase())
 
 	if err2 != nil {
-		a := 1
-		b := a
-		a = b
+		http.Error(w, "Errore con il db", http.StatusInternalServerError)
+		return
 	}
 
+	// gestione creazione utente
 	if uId < 0 {
+		uId = 0
 		// Errore, l'utente non esiste va creato!
 		uId, err := rt.db.CreateUser(User{Name: username.Name}.ToDatabase())
 		// la funzione mi torna anche l'id dell'utente creato
@@ -49,24 +49,26 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 		// /wp/id/image
 		path := filepath.Join(cartellaPrincipale, strconv.Itoa(uId))
 		err2 := os.MkdirAll(filepath.Join(path, "imgUs"), os.ModePerm)
+
 		if err2 != nil {
 			http.Error(w, "Errore nella creazione della dir dell'utente", http.StatusInternalServerError)
 			return
 		}
-		contenitore = uId
+		// contenitore = uId
+		w.WriteHeader(http.StatusCreated)
+		err = json.NewEncoder(w).Encode(uId)
+		if err != nil {
+			http.Error(w, "Errore nella richiesta json", http.StatusBadRequest)
+			return
+		}
 
+	} else {
+		// utente gia esistente
+		w.WriteHeader(http.StatusCreated)
+		err = json.NewEncoder(w).Encode(uId)
+		if err != nil {
+			http.Error(w, "Errore nella richiesta json", http.StatusBadRequest)
+			return
+		}
 	}
-	// tutto fatto!
-	// invio l'id all'utente
-	if uId == -1 {
-		uId = contenitore
-		contenitore += 1
-	}
-	w.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(w).Encode(uId)
-	if err != nil {
-		http.Error(w, "Errore nella richiesta json", http.StatusBadRequest)
-		return
-	}
-
 }

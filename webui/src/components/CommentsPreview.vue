@@ -68,7 +68,7 @@ export default {
     <div class="commentoP">        
       <div><p  style="font-size: 14px;" class="usnme" @click="goToProfile()">{{ this.nomeAutoreCommento }}</p> <p style="font-size: 14px;" >ha scritto:</p></div>
       <div v-show="!eliminato" style=" word-wrap: break-word; "><p @click="removeComment()" :id="this.cId" @mouseover="this.cambiaColore(true)" @mouseout="this.cambiaColore(false)" :class="{ rosso: isMouseOver }" title="Elimina">  {{ this.testo }} </p> </div>
-      <div v-show="eliminato" style=" word-wrap: break-word; "><p :id="this.cId" style="color: red;">  commento eliminato </p> </div>
+      <div v-show="eliminato" style=" word-wrap: break-word; "><p  style="color: red;">  commento eliminato </p> </div>
     </div>
 </template>
 

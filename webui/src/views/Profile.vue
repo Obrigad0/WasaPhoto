@@ -64,7 +64,7 @@ export default {
 
       async cambiaUsername() { 
           let newUN = this.nuovoUsername
-          if(newUN.length > 3 ){
+          if(newUN.length > 3 && newUN.length  <= 16){
             try{
               console.log("username inserito:"+newUN)
               await this.$axios.put("/user/"+this.$route.params.idUser, {username: newUN} , { headers: { 'Content-Type': 'application/json' }});
@@ -168,8 +168,8 @@ export default {
               console.log("Vedo se ho bannato questo utente")
               try{
                 let response2 = await this.$axios.get("/user/"+localStorage.getItem("token"));
-                
-                if(response2.data.banList.includes(parseInt(this.$route.params.idUser,10))){
+                const dban = response2.data.banList != null ? response2.data.banList: [] 
+                if(dban.includes(parseInt(this.$route.params.idUser,10))){
                   // ho bannato questo profilo, quindi il pulsante cambia (e il tipo di operazione quando premuto)
                   console.log("Ho bannato questo profilo!")
                   this.bannato = true
@@ -208,7 +208,7 @@ export default {
     <div class="box" style="height: 13vh;">
         <div class="titoli">
               <h1 v-if="!modifica" id="username">{{username}}</h1>
-              <input v-model="nuovoUsername" v-if="modifica" class="input" type="text" placeholder="inserisci nuovo username">
+              <input v-model="nuovoUsername" v-if="modifica" class="input" type="text" maxlength="16" minlength="2" placeholder="inserisci nuovo username">
               <button @click="cambiaUsername()" v-if="modifica" >invia</button>
         </div>
         <div class="titoli2">

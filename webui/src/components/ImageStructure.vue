@@ -6,7 +6,7 @@ export default {
   data() {
     return {
         imageUrl: "",
-        descrizione: 'Forza Forza Lazio!',
+        descrizione: 'descrizione',
         isLiked: false,
         comments: [],
         likes: [],
@@ -40,6 +40,16 @@ export default {
 
       if(this.autore == localStorage.getItem('token')){
         //niente autolike sorry user
+        console.log("L'Utente non può mettere like ad un proprio post.")
+        const contenitoreDescrizione = this.descrizione
+        const elementoDesc = document.getElementById("stiDesc")
+        this.descrizione = "AUTO-LIKE NON CONSENTITO!"
+        elementoDesc.style.color = 'red';
+        setTimeout(() => {
+          this.descrizione = contenitoreDescrizione
+          elementoDesc.style.color = 'black';
+        }, 3000) 
+
         return
       }else{
         console.log("is liked era "+this.isLiked)
@@ -215,7 +225,7 @@ export default {
   <div class="principale">
     <div v-if="!isP" @click="toAuthorProfile()" >{{this.nomeAutore}}</div>
     <div v-if="post && !likeP"  class="post">
-      <img v-if="!eliminato"  :src="imageUrl"  class="immagine">
+      <img v-if="!eliminato"  :src="imageUrl"  class="immagine" :title=this.data>
       <p v-if="eliminato" style="color: red;">ricarica la pagina</p>
       <div class="feedback">
         <button @click="toggleLike()" class="like">
@@ -227,7 +237,7 @@ export default {
           <img  src="../assets/images/invia.png">
         </button>
       </div>
-      <p v-if="!eliminato" class="descrizione">{{ descrizione }}</p>      
+      <p v-if="!eliminato" id="stiDesc" class="descrizione">{{ descrizione }}</p>      
       <p v-if="eliminato" style="color: red;">post elimanto</p>
 
       <!-- v-if="errore === ''"  <p v-if="errore !== ''" class="descrizione">{{ errore }}</p> -->
@@ -256,7 +266,7 @@ export default {
     <div v-if="likeP" class="commenti">
     
     <div  class="testo">
-        <p  id="comP" class="cambiacolore" v-for="(like, index) in nomiLike" :key="index" :id="like.id" @click="goToProfileComm(like.id)"> {{ like.nome }} </p>
+        <p class="cambiacolore" v-for="(like, index) in nomiLike" :key="index" :id="like.id" @click="goToProfileComm(like.id)"> {{ like.nome }} </p>
       </div>
       <div class="com2">
           <button @click="toLikes()">post</button>
