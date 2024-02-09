@@ -41,15 +41,20 @@ export default {
             }catch (e){
                 this.errore = "{"+ e +"}"
             }
+        }else{
+          console.log("il commento non è il mio")
         }
     },
 
     async idToName(){
         try {
+          console.log("id di chi ha commentato 2 : "+this.uId)
           let response = await this.$axios.get("/user/"+ this.uId) 
           this.nomeAutoreCommento = response.data.name
+          console.log("nome di chi ha commentato: "+this.nomeAutoreCommento)
         }catch (e){
             this.errore = "{"+ e +"}"
+            console.log(errore)
       }
     }
   },
@@ -58,6 +63,8 @@ export default {
     this.tokenn = localStorage.getItem("token")
     this.idToName()
     console.log("nuovo commento!, id :"+this.cId)
+    console.log("id di chi ha commentato 1 : "+this.uId)
+    console.log("il commento : "+this.testo)
 
     //console.log(this.testo)
   }

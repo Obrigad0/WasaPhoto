@@ -26,7 +26,7 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// controllo se l'utente esiste
-	uId := 0
+	var uId int
 	uId, err2 := rt.db.Access(User{Name: username.Name}.ToDatabase())
 
 	if err2 != nil {
@@ -36,7 +36,6 @@ func (rt *_router) postSession(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// gestione creazione utente
 	if uId < 0 {
-		uId = 0
 		// Errore, l'utente non esiste va creato!
 		uId, err := rt.db.CreateUser(User{Name: username.Name}.ToDatabase())
 		// la funzione mi torna anche l'id dell'utente creato

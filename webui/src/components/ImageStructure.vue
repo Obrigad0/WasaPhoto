@@ -96,10 +96,12 @@ export default {
             let com = { text: this.comment, idComment: await this.getCommentId(), commenter: parseInt(localStorage.getItem('token'),10) } 
             if(this.comments == null){
               this.comments.push(com)
-            }
-            this.comments.unshift(com)
+            }else{
+              this.comments.unshift(com)
+            } 
             this.comment = ''
-            console.log("pushato")
+            console.log("Array di commenti: "+this.comments)
+            console.log("pushato, chi ha commentato "+com.commenter)
           }
       }catch (e){
             this.errore = "{ "+ e +" }"
