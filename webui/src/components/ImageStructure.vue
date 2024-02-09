@@ -43,12 +43,12 @@ export default {
         console.log("L'Utente non può mettere like ad un proprio post.")
         const contenitoreDescrizione = this.descrizione
         const elementoDesc = document.getElementById("stiDesc")
-        this.descrizione = "AUTO-LIKE NON CONSENTITO!"
-        elementoDesc.style.color = 'red';
+        this.descrizione = "LIKE AD UN PROPRIO POST VIETATI"
+        elementoDesc.style.color = 'blue';
         setTimeout(() => {
           this.descrizione = contenitoreDescrizione
           elementoDesc.style.color = 'black';
-        }, 3000) 
+        }, 5000) 
 
         return
       }else{
