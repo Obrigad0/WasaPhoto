@@ -8,9 +8,6 @@ export default {
             typeOfSearch: null,
             query: "",
             users: [], //array utenti
-            //{ username: 'Utente1', follower: 100, following: 50 },
-            //{ username: 'Utente2', follower: 150, following: 75 },
-            //{ username: 'Utente3', follower: 80, following: 40 },
         }
     },
 
@@ -44,8 +41,9 @@ export default {
               }
         this.users = response.data != null ? response.data : [] //attenzione da cambiare
       },
-        
-      async getProfilesFollow(){
+      
+      //FUNZIONE NON UTILIZZABILE
+      /*async getProfilesFollow(){
         //prende i profili seguiti
         let response = await this.$axios.get("/user/"+localStorage.getItem("token")+"/following/"); //cambiare
               if (response.status === 401 || response.status === 500){
@@ -55,6 +53,7 @@ export default {
               }
         this.users = response.data.utente != null ? response.data.utente : [] //attenzione da cambiare
       },
+      */
         
   },
  
@@ -63,12 +62,9 @@ export default {
     console.log("Ecco la query "+this.query)
     if(this.query == "@ban"){
       await this.getProfilesBan()
-    }else if(this.query == "@follow"){
-      await this.getProfilesFollow()
     }else{
       await this.getProfilesSearch()
     }
-    console.log(this.users)
   }
 };
 

@@ -11,9 +11,6 @@ export default {
       PageComponents,
     },
 
-    toHome(){
-        this.$router.replace("/home")
-    },
 }
 </script>
 

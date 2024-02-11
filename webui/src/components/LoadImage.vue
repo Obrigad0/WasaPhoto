@@ -8,7 +8,6 @@ export default {
     methods: {
 
       async creaPost(){
-          console.log("qui1")
 
           let fileCaricato = document.getElementById('file')
           //let descrizione = document.getElementById('descrizione')
@@ -24,23 +23,18 @@ export default {
               formData.append('file',fileCaricato);
               formData.append('descrizione', this.descrizione);
               
-              //reader.onload = async () => {
                   await this.$axios.post("/user/"+this.$route.params.idUser+"/images", formData, {
                       headers: {
                       'Content-Type': 'multipart/form-data',
                       },
                   })
 
-             // };
-
           }else{
               //errore file non inserito
               console.log("errore file non inserito")
           }
-          console.log("qui2")
           location.reload(true)
 
-          
       }
   }
 }   

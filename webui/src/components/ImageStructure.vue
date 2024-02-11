@@ -100,12 +100,9 @@ export default {
               this.comments.unshift(com)
             } 
             this.comment = ''
-            console.log("Array di commenti: "+this.comments)
-            console.log("pushato, chi ha commentato "+com.commenter)
           }
       }catch (e){
             this.errore = "{ "+ e +" }"
-            console.log("Errore nel caricamento del commento:"+this.errore)
       }
 
     },
@@ -135,30 +132,15 @@ export default {
         //funzione
       try{
         this.token = localStorage.getItem('token')
-        //this.likes = this.like
-        console.log("like ricevuti :"+this.like)
         this.likes = this.like != null ? this.like : []
-        console.log("lista like alla foto:"+this.likes)
         this.comments = this.commenti != null ? this.commenti : []
-        //console.log(this.comments)
         this.isP = this.isProfile
+
         if(!this.isP){ 
           this.nomeAutore = await this.idToNameAutore(this.autore) 
         }
-        console.log("il nome è:"+this.nomeAutore)
         this.descrizione = this.desc != null ? this.desc : ""
-
-        console.log("id dell'immagine"+this.iId)
-        console.log("url?:::"+__API_URL__)
         this.imageUrl = __API_URL__+ "/user/"+this.autore+"/images/"+this.iId
-        //const response = await axios.get("/user/"+this.autore+"/images/"+this.iId);
-        //this.imageUrl = response.data.file;
-        //this.imageInfo = response.data.info;
-
-
-
-        //get image, ritorna anche le informazioni dell'immagine, ma prendo solo il file mandato
-        //this.imageUrl = __API_URL__+ "/user/"+this.autore+"/images/"+this.iId
 
         if(this.isLike()){
           this.isLiked = true
@@ -214,8 +196,9 @@ export default {
   async mounted(){
     await this.getPost();
     if(this.likes !== null){
+      //traduce tutti gli id degli utenti in nomi
       for (let i = 0; i < this.likes.length; i++) {
-          await  this.idToName(this.likes[i])
+          await this.idToName(this.likes[i])
     }}
     
   }
@@ -265,14 +248,14 @@ export default {
         <button @click="toComment()" >post</button>
       </div>   
     </div>
-    <div v-if="likeP" class="commenti">
+    <div v-show="likeP" class="commenti">
     
-    <div  class="testo">
-        <p class="cambiacolore" v-for="(like, index) in nomiLike" :key="index" :id="like.id" @click="goToProfileComm(like.id)"> {{ like.nome }} </p>
-      </div>
-      <div class="com2">
-          <button @click="toLikes()">post</button>
-      </div>  
+      <div  class="testo">
+          <p class="cambiacolore" v-for="(like, index) in nomiLike" :key="index" :id="like.id" @click="goToProfileComm(like.id)"> {{ like.nome }} ha messo like</p>
+        </div>
+        <div class="com2">
+            <button @click="toLikes()">post</button>
+        </div>  
     </div>
   </div>
   </template>

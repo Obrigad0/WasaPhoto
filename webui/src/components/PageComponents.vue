@@ -28,10 +28,10 @@
 
     mounted(){
       if(!localStorage.getItem("token")){
-        console.log("Non sei loggato!!!")
+        console.log("Non sei loggato")
         this.$router.replace("/login")
       }else{
-      console.log("Questo è il tuo token:"+localStorage.getItem("token"))
+        console.log("Questo è il tuo token: "+localStorage.getItem("token"))
       }
     }
     
@@ -52,7 +52,7 @@
             <button class="cerca" @click="toSearch()" style="padding: 2px 8px; background-color: #734f59; color: #fff; border: none; cursor: pointer;">find</button>
         </div>
       </div>
-      <div class="box" style="height: 80vh; background-color: white;">
+      <div class="box" style="height: 84vh; background-color: white;">
         <slot></slot>
       </div>
       <div class="box" style="height: 50px; padding-top: 10px;background-color: #f1f1f1;" >

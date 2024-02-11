@@ -29,10 +29,21 @@ export default {
       LoadImage,
     },
 
-  mounted() { 
-    // al caricamento della pagina vengono recuperate tutte le informazioni sull'utente
-    this.profileInfos();
+  watch: {
+    '$route': {
+      immediate: true,
+      handler(to, from) {
+        (async () => {
+          if (from.path.startsWith('/profile/') && to.path.startsWith('/profile/') && from.path !== to.path) {
+            //await this.profileInfos();
+            location.reload(true)
+
+          }
+        })();
+      }
+    }
   },
+
 
   methods:{
       testoBottoneFollow() {
@@ -54,7 +65,6 @@ export default {
       itsMe(){
         //controlla se l'utente del profilo visitato e' l'utente proprietario del profilo
         if(localStorage.getItem('token') == this.$route.params.idUser){
-          console.log("Sono io!")
           return true
         }
         return false
@@ -66,7 +76,6 @@ export default {
           let newUN = this.nuovoUsername
           if(newUN.length > 3 && newUN.length  <= 16){
             try{
-              console.log("username inserito:"+newUN)
               await this.$axios.put("/user/"+this.$route.params.idUser, {username: newUN} , { headers: { 'Content-Type': 'application/json' }});
               location.reload(true)
             }catch(e){
@@ -81,12 +90,11 @@ export default {
         //controlla se l'utente e' nell'array di followed dell'utente visitato 
         //se si il pulsante per seguire diventa per smettere di seguire
         //this.seguito = !this.seguito //da levare
-        if(this.follower.includes(parseInt(localStorage.getItem('token'),10))){ console.log("i follower"+this.follower); return true }else{console.log("i follower"+this.follower); return false}
+        if(this.follower.includes(parseInt(localStorage.getItem('token'),10))){ return true }else{ return false}
       },
        
       async follow(){ //usato da terzo
         try{
-          console.log("cliccato segui") 
           if(this.seguito){
             //leva il follow
             await this.$axios.delete("/user/"+localStorage.getItem('token')+"/following/"+ this.$route.params.idUser);
@@ -104,7 +112,6 @@ export default {
         
       async ban(){  
         try{
-          console.log("cliccato banna") 
           if(this.bannato){
             //leva il ban
             await this.$axios.delete("/user/"+localStorage.getItem('token')+"/banned/"+ this.$route.params.idUser);
@@ -135,45 +142,33 @@ export default {
           //prelevo le informazioni
           let response = await this.$axios.get("/user/"+this.$route.params.idUser);
 
-          if (response.status === 401 || response.status === 500){
-            
-             return
-          }
-
           this.username = response.data.name
-          console.log("USername profilo visitato:"+this.username)
+
           //controlla se l'array ricevuto e' null, se si viene iserito in follower un array vuoto
           this.follower = response.data.follower != null ? response.data.follower : []
           this.following = response.data.following != null ? response.data.following : []
 
           // prendo tutte le immagini dell'utente
-          console.log("recupero le immagini")
           let response2 = await this.$axios.get("/user/"+this.$route.params.idUser+"/images");
           this.images = response2.data != null ? response2.data : []
-          console.log("Ecco i like che ho ricevuto dal server: "+this.images[0])
 
           //controllo se l'array e' null, se si inserisco 0 in followerN, altrimenti inserisco la lunghezza dell'array
           this.followerN = response.data.follower != null ? response.data.follower.length : 0
           this.followingN = response.data.following != null ? response.data.following.length : 0
 
-          //usata solo se e' il nostro profilo
           this.banList = response.data.banList != null ? response.data.banList: [] 
-          //forse
 
           //controllo se l'utente segue l'utente visitato
           this.seguito =  this.isFollowed();
 
           //faccio una chiamata al db per il mio profilo dove prendo i miei ban e vedo se ho bannato questo utente.
           if(this.$route.params.idUser !== parseInt(localStorage.getItem('token'),10)){
-              console.log("Vedo se ho bannato questo utente")
               try{
                 let response2 = await this.$axios.get("/user/"+localStorage.getItem("token"));
                 const dban = response2.data.banList != null ? response2.data.banList: [] 
                 if(dban.includes(parseInt(this.$route.params.idUser,10))){
                   // ho bannato questo profilo, quindi il pulsante cambia (e il tipo di operazione quando premuto)
-                  console.log("Ho bannato questo profilo!")
                   this.bannato = true
-                  //testoBottoneBan() ??
                 }
             }catch(e){
               console.log(e)
@@ -182,7 +177,6 @@ export default {
           }
 
         }catch(e){
-           //this.banned = true
            console.log(e)
            console.log("Errore, informazioni non recuperabili o sei stato bannato dall'utente!")
              //mi sposto nella pagina errorpage
@@ -191,14 +185,19 @@ export default {
 
       }, 
       
+
+      //serve a modificare la pagina quando si cambia nome, fa comparire o scomparire l'input
       unm(){
         this.modifica = !this.modifica
       }
       
 
-  }
+  },
 
-
+  async mounted() { 
+    // al caricamento della pagina vengono recuperate tutte le informazioni sull'utente
+    await this.profileInfos();
+  },
 };
 
 </script>

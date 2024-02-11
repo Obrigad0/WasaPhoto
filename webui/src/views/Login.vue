@@ -26,7 +26,6 @@ export default {
         //ci spostiamo nella pagina principale di wasaphoto, ovvero la pagina dello stream dell'utente
         this.$router.replace("/home")
 
-        //this.$emit('updatedLoggedChild',true)
         console.log("Tutto ok, loggato");
       } catch(e){
             //cattura l'errore tornato dal server
@@ -79,8 +78,8 @@ body,html {
 
 
 .container{
-    height: 90vh;
-    margin: 0;
+    height: 100vh;
+    width: 100vw;
     border-radius: 6px;
 
 }

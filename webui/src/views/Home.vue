@@ -7,7 +7,7 @@ export default {
   data: function() {
 		return {
         arrayDiPost: [],
-        nome: 'giusepe',
+        nome: '',
         }
     },
 
@@ -22,7 +22,7 @@ export default {
 
             let response = await this.$axios.get("/user/"+localStorage.getItem("token")+"/following/");
             let data = response.data
-            console.log("ecco come' la struttura dello stream"+data)
+            
             //let user = data.utente; non servono
             // e' un array di immagini
             this.arrayDiPost = data.ultimaImmagine;
@@ -33,8 +33,8 @@ export default {
       }
     },
 
-    mounted(){
-      this.getMyStream()
+    async mounted(){
+      await this.getMyStream()
     }
 
 }
